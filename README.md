@@ -5,7 +5,7 @@
 
 Named after astronaut Dave Bowman, the only one who could keep HAL in check. In the same spirit, **dave** keeps an eye on [halOP](https://github.com/hal/foundation) — the WildFly management console — making sure it behaves as expected.
 
-UI test suite for [halOP](https://github.com/hal/halos), the WildFly management console. Built with [Playwright](https://playwright.dev/) and TypeScript.
+UI test suite for [halOP](https://github.com/hal/foundation), the WildFly management console. Built with [Playwright](https://playwright.dev/) and TypeScript.
 
 dave automatically starts a WildFly server and halOP container, runs end-to-end tests against the management console, and tears everything down when finished.
 
@@ -93,10 +93,8 @@ Custom Playwright fixtures in [`src/fixtures/test.fixture.ts`](src/fixtures/test
 | Fixture          | Purpose                                                                   |
 | ---------------- | ------------------------------------------------------------------------- |
 | `basePage`       | OUIA enablement, navigation with `?connect=` parameter                    |
-| `endpointPage`   | "Connect to WildFly" modal interactions                                   |
 | `dashboardPage`  | Dashboard heading assertions                                              |
 | `navigationPage` | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
-| `connectedPage`  | Pre-connected page (navigates and waits for console ready)                |
 
 Tests import `test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
 
@@ -114,16 +112,15 @@ dave/
   src/
     fixtures/
       test.fixture.ts          # Custom fixtures with page objects
+      wildfly.fixture.ts       # WildFly container lifecycle per test file
     pages/
       base.page.ts             # Base page object
       dashboard.page.ts        # Dashboard page object
-      endpoint.page.ts         # Endpoint connection page object
       navigation.page.ts       # Navigation page object
     tests/
       smoke/                   # Smoke tests
         app-loads.spec.ts
         dashboard.spec.ts
-        endpoint-connection.spec.ts
         navigation.spec.ts
     utils/
       configure-testcontainers.ts  # Testcontainers config
@@ -146,7 +143,7 @@ Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-s
 
 | Project                                            | Description                                             |
 | -------------------------------------------------- | ------------------------------------------------------- |
-| [halOP](https://github.com/hal/halos)              | WildFly management console (the application under test) |
+| [halOP](https://github.com/hal/foundation)              | WildFly management console (the application under test) |
 | [WildFly](https://www.wildfly.org/)                | The application server managed by halOP                 |
 | [testcontainers](https://node.testcontainers.org/) | Container management for integration tests              |
 

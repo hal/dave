@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**dave** is a Playwright + TypeScript UI test suite for [halOP](https://github.com/hal/halos), the WildFly management console. Each test file gets its own WildFly container (via testcontainers) for full isolation, while a shared halOP container is started once via global setup/teardown.
+**dave** is a Playwright + TypeScript UI test suite for [halOP](https://github.com/hal/foundation), the WildFly management console. Each test file gets its own WildFly container (via testcontainers) for full isolation, while a shared halOP container is started once via global setup/teardown.
 
 ## Commands
 
@@ -70,10 +70,8 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 Tests use POM via custom Playwright fixtures defined in `src/fixtures/test.fixture.ts`:
 
 - **`basePage`** — OUIA enablement via `addInitScript`, navigation with `?connect=` URL parameter, wait for `#hal-main-id`
-- **`endpointPage`** — "Connect to WildFly" modal interactions
 - **`dashboardPage`** — dashboard heading checks
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)
-- **`connectedPage`** — pre-connected basePage (sets OUIA via `addInitScript`, then single navigation with `?connect=` param)
 
 Tests import the custom `test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
 
