@@ -4,6 +4,7 @@ useWildFlyContainer(test, "smoke/dashboard");
 
 test.describe("Dashboard", () => {
   test("shows dashboard heading", async ({ dashboardPage }) => {
+    await dashboardPage.open();
     await expect(dashboardPage.heading).toBeVisible();
   });
 });

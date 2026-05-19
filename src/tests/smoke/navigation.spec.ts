@@ -6,9 +6,10 @@ useWildFlyContainer(test, "smoke/navigation");
 
 test.describe("Navigation", () => {
   for (const item of NAV_ITEMS) {
-    test(`navigates to ${item}`, async ({ connectedPage, navigationPage }) => {
+    test(`navigates to ${item}`, async ({ navigationPage }) => {
+      await navigationPage.open();
       await navigationPage.navigateTo(item);
-      await expect(connectedPage.page.locator(MAIN_CONTENT_ID)).toBeVisible();
+      await expect(navigationPage.page.locator(MAIN_CONTENT_ID)).toBeVisible();
     });
   }
 });

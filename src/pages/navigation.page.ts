@@ -1,12 +1,14 @@
 import type { Locator, Page } from "@playwright/test";
-import { MAIN_CONTENT_ID } from "./base.page.js";
+import { BasePage, MAIN_CONTENT_ID } from "./base.page.js";
 
 const NAV_ITEMS = ["Dashboard", "Deployments", "Tasks", "Configuration", "Runtime", "Management model"] as const;
 
 export type NavItem = (typeof NAV_ITEMS)[number];
 
-export class NavigationPage {
-  constructor(readonly page: Page) {}
+export class NavigationPage extends BasePage {
+  constructor(page: Page, managementUrl: string) {
+    super(page, managementUrl);
+  }
 
   link(item: NavItem): Locator {
     return this.page.getByRole("link", { name: item });
