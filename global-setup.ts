@@ -1,12 +1,9 @@
-import { execFile } from "node:child_process";
+/* eslint-disable no-console */
 import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { promisify } from "node:util";
 import type { FullConfig } from "@playwright/test";
-import { detectRuntime } from "./src/utils/container-runtime.js";
-
-const execFileAsync = promisify(execFile);
+import { detectRuntime, execFileAsync } from "./src/utils/container-runtime.js";
 
 export interface HalOpInstance {
   readonly containerId: string;
@@ -21,26 +18,24 @@ const STATE_FILE = join(tmpdir(), "dave-state.json");
 const DEFAULT_HALOP_IMAGE = "quay.io/halconsole/hal-op:test-suite";
 const DEFAULT_HALOP_PORT = 9090;
 const CONTAINER_INTERNAL_PORT = 9090;
+const CONTAINER_NAME = "dave_halop";
 
 export { STATE_FILE };
 
-async function startHalOp(
-  image: string,
-  port: number,
-): Promise<HalOpInstance> {
+async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
   const runtime = await detectRuntime();
   const { stdout } = await execFileAsync(runtime, [
     "run",
     "-d",
+    "--name",
+    CONTAINER_NAME,
     "-p",
     `${port}:${CONTAINER_INTERNAL_PORT}`,
     image,
   ]);
   const containerId = stdout.trim();
   if (!containerId) {
-    throw new Error(
-      `${runtime} run returned no container ID for image "${image}"`,
-    );
+    throw new Error(`${runtime} run returned no container ID for image "${image}"`);
   }
   return { containerId, port };
 }

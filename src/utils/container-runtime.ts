@@ -1,7 +1,7 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
-const execFileAsync = promisify(execFile);
+export const execFileAsync = promisify(execFile);
 
 export type ContainerRuntime = "podman" | "docker";
 
@@ -26,9 +26,7 @@ export async function detectRuntime(): Promise<ContainerRuntime> {
   } else if (await isAvailable("docker")) {
     cached = "docker";
   } else {
-    throw new Error(
-      "No container runtime found. Install podman or docker.",
-    );
+    throw new Error("No container runtime found. Install podman or docker.");
   }
 
   return cached;

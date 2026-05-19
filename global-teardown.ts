@@ -1,11 +1,8 @@
-import { execFile } from "node:child_process";
+/* eslint-disable no-console */
 import { readFileSync, unlinkSync } from "node:fs";
-import { promisify } from "node:util";
 import type { FullConfig } from "@playwright/test";
-import { detectRuntime } from "./src/utils/container-runtime.js";
+import { detectRuntime, execFileAsync } from "./src/utils/container-runtime.js";
 import { STATE_FILE, type DaveState } from "./global-setup.js";
-
-const execFileAsync = promisify(execFile);
 
 async function stopHalOp(containerId: string): Promise<void> {
   const runtime = await detectRuntime();

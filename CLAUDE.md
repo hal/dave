@@ -17,6 +17,11 @@ pnpm report                            # Open last HTML report
 
 pnpm test -- --grep "pattern"          # Run tests matching pattern
 pnpm test -- src/tests/smoke/app-loads.spec.ts  # Run single spec file
+
+pnpm lint                              # Run ESLint
+pnpm lint:fix                          # Run ESLint with auto-fix
+pnpm format                            # Format all files with Prettier
+pnpm format:check                      # Check formatting without changing
 ```
 
 ## Prerequisites
@@ -37,7 +42,7 @@ global-setup.ts              →  starts halOP container
                                  sets HALOP_URL env var
 
   test.beforeAll()           →  starts a WildFly container per test file
-                                 (via testcontainers, using wado images)
+                                 (via testcontainers)
   src/fixtures/test.fixture.ts  →  creates page objects per test
   src/tests/**/*.spec.ts        →  test execution
   test.afterAll()            →  stops the WildFly container
@@ -90,3 +95,4 @@ Tests import the custom `test` and `expect` from `../fixtures/test.fixture` inst
 - Chromium-only project
 - OUIA attributes used for element identification (PatternFly testing convention)
 - halOP state shared between setup/teardown via `/tmp/dave-state.json`
+- ESLint with TypeScript + Playwright rules, Prettier for formatting

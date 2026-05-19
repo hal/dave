@@ -13,11 +13,6 @@
     "noEmit": true,
     "isolatedModules": true
   },
-  "include": [
-    "src/**/*.ts",
-    "global-setup.ts",
-    "global-teardown.ts",
-    "playwright.config.ts"
-  ],
+  "include": ["src/**/*.ts", "global-setup.ts", "global-teardown.ts", "playwright.config.ts"],
   "exclude": ["node_modules"]
 }

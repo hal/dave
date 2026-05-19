@@ -14,9 +14,7 @@ export interface WildFlyContainer {
   readonly managementUrl: string;
 }
 
-export async function startWildFlyContainer(
-  name: string,
-): Promise<WildFlyContainer> {
+export async function startWildFlyContainer(name: string): Promise<WildFlyContainer> {
   const image = process.env.WILDFLY_IMAGE ?? DEFAULT_IMAGE;
   const container = await new GenericContainer(image)
     .withName(name)
@@ -33,33 +31,22 @@ export async function startWildFlyContainer(
   return { container, managementUrl };
 }
 
-export async function stopWildFlyContainer(
-  wildfly: WildFlyContainer,
-): Promise<void> {
+export async function stopWildFlyContainer(wildfly: WildFlyContainer): Promise<void> {
   await wildfly.container.stop();
 }
 
-export async function executeCliCommand(
-  wildfly: WildFlyContainer,
-  command: string,
-): Promise<string> {
+export async function executeCliCommand(wildfly: WildFlyContainer, command: string): Promise<string> {
   const result = await wildfly.container.exec([
     "/bin/sh",
     "-c",
     `${JBOSS_CLI_PATH} --connect --controller=localhost:${MANAGEMENT_CONTAINER_PORT} --commands=${command}`,
   ]);
   if (result.exitCode !== 0) {
-    throw new Error(
-      `CLI command failed (exit ${result.exitCode}): ${result.output}`,
-    );
+    throw new Error(`CLI command failed (exit ${result.exitCode}): ${result.output}`);
   }
   return result.output;
 }
 
 export function containerNameFromSpec(specPath: string): string {
-  const match = specPath.match(/tests\/(.+)\.spec\.ts$/);
-  if (!match) {
-    return `dave_${specPath.replace(/[^a-zA-Z0-9]/g, "_")}`;
-  }
-  return `dave_${match[1].replace(/[\/-]/g, "_")}`;
+  return `dave_${specPath.replace(/[^a-zA-Z0-9]/g, "_")}`;
 }

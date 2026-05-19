@@ -20,10 +20,7 @@ function configureContainerRuntime(): void {
   }
 
   const uid = os.userInfo().uid;
-  const podmanSocketPaths = [
-    `/run/user/${uid}/podman/podman.sock`,
-    "/var/run/podman/podman.sock",
-  ];
+  const podmanSocketPaths = [`/run/user/${uid}/podman/podman.sock`, "/var/run/podman/podman.sock"];
 
   for (const socketPath of podmanSocketPaths) {
     if (existsSync(socketPath)) {

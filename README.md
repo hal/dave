@@ -1,7 +1,7 @@
 # dave
 
-> *"Look Dave, I can see you're really upset about this. I honestly think you ought to sit down calmly, take a stress pill, and think things over."*
-> — HAL 9000, *2001: A Space Odyssey*
+> _"Look Dave, I can see you're really upset about this. I honestly think you ought to sit down calmly, take a stress pill, and think things over."_
+> — HAL 9000, _2001: A Space Odyssey_
 
 Named after astronaut Dave Bowman, the only one who could keep HAL in check. In the same spirit, **dave** keeps an eye on [halOP](https://github.com/hal/foundation) — the WildFly management console — making sure it behaves as expected.
 
@@ -13,8 +13,7 @@ dave automatically starts a WildFly server and halOP container, runs end-to-end 
 
 - **Node.js** 22+
 - **pnpm** (corepack-enabled, see `packageManager` in `package.json`)
-- **wado** CLI — manages WildFly server instances (installed automatically as an optional dependency via [`@wildfly-admin-container/wado-{platform}`](https://www.npmjs.com/package/@wildfly-admin-container/wado-darwin-arm64))
-- **[Podman](https://podman.io/)** or **[Docker](https://www.docker.com/)** — runs the halOP container (auto-detected)
+- **[Podman](https://podman.io/)** or **[Docker](https://www.docker.com/)** — runs WildFly and halOP containers (auto-detected)
 
 ## Getting Started
 
@@ -29,15 +28,26 @@ pnpm exec playwright install chromium
 pnpm test
 ```
 
+## Code Quality
+
+| Command              | Description                        |
+| -------------------- | ---------------------------------- |
+| `pnpm lint`          | Run ESLint                         |
+| `pnpm lint:fix`      | Run ESLint with auto-fix           |
+| `pnpm format`        | Format all files with Prettier     |
+| `pnpm format:check`  | Check formatting without changing  |
+
+ESLint is configured with TypeScript and [Playwright-specific](https://github.com/playwright-community/eslint-plugin-playwright) rules. Prettier handles all formatting. See `eslint.config.js` and `.prettierrc` for details.
+
 ## Running Tests
 
-| Command | Description |
-|---|---|
-| `pnpm test` | Run all tests headless in Chromium |
-| `pnpm test:headed` | Run with a visible browser window |
-| `pnpm test:ui` | Playwright interactive UI mode |
-| `pnpm test:debug` | Debug mode with Playwright inspector |
-| `pnpm report` | Open the last HTML test report |
+| Command            | Description                          |
+| ------------------ | ------------------------------------ |
+| `pnpm test`        | Run all tests headless in Chromium   |
+| `pnpm test:headed` | Run with a visible browser window    |
+| `pnpm test:ui`     | Playwright interactive UI mode       |
+| `pnpm test:debug`  | Debug mode with Playwright inspector |
+| `pnpm report`      | Open the last HTML test report       |
 
 Filter tests by pattern or file:
 
@@ -50,40 +60,43 @@ pnpm test -- src/tests/smoke/app-loads.spec.ts
 
 Environment variables can be set in a `.env` file (see [`.env.example`](.env.example)):
 
-| Variable | Default | Description |
-|---|---|---|
-| `WILDFLY_VERSION` | `dev` | WildFly version passed to `wado start` |
-| `HALOP_IMAGE` | `quay.io/halconsole/hal-op:test-suite` | halOP container image |
-| `HALOP_PORT` | `9090` | Host port mapped to the halOP container |
+| Variable        | Default                                | Description                             |
+| --------------- | -------------------------------------- | --------------------------------------- |
+| `WILDFLY_IMAGE` | `quay.io/wado/wado-sa:development`     | WildFly container image                 |
+| `HALOP_IMAGE`   | `quay.io/halconsole/hal-op:test-suite` | halOP container image                   |
+| `HALOP_PORT`    | `9090`                                 | Host port mapped to the halOP container |
 
 ## How It Works
 
 ### Test Lifecycle
 
 ```
-global-setup.ts       starts WildFly (via wado) + halOP container
-                      writes state to /tmp/dave-state.json
-                      exports HALOP_URL and WILDFLY_URL
+global-setup.ts              starts halOP container
+                              writes state to /tmp/dave-state.json
+                              sets HALOP_URL env var
 
-  tests/*.spec.ts     Playwright tests run against halOP + WildFly
+  test.beforeAll()            starts a WildFly container per test file
+                              (via testcontainers)
+  src/fixtures/test.fixture.ts  creates page objects per test
+  src/tests/**/*.spec.ts        test execution
+  test.afterAll()             stops the WildFly container
 
-global-teardown.ts    stops halOP container + WildFly
-                      cleans up state file
+global-teardown.ts            stops halOP container, cleans state file
 ```
 
-Tests run **sequentially** with a single worker against one shared WildFly instance.
+Tests run **sequentially** with a single worker. Each test file gets its own isolated WildFly container via [testcontainers](https://node.testcontainers.org/).
 
 ### Page Object Model
 
 Custom Playwright fixtures in [`src/fixtures/test.fixture.ts`](src/fixtures/test.fixture.ts) provide page objects to each test:
 
-| Fixture | Purpose |
-|---|---|
-| `basePage` | OUIA enablement, navigation with `?connect=` parameter |
-| `endpointPage` | "Connect to WildFly" modal interactions |
-| `dashboardPage` | Dashboard heading assertions |
+| Fixture          | Purpose                                                                   |
+| ---------------- | ------------------------------------------------------------------------- |
+| `basePage`       | OUIA enablement, navigation with `?connect=` parameter                    |
+| `endpointPage`   | "Connect to WildFly" modal interactions                                   |
+| `dashboardPage`  | Dashboard heading assertions                                              |
 | `navigationPage` | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
-| `connectedPage` | Pre-connected page (navigates and waits for console ready) |
+| `connectedPage`  | Pre-connected page (navigates and waits for console ready)                |
 
 Tests import `test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
 
@@ -95,8 +108,8 @@ Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection,
 
 ```
 dave/
-  global-setup.ts              # Start WildFly + halOP before tests
-  global-teardown.ts           # Stop WildFly + halOP after tests
+  global-setup.ts              # Start halOP before tests
+  global-teardown.ts           # Stop halOP after tests
   playwright.config.ts         # Playwright configuration
   src/
     fixtures/
@@ -113,22 +126,23 @@ dave/
         endpoint-connection.spec.ts
         navigation.spec.ts
     utils/
-      container-runtime.ts     # Auto-detect Podman or Docker
-      wado.ts                  # wado CLI wrapper
+      configure-testcontainers.ts  # Testcontainers config
+      container-runtime.ts         # Auto-detect Podman or Docker
+      wildfly-container.ts         # WildFly container lifecycle
 ```
 
 ## Related Projects
 
-| Project | Description |
-|---|---|
-| [halOP](https://github.com/hal/halos) | WildFly management console (the application under test) |
-| [wado](https://www.npmjs.com/package/@wildfly-admin-container/wado-darwin-arm64) | CLI tool for managing WildFly server instances (platform-specific npm packages) |
-| [WildFly](https://www.wildfly.org/) | The application server managed by halOP |
+| Project                                            | Description                                             |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| [halOP](https://github.com/hal/halos)              | WildFly management console (the application under test) |
+| [WildFly](https://www.wildfly.org/)                | The application server managed by halOP                 |
+| [testcontainers](https://node.testcontainers.org/) | Container management for integration tests              |
 
 ## Container Images
 
-| Image | Description |
-|---|---|
-| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite |
-| [`quay.io/halconsole/hal-op:development`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP development image |
-| [`quay.io/halconsole/hal-op:latest`](https://quay.io/repository/halconsole/hal-op?tab=tags) | Latest halOP release |
+| Image                                                                                            | Description                        |
+| ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags)  | halOP image used by the test suite |
+| [`quay.io/halconsole/hal-op:development`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP development image            |
+| [`quay.io/halconsole/hal-op:latest`](https://quay.io/repository/halconsole/hal-op?tab=tags)      | Latest halOP release               |

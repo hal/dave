@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 
-const MAIN_CONTENT_ID = "#hal-main-id";
+export const MAIN_CONTENT_ID = "#hal-main-id";
 const CONNECT_PARAMETER = "connect";
 
 export class BasePage {
