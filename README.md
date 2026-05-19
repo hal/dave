@@ -100,7 +100,7 @@ Tests import `test` and `expect` from `../fixtures/test.fixture` instead of `@pl
 
 ### Element Identification
 
-Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following PatternFly's testing conventions.
+Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions.
 
 ## Project Structure
 
