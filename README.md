@@ -131,6 +131,17 @@ dave/
       wildfly-container.ts         # WildFly container lifecycle
 ```
 
+## CI/CD
+
+GitHub Actions runs lint and tests on every push to `main` and on pull requests:
+
+- **Lint** — checks formatting (Prettier) and linting (ESLint)
+- **Test** — installs Chromium, runs the full Playwright suite, and uploads test results as artifacts
+
+The latest Playwright HTML report from `main` is published to **GitHub Pages**: https://hal.github.io/dave/
+
+Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-security/dependabot), configured for weekly npm and GitHub Actions updates.
+
 ## Related Projects
 
 | Project                                            | Description                                             |

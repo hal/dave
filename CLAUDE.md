@@ -82,6 +82,15 @@ Tests import the custom `test` and `expect` from `../fixtures/test.fixture` inst
 - **`src/utils/wildfly-container.ts`** — testcontainers-based WildFly lifecycle (start, stop, CLI exec)
 - **`src/utils/container-runtime.ts`** — auto-detects Podman or Docker for halOP container
 
+## CI/CD
+
+GitHub Actions workflows in `.github/workflows/`:
+
+- **`lint.yml`** — runs `pnpm format:check` and `pnpm lint` on push/PR to `main`
+- **`test.yml`** — runs the full Playwright suite, uploads test results and JUnit report as artifacts, and deploys the HTML report to GitHub Pages on `main` pushes
+
+Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub Actions updates.
+
 ## Key Conventions
 
 - ES modules throughout (`"type": "module"`, NodeNext resolution)
