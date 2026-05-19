@@ -143,13 +143,13 @@ Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-s
 
 | Project                                            | Description                                             |
 | -------------------------------------------------- | ------------------------------------------------------- |
-| [halOP](https://github.com/hal/foundation)              | WildFly management console (the application under test) |
+| [halOP](https://github.com/hal/foundation)         | WildFly management console (the application under test) |
 | [WildFly](https://www.wildfly.org/)                | The application server managed by halOP                 |
 | [testcontainers](https://node.testcontainers.org/) | Container management for integration tests              |
 
 ## Container Images
 
-| Image                                                                                           | Description                        |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------- |
-| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite |
+| Image                                                                                           | Description                            |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------- |
+| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite     |
 | [`quay.io/wado/wado-sa:development`](https://quay.io/repository/wado/wado-sa?tab=tags)          | WildFly image used for test containers |

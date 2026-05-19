@@ -57,8 +57,8 @@ git pull --rebase upstream main
 
 ## Discuss your planned changes (if you want feedback)
 
- * GitHub Issues - https://github.com/hal/dave/issues
- * Zulip - https://wildfly.zulipchat.com/#narrow/stream/174373-hal
+- GitHub Issues - https://github.com/hal/dave/issues
+- Zulip - https://wildfly.zulipchat.com/#narrow/stream/174373-hal
 
 ## Create a simple topic branch to isolate your work (recommended)
 
@@ -106,16 +106,16 @@ git push origin my_cool_feature
 
 Now your updates are in your GitHub repo, you will need to notify the project that you have code/docs for inclusion.
 
- * Send a pull request, by clicking the pull request link while in your repository fork
- * After review a maintainer will merge your pull request, update/resolve associated issues, and reply when complete
- * Lastly, switch back to branch main from your topic branch and pull the updates
+- Send a pull request, by clicking the pull request link while in your repository fork
+- After review a maintainer will merge your pull request, update/resolve associated issues, and reply when complete
+- Lastly, switch back to branch main from your topic branch and pull the updates
 
 ```bash
 git checkout main
 git pull upstream main
 ```
 
- * You may also choose to update your origin on GitHub as well
+- You may also choose to update your origin on GitHub as well
 
 ```bash
 git push origin
@@ -125,8 +125,8 @@ git push origin
 
 Here are some tips on increasing the chance that your pull request is accepted:
 
- * Write a [good commit message](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
- * Include tests that fail without your code, and pass with it
+- Write a [good commit message](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
+- Include tests that fail without your code, and pass with it
 
 # Issues
 
