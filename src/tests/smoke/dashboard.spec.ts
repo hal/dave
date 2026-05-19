@@ -3,8 +3,7 @@ import { test, expect, useWildFlyContainer } from "../../fixtures/test.fixture.j
 useWildFlyContainer(test, "smoke/dashboard");
 
 test.describe("Dashboard", () => {
-  test("shows dashboard heading", async ({ connectedPage, dashboardPage }) => {
-    await connectedPage.waitForConsoleReady();
+  test("shows dashboard heading", async ({ dashboardPage }) => {
     await expect(dashboardPage.heading).toBeVisible();
   });
 });

@@ -17,7 +17,7 @@ export class BasePage {
     await this.waitForConsoleReady();
   }
 
-  async waitForConsoleReady(): Promise<void> {
+  private async waitForConsoleReady(): Promise<void> {
     await this.page.locator(MAIN_CONTENT_ID).waitFor({ state: "visible" });
   }
 }

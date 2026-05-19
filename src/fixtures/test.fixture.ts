@@ -1,7 +1,6 @@
 import { test as base } from "@playwright/test";
 import { BasePage } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
-import { EndpointPage } from "../pages/endpoint.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
 import {
   containerNameFromSpec,
@@ -43,7 +42,6 @@ export function useWildFlyContainer(testInstance: typeof test, specPath: string)
 interface DaveFixtures {
   basePage: BasePage;
   dashboardPage: DashboardPage;
-  endpointPage: EndpointPage;
   navigationPage: NavigationPage;
   connectedPage: BasePage;
 }
@@ -55,10 +53,6 @@ export const test = base.extend<DaveFixtures>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page));
-  },
-
-  endpointPage: async ({ page }, use) => {
-    await use(new EndpointPage(page));
   },
 
   navigationPage: async ({ page }, use) => {
