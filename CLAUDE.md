@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm test                              # Run all tests (headless, Chromium)
+pnpm test                              # Run all tests (headless, all browsers)
 pnpm test:headed                       # Run with visible browser
 pnpm test:ui                           # Playwright interactive UI mode
 pnpm test:debug                        # Debug mode with inspector
@@ -17,6 +17,9 @@ pnpm report                            # Open last HTML report
 
 pnpm test -- --grep "pattern"          # Run tests matching pattern
 pnpm test -- src/tests/smoke/app-loads.spec.ts  # Run single spec file
+pnpm test -- --project=chromium        # Run only in Chromium
+pnpm test -- --project=firefox         # Run only in Firefox
+pnpm test -- --project=webkit          # Run only in WebKit
 
 pnpm lint                              # Run ESLint
 pnpm lint:fix                          # Run ESLint with auto-fix
@@ -59,7 +62,7 @@ Each test file that needs WildFly calls `useWildFlyContainer()` at the top level
 useWildFlyContainer(test, "smoke/dashboard");
 ```
 
-Container names follow the pattern `dave_<path>` (e.g., `dave_smoke_dashboard`). Ports are dynamically allocated — use `wildfly.managementUrl` and `wildfly.httpUrl` instead of hardcoded ports.
+Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). Ports are dynamically allocated — use `wildfly.managementUrl` and `wildfly.httpUrl` instead of hardcoded ports.
 
 The container's built-in HEALTHCHECK (`/health/ready` + `/management` fallback) is used as the wait strategy, ensuring the management interface is fully ready before tests run.
 
@@ -92,9 +95,9 @@ Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub A
 ## Key Conventions
 
 - ES modules throughout (`"type": "module"`, NodeNext resolution)
-- Tests run sequentially (workers: 1, fullyParallel: false) — dynamic ports enable future parallelism
-- Each test file gets its own WildFly container for isolation (dynamic ports, healthcheck-based readiness)
-- Chromium-only project
+- Spec files run in parallel across workers (4 locally, 2 in CI); tests within a spec file are sequential (`fullyParallel: false`)
+- Each test file gets its own WildFly container per browser project for isolation (dynamic ports, healthcheck-based readiness)
+- Multi-browser: Chromium, Firefox, and WebKit
 - OUIA attributes used for element identification (PatternFly testing convention)
 - halOP state shared between setup/teardown via `/tmp/dave-state.json`
 - ESLint with TypeScript + Playwright rules, Prettier for formatting

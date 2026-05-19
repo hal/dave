@@ -49,6 +49,7 @@ export async function executeCliCommand(wildfly: WildFlyContainer, command: stri
   return result.output;
 }
 
-export function containerNameFromSpec(specPath: string): string {
-  return `dave_${specPath.replace(/[^a-zA-Z0-9]/g, "_")}`;
+export function containerNameFromSpec(specPath: string, projectName?: string): string {
+  const base = `dave_${specPath.replace(/[^a-zA-Z0-9]/g, "_")}`;
+  return projectName ? `${base}_${projectName}` : base;
 }

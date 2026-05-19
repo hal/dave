@@ -28,9 +28,9 @@ export function requireManagementUrl(): string {
 export function useWildFlyContainer(testInstance: typeof base, specPath: string): void {
   let wildfly: WildFlyContainer | undefined;
 
-  testInstance.beforeAll(async () => {
+  testInstance.beforeAll(async (_fixtures, testInfo) => {
     testInstance.setTimeout(CONTAINER_SETUP_TIMEOUT_MS);
-    wildfly = await startWildFlyContainer(containerNameFromSpec(specPath));
+    wildfly = await startWildFlyContainer(containerNameFromSpec(specPath, testInfo.project.name));
     setWildFly(wildfly);
   });
 

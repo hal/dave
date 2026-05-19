@@ -22,7 +22,7 @@ dave automatically starts a WildFly server and halOP container, runs end-to-end 
 pnpm install
 
 # Install Playwright browsers
-pnpm exec playwright install chromium
+pnpm exec playwright install chromium firefox webkit
 
 # Run all tests (headless)
 pnpm test
@@ -41,19 +41,22 @@ ESLint is configured with TypeScript and [Playwright-specific](https://github.co
 
 ## Running Tests
 
-| Command            | Description                          |
-| ------------------ | ------------------------------------ |
-| `pnpm test`        | Run all tests headless in Chromium   |
-| `pnpm test:headed` | Run with a visible browser window    |
-| `pnpm test:ui`     | Playwright interactive UI mode       |
-| `pnpm test:debug`  | Debug mode with Playwright inspector |
-| `pnpm report`      | Open the last HTML test report       |
+| Command            | Description                           |
+| ------------------ | ------------------------------------- |
+| `pnpm test`        | Run all tests headless (all browsers) |
+| `pnpm test:headed` | Run with a visible browser window     |
+| `pnpm test:ui`     | Playwright interactive UI mode        |
+| `pnpm test:debug`  | Debug mode with Playwright inspector  |
+| `pnpm report`      | Open the last HTML test report        |
 
-Filter tests by pattern or file:
+Filter tests by pattern, file, or browser:
 
 ```bash
 pnpm test -- --grep "dashboard"
 pnpm test -- src/tests/smoke/app-loads.spec.ts
+pnpm test -- --project=chromium
+pnpm test -- --project=firefox
+pnpm test -- --project=webkit
 ```
 
 ## Configuration
@@ -84,7 +87,7 @@ global-setup.ts              starts halOP container
 global-teardown.ts            stops halOP container, cleans state file
 ```
 
-Tests run **sequentially** with a single worker. Each test file gets its own isolated WildFly container via [testcontainers](https://node.testcontainers.org/).
+Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
 
 ### Page Object Model
 
@@ -133,7 +136,7 @@ dave/
 GitHub Actions runs lint and tests on every push to `main` and on pull requests:
 
 - **Lint** — checks formatting (Prettier) and linting (ESLint)
-- **Test** — installs Chromium, runs the full Playwright suite, and uploads test results as artifacts
+- **Test** — installs Chromium, Firefox, and WebKit, runs the full Playwright suite, and uploads test results as artifacts
 
 The latest Playwright HTML report from `main` is published to **GitHub Pages**: https://hal.github.io/dave/
 
