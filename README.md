@@ -149,8 +149,7 @@ Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-s
 
 ## Container Images
 
-| Image                                                                                            | Description                        |
-| ------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags)  | halOP image used by the test suite |
-| [`quay.io/halconsole/hal-op:development`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP development image            |
-| [`quay.io/halconsole/hal-op:latest`](https://quay.io/repository/halconsole/hal-op?tab=tags)      | Latest halOP release               |
+| Image                                                                                           | Description                        |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------- |
+| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite |
+| [`quay.io/wado/wado-sa:development`](https://quay.io/repository/wado/wado-sa?tab=tags)          | WildFly image used for test containers |
