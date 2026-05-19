@@ -37,36 +37,31 @@ pnpm format:check                      # Check formatting without changing
 ### Test Lifecycle
 
 ```
-global-setup.ts              →  starts halOP container
+global-setup.ts              →  removes stale dave_* containers
+                                 starts halOP container
                                  writes state to /tmp/dave-state.json
                                  sets HALOP_URL env var
 
-  test.beforeAll()           →  starts a WildFly container per test file
-                                 (via testcontainers)
+  useWildFlyContainer()      →  starts a WildFly container per test file
+                                 (via testcontainers, dynamic ports, healthcheck wait)
   src/fixtures/test.fixture.ts  →  creates page objects per test
   src/tests/**/*.spec.ts        →  test execution
-  test.afterAll()            →  stops the WildFly container
+  afterAll()                 →  stops the WildFly container
 
 global-teardown.ts           →  stops halOP container, cleans state file
 ```
 
 ### WildFly Container Isolation
 
-Each test file that needs WildFly starts its own container in `test.beforeAll()`:
+Each test file that needs WildFly calls `useWildFlyContainer()` at the top level, which handles `beforeAll`/`afterAll` lifecycle automatically:
 
 ```typescript
-test.beforeAll(async () => {
-  wildfly = await startWildFlyContainer(containerNameFromSpec("smoke/dashboard"));
-  setWildFly(wildfly);
-});
-
-test.afterAll(async () => {
-  clearWildFly();
-  await stopWildFlyContainer(wildfly);
-});
+useWildFlyContainer(test, "smoke/dashboard");
 ```
 
-Container names follow the pattern `dave_<path>` (e.g., `dave_smoke_dashboard`). Fixed ports: HTTP 18080, management 19990.
+Container names follow the pattern `dave_<path>` (e.g., `dave_smoke_dashboard`). Ports are dynamically allocated — use `wildfly.managementUrl` and `wildfly.httpUrl` instead of hardcoded ports.
+
+The container's built-in HEALTHCHECK (`/health/ready` + `/management` fallback) is used as the wait strategy, ensuring the management interface is fully ready before tests run.
 
 Tests that modify WildFly configuration can use `executeCliCommand()` to run JBoss CLI commands inside the container.
 
@@ -74,11 +69,11 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 
 Tests use POM via custom Playwright fixtures defined in `src/fixtures/test.fixture.ts`:
 
-- **`basePage`** — OUIA enablement, navigation with `?connect=` URL parameter, wait for `#hal-main-id`
+- **`basePage`** — OUIA enablement via `addInitScript`, navigation with `?connect=` URL parameter, wait for `#hal-main-id`
 - **`endpointPage`** — "Connect to WildFly" modal interactions
 - **`dashboardPage`** — dashboard heading checks
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)
-- **`connectedPage`** — pre-connected basePage (runs `navigateWithConnect` + `waitForConsoleReady` before test)
+- **`connectedPage`** — pre-connected basePage (sets OUIA via `addInitScript`, then single navigation with `?connect=` param)
 
 Tests import the custom `test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
 
@@ -90,8 +85,8 @@ Tests import the custom `test` and `expect` from `../fixtures/test.fixture` inst
 ## Key Conventions
 
 - ES modules throughout (`"type": "module"`, NodeNext resolution)
-- Tests run sequentially (workers: 1, fullyParallel: false)
-- Each test file gets its own WildFly container for isolation
+- Tests run sequentially (workers: 1, fullyParallel: false) — dynamic ports enable future parallelism
+- Each test file gets its own WildFly container for isolation (dynamic ports, healthcheck-based readiness)
 - Chromium-only project
 - OUIA attributes used for element identification (PatternFly testing convention)
 - halOP state shared between setup/teardown via `/tmp/dave-state.json`

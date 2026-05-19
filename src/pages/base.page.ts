@@ -7,7 +7,7 @@ export class BasePage {
   constructor(readonly page: Page) {}
 
   async enableOuia(): Promise<void> {
-    await this.page.evaluate(() => {
+    await this.page.addInitScript(() => {
       localStorage.setItem("ouia", "true");
     });
   }

@@ -40,7 +40,35 @@ async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
   return { containerId, port };
 }
 
+const CONTAINER_PREFIX = "dave_";
+
+async function removeStaleContainers(): Promise<void> {
+  const runtime = await detectRuntime();
+  try {
+    const { stdout } = await execFileAsync(runtime, [
+      "ps",
+      "-a",
+      "--filter",
+      `name=^${CONTAINER_PREFIX}`,
+      "--format",
+      "{{.Names}}",
+    ]);
+    const names = stdout
+      .trim()
+      .split("\n")
+      .filter((n) => n.length > 0);
+    for (const name of names) {
+      console.log(`Removing stale container: ${name}`);
+      await execFileAsync(runtime, ["rm", "-f", name]);
+    }
+  } catch {
+    // No stale containers or runtime not ready yet
+  }
+}
+
 async function globalSetup(_config: FullConfig): Promise<void> {
+  await removeStaleContainers();
+
   const halopImage = process.env.HALOP_IMAGE ?? DEFAULT_HALOP_IMAGE;
   const halopPort = Number(process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT);
 

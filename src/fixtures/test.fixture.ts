@@ -1,5 +1,5 @@
 import { test as base } from "@playwright/test";
-import { BasePage, MAIN_CONTENT_ID } from "../pages/base.page.js";
+import { BasePage } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
 import { EndpointPage } from "../pages/endpoint.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
@@ -80,14 +80,8 @@ export const test = base.extend<DaveFixtures>({
       page.on("pageerror", (err) => console.log(`PAGE ERROR: ${err.message}`));
       /* eslint-enable no-console */
     }
-    await page.goto("/");
     await basePage.enableOuia();
-    const url = `/?connect=${currentWildFly.managementUrl}`;
-    if (DEBUG) {
-      console.log(`connectedPage: navigating to ${url}`); // eslint-disable-line no-console
-    }
-    await page.goto(url);
-    await page.locator(MAIN_CONTENT_ID).waitFor({ state: "visible", timeout: 30_000 });
+    await basePage.navigateWithConnect(currentWildFly.managementUrl);
     await use(basePage);
   },
 });
