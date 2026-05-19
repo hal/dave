@@ -19,7 +19,7 @@ export async function startWildFlyContainer(name: string): Promise<WildFlyContai
     .withName(name)
     .withCommand(["-c", "standalone-no-auth.xml"])
     .withExposedPorts(HTTP_CONTAINER_PORT, MANAGEMENT_CONTAINER_PORT)
-    .withWaitStrategy(Wait.forHealthCheck())
+    .withWaitStrategy(Wait.forHttp("/management", MANAGEMENT_CONTAINER_PORT).forStatusCode(200))
     .withStartupTimeout(STARTUP_TIMEOUT_MS)
     .start();
 

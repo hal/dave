@@ -1,12 +1,14 @@
 import { test as base } from "@playwright/test";
 import { BasePage } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
+import { ModelBrowserPage } from "../pages/model-browser.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
 import { requireManagementUrl } from "./wildfly.fixture.js";
 
 interface DaveFixtures {
   basePage: BasePage;
   dashboardPage: DashboardPage;
+  modelBrowserPage: ModelBrowserPage;
   navigationPage: NavigationPage;
 }
 
@@ -17,6 +19,10 @@ export const test = base.extend<DaveFixtures>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page, requireManagementUrl()));
+  },
+
+  modelBrowserPage: async ({ page }, use) => {
+    await use(new ModelBrowserPage(page, requireManagementUrl()));
   },
 
   navigationPage: async ({ page }, use) => {
