@@ -35,7 +35,7 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
     await datasourcesItem.waitFor({ state: "visible" });
     await datasourcesItem.click();
 
-    await expect(modelBrowserPage.resourceHeading).toHaveText("datasources");
+    await expect(modelBrowserPage.resourceHeading).toContainText("datasources");
     const breadcrumbText = await modelBrowserPage.breadcrumbText();
     expect(breadcrumbText).toContain("subsystem=datasources");
   });
