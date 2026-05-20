@@ -31,7 +31,8 @@ export const test = base.extend<DaveFixtures>({
   },
 });
 
-test.beforeEach(async (_fixtures, testInfo) => {
+// eslint-disable-next-line no-empty-pattern
+test.beforeEach(async ({}, testInfo) => {
   await label(LabelName.TAG, testInfo.project.name);
 });
 
