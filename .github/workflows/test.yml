@@ -59,22 +59,26 @@ jobs:
           PAGES_URL="https://hal.github.io/dave"
           mkdir -p allure-results/history
           for file in history.json history-trend.json duration-trend.json categories-trend.json retry-trend.json; do
-            curl -fsSL "${PAGES_URL}/history/${file}" -o "allure-results/history/${file}" || true
+            curl -fsSL "${PAGES_URL}/reports/allure/history/${file}" -o "allure-results/history/${file}" || true
           done
 
       - name: Generate Allure report
         if: ${{ !cancelled() }}
         run: pnpm allure:generate
 
-      - name: Copy Playwright report into Allure report
+      - name: Assemble GitHub Pages site
         if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
-        run: cp -r playwright-report allure-report/playwright
+        run: |
+          mkdir -p pages-root/reports
+          cp .github/pages/index.html pages-root/
+          cp -r allure-report pages-root/reports/allure
+          cp -r playwright-report pages-root/reports/playwright
 
       - name: Upload Pages artifact
         if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
         uses: actions/upload-pages-artifact@v3
         with:
-          path: allure-report/
+          path: pages-root/
 
   deploy-report:
     if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}

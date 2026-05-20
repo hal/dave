@@ -89,7 +89,7 @@ Exclude a group:
 pnpm test -- --grep-invert @smoke
 ```
 
-Tags are displayed as badges in the [HTML test report](https://hal.github.io/dave/) and can be used to filter results.
+Tags are displayed as badges in the [HTML test report](https://hal.github.io/dave/reports/allure/) and can be used to filter results.
 
 To add a new group, add a constant to `src/tags.ts` and apply it to test files via the `tag` option on `test.describe()`.
 
@@ -176,10 +176,10 @@ GitHub Actions runs lint and tests on every push to `main` and on pull requests:
 - **Lint** — checks formatting (Prettier) and linting (ESLint)
 - **Test** — installs Chromium, Firefox, and WebKit, runs the full Playwright suite, and uploads test results as artifacts
 
-The latest test reports from `main` are published to **GitHub Pages**:
+The latest test reports from `main` are published to **[GitHub Pages](https://hal.github.io/dave/)**:
 
-- [Allure report](https://hal.github.io/dave/) (default) — includes trend charts that track pass/fail rates across runs
-- [Playwright report](https://hal.github.io/dave/playwright/) — built-in Playwright HTML report
+- [Allure report](https://hal.github.io/dave/reports/allure/) — includes trend charts that track pass/fail rates across runs
+- [Playwright report](https://hal.github.io/dave/reports/playwright/) — built-in Playwright HTML report
 
 Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-security/dependabot), configured for weekly npm and GitHub Actions updates.
 
