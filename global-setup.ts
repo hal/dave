@@ -70,7 +70,11 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   await removeStaleContainers();
 
   const halopImage = process.env.HALOP_IMAGE ?? DEFAULT_HALOP_IMAGE;
-  const halopPort = Number(process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT);
+  const halopPortRaw = process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT;
+  const halopPort = Number(halopPortRaw);
+  if (Number.isNaN(halopPort)) {
+    throw new Error(`Invalid HALOP_PORT: "${halopPortRaw}" is not a number`);
+  }
 
   console.log(`Starting halOP from "${halopImage}" on port ${halopPort}...`);
   const halop = await startHalOp(halopImage, halopPort);

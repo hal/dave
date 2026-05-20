@@ -54,12 +54,21 @@ export class ModelBrowserPage extends BasePage {
     }
   }
 
+  async navigateToChild(parent: string, child: string): Promise<void> {
+    await this.selectTreeItem(parent);
+    await this.expandTreeItem(parent);
+    const childItem = this.treeItem(child);
+    await childItem.waitFor({ state: "visible" });
+    await childItem.click();
+    await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+  }
+
   breadcrumb(): Locator {
     return this.page.locator(MAIN_CONTENT).locator("nav");
   }
 
-  async breadcrumbText(): Promise<string> {
-    return (await this.breadcrumb().textContent()) ?? "";
+  async breadcrumbText(): Promise<string | null> {
+    return await this.breadcrumb().textContent();
   }
 
   tab(name: TabName): Locator {

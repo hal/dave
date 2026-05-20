@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 import {
   NAV_CONFIGURATION,
   NAV_DASHBOARD,
@@ -24,10 +24,6 @@ export type NavItem = keyof typeof NAV_ITEMS;
 const NAV_ITEM_NAMES = Object.keys(NAV_ITEMS) as NavItem[];
 
 export class NavigationPage extends BasePage {
-  constructor(page: Page, managementUrl: string) {
-    super(page, managementUrl);
-  }
-
   link(item: NavItem): Locator {
     return this.page.locator(ouiaSelector(NAV_ITEMS[item]));
   }

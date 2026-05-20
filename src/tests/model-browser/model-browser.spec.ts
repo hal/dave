@@ -28,12 +28,7 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
 
   test("navigates to specific subsystem", async ({ modelBrowserPage }) => {
     await modelBrowserPage.open();
-    await modelBrowserPage.selectTreeItem("subsystem");
-    await modelBrowserPage.expandTreeItem("subsystem");
-
-    const datasourcesItem = modelBrowserPage.treeItem("datasources");
-    await datasourcesItem.waitFor({ state: "visible" });
-    await datasourcesItem.click();
+    await modelBrowserPage.navigateToChild("subsystem", "datasources");
 
     await expect(modelBrowserPage.resourceHeading).toContainText("datasources");
     const breadcrumbText = await modelBrowserPage.breadcrumbText();
@@ -42,11 +37,7 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
 
   test("switches tabs", async ({ modelBrowserPage }) => {
     await modelBrowserPage.open();
-    await modelBrowserPage.selectTreeItem("subsystem");
-    await modelBrowserPage.expandTreeItem("subsystem");
-    const datasourcesItem = modelBrowserPage.treeItem("datasources");
-    await datasourcesItem.waitFor({ state: "visible" });
-    await datasourcesItem.click();
+    await modelBrowserPage.navigateToChild("subsystem", "datasources");
 
     await expect(modelBrowserPage.tab("Data")).toBeVisible();
     await expect(modelBrowserPage.tab("Attributes")).toBeVisible();
@@ -62,11 +53,7 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
 
   test("shows operations with global toggle", async ({ modelBrowserPage }) => {
     await modelBrowserPage.open();
-    await modelBrowserPage.selectTreeItem("subsystem");
-    await modelBrowserPage.expandTreeItem("subsystem");
-    const datasourcesItem = modelBrowserPage.treeItem("datasources");
-    await datasourcesItem.waitFor({ state: "visible" });
-    await datasourcesItem.click();
+    await modelBrowserPage.navigateToChild("subsystem", "datasources");
     await modelBrowserPage.selectTab("Operations");
 
     await expect(modelBrowserPage.globalOperationsSwitch()).toBeVisible();
