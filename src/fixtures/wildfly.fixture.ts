@@ -10,11 +10,11 @@ const CONTAINER_SETUP_TIMEOUT_MS = 180_000;
 
 let currentWildFly: WildFlyContainer | undefined;
 
-export function setWildFly(wildfly: WildFlyContainer): void {
+function setWildFly(wildfly: WildFlyContainer): void {
   currentWildFly = wildfly;
 }
 
-export function clearWildFly(): void {
+function clearWildFly(): void {
   currentWildFly = undefined;
 }
 

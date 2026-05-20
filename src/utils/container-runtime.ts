@@ -5,8 +5,6 @@ export const execFileAsync = promisify(execFile);
 
 export type ContainerRuntime = "podman" | "docker";
 
-let cached: ContainerRuntime | undefined;
-
 async function isAvailable(binary: string): Promise<boolean> {
   try {
     await execFileAsync(binary, ["--version"]);
@@ -16,18 +14,18 @@ async function isAvailable(binary: string): Promise<boolean> {
   }
 }
 
-export async function detectRuntime(): Promise<ContainerRuntime> {
-  if (cached) {
-    return cached;
-  }
-
+async function resolveRuntime(): Promise<ContainerRuntime> {
   if (await isAvailable("podman")) {
-    cached = "podman";
+    return "podman";
   } else if (await isAvailable("docker")) {
-    cached = "docker";
-  } else {
-    throw new Error("No container runtime found. Install podman or docker.");
+    return "docker";
   }
+  throw new Error("No container runtime found. Install podman or docker.");
+}
 
-  return cached;
+let detection: Promise<ContainerRuntime> | undefined;
+
+export function detectRuntime(): Promise<ContainerRuntime> {
+  detection ??= resolveRuntime();
+  return detection;
 }
