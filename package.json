@@ -27,6 +27,7 @@
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.0",
     "allure": "^3.8.2",
+    "allure-js-commons": "^3.8.0",
     "allure-playwright": "^3.8.0",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
