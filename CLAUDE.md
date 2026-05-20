@@ -13,7 +13,10 @@ pnpm test                              # Run all tests (headless, all browsers)
 pnpm test:headed                       # Run with visible browser
 pnpm test:ui                           # Playwright interactive UI mode
 pnpm test:debug                        # Debug mode with inspector
-pnpm report                            # Open last HTML report
+pnpm report                            # Open last Playwright HTML report
+pnpm allure:generate                   # Generate Allure report from results
+pnpm allure:serve                      # Serve Allure report with live reload
+pnpm allure:open                       # Open a generated Allure report
 
 pnpm test -- --grep "pattern"          # Run tests matching pattern
 pnpm test -- src/tests/smoke/app-loads.spec.ts  # Run single spec file
@@ -93,7 +96,7 @@ Tests import the custom `test` and `expect` from `../fixtures/test.fixture` inst
 GitHub Actions workflows in `.github/workflows/`:
 
 - **`lint.yml`** — runs `pnpm format:check` and `pnpm lint` on push/PR to `main`
-- **`test.yml`** — runs the full Playwright suite, uploads test results and JUnit report as artifacts, and deploys the HTML report to GitHub Pages on `main` pushes
+- **`test.yml`** — runs the full Playwright suite, uploads test results and JUnit report as artifacts, and deploys the Allure report (with trend history) to GitHub Pages on `main` pushes
 
 Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub Actions updates.
 

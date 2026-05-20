@@ -48,6 +48,9 @@ ESLint is configured with TypeScript and [Playwright-specific](https://github.co
 | `pnpm test:ui`            | Playwright interactive UI mode        |
 | `pnpm test:debug`         | Debug mode with Playwright inspector  |
 | `pnpm report`             | Open the last HTML test report        |
+| `pnpm allure:generate`    | Generate Allure report from results   |
+| `pnpm allure:serve`       | Serve Allure report with live reload  |
+| `pnpm allure:open`        | Open a generated Allure report        |
 | `pnpm test:smoke`         | Run only `@smoke` tests               |
 | `pnpm test:dashboard`     | Run only `@dashboard` tests           |
 | `pnpm test:navigation`    | Run only `@navigation` tests          |
@@ -173,7 +176,10 @@ GitHub Actions runs lint and tests on every push to `main` and on pull requests:
 - **Lint** — checks formatting (Prettier) and linting (ESLint)
 - **Test** — installs Chromium, Firefox, and WebKit, runs the full Playwright suite, and uploads test results as artifacts
 
-The latest Playwright HTML report from `main` is published to **GitHub Pages**: https://hal.github.io/dave/
+The latest test reports from `main` are published to **GitHub Pages**:
+
+- [Allure report](https://hal.github.io/dave/) (default) — includes trend charts that track pass/fail rates across runs
+- [Playwright report](https://hal.github.io/dave/playwright/) — built-in Playwright HTML report
 
 Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-security/dependabot), configured for weekly npm and GitHub Actions updates.
 

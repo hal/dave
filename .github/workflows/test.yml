@@ -52,11 +52,29 @@ jobs:
           path: test-results/junit.xml
           retention-days: 14
 
+      - name: Fetch Allure history from GitHub Pages
+        if: ${{ !cancelled() }}
+        continue-on-error: true
+        run: |
+          PAGES_URL="https://hal.github.io/dave"
+          mkdir -p allure-results/history
+          for file in history.json history-trend.json duration-trend.json categories-trend.json retry-trend.json; do
+            curl -fsSL "${PAGES_URL}/history/${file}" -o "allure-results/history/${file}" || true
+          done
+
+      - name: Generate Allure report
+        if: ${{ !cancelled() }}
+        run: pnpm allure:generate
+
+      - name: Copy Playwright report into Allure report
+        if: always() && github.ref == 'refs/heads/main'
+        run: cp -r playwright-report allure-report/playwright
+
       - name: Upload Pages artifact
         if: always() && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: playwright-report/
+          path: allure-report/
 
   deploy-report:
     if: always() && github.ref == 'refs/heads/main'

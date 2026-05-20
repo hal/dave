@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import * as os from "node:os";
 
 const HALOP_URL = process.env.HALOP_URL ?? "http://localhost:9090";
 
@@ -11,6 +12,20 @@ export default defineConfig({
   reporter: [
     ["list"],
     ["html", { open: "never" }],
+    [
+      "allure-playwright",
+      {
+        resultsDir: "allure-results",
+        detail: true,
+        suiteTitle: true,
+        environmentInfo: {
+          os_platform: os.platform(),
+          os_release: os.release(),
+          node_version: process.version,
+          halop_url: HALOP_URL,
+        },
+      },
+    ],
     ...(process.env.CI ? [["junit", { outputFile: "test-results/junit.xml" }] as const] : []),
   ],
   timeout: 60_000,
