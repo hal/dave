@@ -67,17 +67,17 @@ jobs:
         run: pnpm allure:generate
 
       - name: Copy Playwright report into Allure report
-        if: always() && github.ref == 'refs/heads/main'
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
         run: cp -r playwright-report allure-report/playwright
 
       - name: Upload Pages artifact
-        if: always() && github.ref == 'refs/heads/main'
+        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: allure-report/
 
   deploy-report:
-    if: always() && github.ref == 'refs/heads/main'
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
     needs: test
     runs-on: ubuntu-latest
     environment:
