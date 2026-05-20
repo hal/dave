@@ -1,9 +1,9 @@
-import { test, expect, useWildFlyContainer } from "../../fixtures/test.fixture.js";
+import { testWithWildFly as test, expect } from "../../fixtures/test.fixture.js";
 import { NAV_ITEM_NAMES } from "../../pages/navigation.page.js";
 import { MAIN_CONTENT } from "../../pages/base.page.js";
 import { Tag } from "../../tags.js";
 
-useWildFlyContainer(test, "smoke/navigation");
+test.use({ specPath: "smoke/navigation" });
 
 test.describe("Navigation", { tag: [Tag.SMOKE, Tag.NAVIGATION] }, () => {
   for (const item of NAV_ITEM_NAMES) {
