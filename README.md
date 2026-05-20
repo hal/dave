@@ -41,13 +41,17 @@ ESLint is configured with TypeScript and [Playwright-specific](https://github.co
 
 ## Running Tests
 
-| Command            | Description                           |
-| ------------------ | ------------------------------------- |
-| `pnpm test`        | Run all tests headless (all browsers) |
-| `pnpm test:headed` | Run with a visible browser window     |
-| `pnpm test:ui`     | Playwright interactive UI mode        |
-| `pnpm test:debug`  | Debug mode with Playwright inspector  |
-| `pnpm report`      | Open the last HTML test report        |
+| Command                   | Description                           |
+| ------------------------- | ------------------------------------- |
+| `pnpm test`               | Run all tests headless (all browsers) |
+| `pnpm test:headed`        | Run with a visible browser window     |
+| `pnpm test:ui`            | Playwright interactive UI mode        |
+| `pnpm test:debug`         | Debug mode with Playwright inspector  |
+| `pnpm report`             | Open the last HTML test report        |
+| `pnpm test:smoke`         | Run only `@smoke` tests               |
+| `pnpm test:dashboard`     | Run only `@dashboard` tests           |
+| `pnpm test:navigation`    | Run only `@navigation` tests          |
+| `pnpm test:model-browser` | Run only `@model-browser` tests       |
 
 Filter tests by pattern, file, or browser:
 
@@ -58,6 +62,33 @@ pnpm test -- --project=chromium
 pnpm test -- --project=firefox
 pnpm test -- --project=webkit
 ```
+
+### Test Groups
+
+Tests are tagged by feature area using [Playwright's tag API](https://playwright.dev/docs/test-annotations#tag-tests). Tags are defined as typed constants in [`src/tags.ts`](src/tags.ts).
+
+| Tag              | Group                | Test Files                                |
+| ---------------- | -------------------- | ----------------------------------------- |
+| `@smoke`         | Smoke tests          | `app-loads`, `dashboard`, `navigation`    |
+| `@dashboard`     | Dashboard feature    | `dashboard`                               |
+| `@navigation`    | Navigation feature   | `navigation`                              |
+| `@model-browser` | Model browser feature| `model-browser`                           |
+
+Tests can belong to multiple groups. Combine groups with OR logic:
+
+```bash
+pnpm test -- --grep "@smoke|@model-browser"
+```
+
+Exclude a group:
+
+```bash
+pnpm test -- --grep-invert @smoke
+```
+
+Tags are displayed as badges in the [HTML test report](https://hal.github.io/dave/) and can be used to filter results.
+
+To add a new group, add a constant to `src/tags.ts` and apply it to test files via the `tag` option on `test.describe()`.
 
 ## Configuration
 
@@ -119,12 +150,16 @@ dave/
     pages/
       base.page.ts             # Base page object
       dashboard.page.ts        # Dashboard page object
+      model-browser.page.ts    # Model browser page object
       navigation.page.ts       # Navigation page object
+    tags.ts                    # Tag constants for test grouping
     tests/
       smoke/                   # Smoke tests
         app-loads.spec.ts
         dashboard.spec.ts
         navigation.spec.ts
+      model-browser/           # Model browser tests
+        model-browser.spec.ts
     utils/
       configure-testcontainers.ts  # Testcontainers config
       container-runtime.ts         # Auto-detect Podman or Docker
