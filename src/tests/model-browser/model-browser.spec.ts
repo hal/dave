@@ -4,7 +4,7 @@ import { Tag } from "../../tags.js";
 
 useWildFlyContainer(test, "model-browser/model-browser");
 
-test.describe("Model Browser", { tag: Tag.MODEL_BROWSER }, () => {
+test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   test("shows tree and root resource", async ({ modelBrowserPage }) => {
     await modelBrowserPage.open();
 

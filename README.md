@@ -67,12 +67,12 @@ pnpm test -- --project=webkit
 
 Tests are tagged by feature area using [Playwright's tag API](https://playwright.dev/docs/test-annotations#tag-tests). Tags are defined as typed constants in [`src/tags.ts`](src/tags.ts).
 
-| Tag              | Group                | Test Files                                |
-| ---------------- | -------------------- | ----------------------------------------- |
-| `@smoke`         | Smoke tests          | `app-loads`, `dashboard`, `navigation`    |
-| `@dashboard`     | Dashboard feature    | `dashboard`                               |
-| `@navigation`    | Navigation feature   | `navigation`                              |
-| `@model-browser` | Model browser feature| `model-browser`                           |
+| Tag              | Group                 | Test Files                             |
+| ---------------- | --------------------- | -------------------------------------- |
+| `@smoke`         | Smoke tests           | `app-loads`, `dashboard`, `navigation` |
+| `@dashboard`     | Dashboard feature     | `dashboard`                            |
+| `@navigation`    | Navigation feature    | `navigation`                           |
+| `@model-browser` | Model browser feature | `model-browser`                        |
 
 Tests can belong to multiple groups. Combine groups with OR logic:
 
