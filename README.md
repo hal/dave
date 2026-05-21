@@ -235,6 +235,7 @@ dave depends on two upstream artifacts from halOP: OUIA ID constants and the `ha
 | `pnpm sync:ouia`   | Fetch `Ids.java` from GitHub and regenerate `src/selectors/ids.ts` |
 | `pnpm sync:image`  | Pull the latest `hal-op:test-suite` container image                |
 | `pnpm sync:status` | Check sync state and report what needs updating                    |
+| `pnpm sync:ci`     | Check OUIA ID drift for CI (fails if `ids.ts` is out of sync)      |
 | `pnpm sync:help`   | Show sync command help                                             |
 
 ### Typical workflow
@@ -270,7 +271,11 @@ dave/
   playwright.config.ts         # Playwright configuration
   scripts/
     lib/
+      emit-ids.ts              # Shared TypeScript code generation for OUIA IDs
+      format.ts                # ANSI color helpers for CLI output
       parse-ids.ts             # Shared Ids.java parsing logic
+      preflight.ts             # Pre-flight checks for required commands
+    sync-ci.ts                 # CI drift detection for OUIA IDs
     sync-ouia.ts               # Generate OUIA ID constants from GitHub
     sync-image.ts              # Pull halOP container image
     sync-status.ts             # Check sync state and report verdict
@@ -318,6 +323,7 @@ GitHub Actions workflows in `.github/workflows/`:
 | Workflow  | Trigger                                                    | What it does                                                                                           |
 | --------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Lint**  | Push / PR to `main`                                        | Checks formatting (Prettier) and linting (ESLint)                                                      |
+| **Sync**  | Push / PR to `main`                                        | Detects OUIA ID drift — fails if `ids.ts` doesn't match upstream `Ids.java`                            |
 | **Smoke** | Push / PR to `main`                                        | Runs `@smoke` tests in Chromium only — fast pass/fail gate, no reports                                 |
 | **Test**  | Push to `main` (path-filtered), daily at 05:00 UTC, manual | Full suite across Chromium, Firefox, and WebKit; uploads artifacts and deploys reports to GitHub Pages |
 
