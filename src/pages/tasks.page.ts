@@ -23,6 +23,6 @@ export class TasksPage extends BasePage {
   }
 
   taskCard(name: string): Locator {
-    return this.page.getByRole("heading", { name, level: 2 });
+    return this.page.getByRole("heading", { name, level: 2, exact: true });
   }
 }
