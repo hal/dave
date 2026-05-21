@@ -8,41 +8,47 @@ Selectors in dave that still use `getByRole` or CSS because halOP doesn't assign
 
 **Status:** Resolved. OUIA selectors are working and used in `navigation.page.ts` and `dashboard.page.ts`.
 
-## pageMain Does Not Set OUIA ID
+## Resolved: pageMain Does Not Set OUIA ID
 
-`pageMain(Ids.MAIN_ID)` in `Skeleton.java:111` sets the HTML `id` attribute (`id="hal-main-id"`), **not** `data-ouia-component-id`. The `<main>` element does not participate in OUIA.
+~~`pageMain(Ids.MAIN_ID)` in `Skeleton.java:111` sets the HTML `id` attribute (`id="hal-main-id"`), **not** `data-ouia-component-id`. The `<main>` element does not participate in OUIA.~~
 
-**Workaround:** Use `main` element selector instead of OUIA selector.
+**Status:** Skipped. The test suite uses the `id` attribute on the `<main>` element, which is acceptable.
 
-**Fix:** Add `.ouiaId(Ids.MAIN_ID)` to the `pageMain` call in `Skeleton.java`, or chain it on the `PageMain` instance if `PageSubComponent` supports `OuiaSupport`.
-
-## Model Browser
-
-The following elements use `getByRole` or CSS selectors and would benefit from dedicated OUIA IDs:
+## Resolved: Model Browser
 
 ### Tree
 
-| Selector                          | Page Object             | Suggested OUIA ID                                              |
-| --------------------------------- | ----------------------- | -------------------------------------------------------------- |
-| `getByRole("tree")`               | `model-browser.page.ts` | `hal-op-model-browser-tree`                                    |
-| `getByRole("treeitem", { name })` | `model-browser.page.ts` | `hal-op-model-browser-tree-item-<name>` (dynamic via `ouia()`) |
+| Selector                          | OUIA ID                       | Status   |
+| --------------------------------- | ----------------------------- | -------- |
+| `getByRole("tree")`               | `hal-op-model-browser-tree`   | Resolved |
+| `getByRole("treeitem", { name })` | dynamic via tree view item ID | Skipped  |
+
+Tree items get their IDs from `ModelBrowserNode` identifiers — no additional OUIA ID needed.
 
 ### Tabs
 
-| Selector                                     | Page Object             | Suggested OUIA ID                       |
-| -------------------------------------------- | ----------------------- | --------------------------------------- |
-| `getByRole("tab", { name: "Data" })`         | `model-browser.page.ts` | `hal-op-model-browser-tab-data`         |
-| `getByRole("tab", { name: "Attributes" })`   | `model-browser.page.ts` | `hal-op-model-browser-tab-attributes`   |
-| `getByRole("tab", { name: "Operations" })`   | `model-browser.page.ts` | `hal-op-model-browser-tab-operations`   |
-| `getByRole("tab", { name: "Capabilities" })` | `model-browser.page.ts` | `hal-op-model-browser-tab-capabilities` |
-| `getByRole("tabpanel", { name })`            | `model-browser.page.ts` | `hal-op-model-browser-tabpanel-<name>`  |
+| Selector                                     | OUIA ID                                 | Status   |
+| -------------------------------------------- | --------------------------------------- | -------- |
+| tabs container                               | `hal-op-model-browser-tabs`             | Resolved |
+| `getByRole("tab", { name: "Data" })`         | `hal-op-model-browser-tab-data`         | Resolved |
+| `getByRole("tab", { name: "Attributes" })`   | `hal-op-model-browser-tab-attributes`   | Resolved |
+| `getByRole("tab", { name: "Operations" })`   | `hal-op-model-browser-tab-operations`   | Resolved |
+| `getByRole("tab", { name: "Capabilities" })` | `hal-op-model-browser-tab-capabilities` | Resolved |
 
 ### Controls
 
-| Selector                                                  | Page Object             | Suggested OUIA ID                        |
-| --------------------------------------------------------- | ----------------------- | ---------------------------------------- |
-| `getByRole("switch", { name: "Show global operations" })` | `model-browser.page.ts` | `hal-op-model-browser-global-ops-switch` |
-| `getByRole("textbox", { name: "Filter by name" })`        | `model-browser.page.ts` | `hal-op-model-browser-filter`            |
+| Selector                                                  | OUIA ID                                          | Status   |
+| --------------------------------------------------------- | ------------------------------------------------ | -------- |
+| `getByRole("switch", { name: "Show global operations" })` | `hal-op-model-browser-global-ops-switch`         | Resolved |
+| operations filter textbox                                 | `hal-op-model-browser-operations-filter`         | Resolved |
+| attributes filter textbox                                 | `hal-op-model-browser-attributes-filter`         | Resolved |
+
+### Resource Detail
+
+| Selector            | OUIA ID                                 | Status   |
+| ------------------- | --------------------------------------- | -------- |
+| resource heading    | `hal-op-model-browser-resource-heading` | Resolved |
+| breadcrumb nav      | `hal-op-model-browser-breadcrumb`       | Resolved |
 
 ### Table Headers
 
@@ -51,26 +57,23 @@ The following elements use `getByRole` or CSS selectors and would benefit from d
 | `getByRole("columnheader", { name: "Name" })` | used in `model-browser.spec.ts` | `hal-op-model-browser-col-name` |
 | `getByRole("columnheader", { name: "Type" })` | used in `model-browser.spec.ts` | `hal-op-model-browser-col-type` |
 
-## Resource Detail
+**Status:** Open. Column headers in PatternFly Java tables don't support individual OUIA IDs. Use `getByRole` selectors.
 
-| Selector                                                                | Page Object             | Suggested OUIA ID                       |
-| ----------------------------------------------------------------------- | ----------------------- | --------------------------------------- |
-| `#${MAIN_ID}` + `getByRole("heading", { level: 1 })` (resource heading) | `model-browser.page.ts` | `hal-op-model-browser-resource-heading` |
-| breadcrumb nav (`#${MAIN_ID} nav`)                                      | `model-browser.page.ts` | `hal-op-model-browser-breadcrumb`       |
+## Resolved: Dashboard
 
-## Dashboard
+Dashboard cards now have OUIA IDs:
 
-Section headings and card areas use `getByRole` because the dashboard cards don't have OUIA IDs.
+| Card              | OUIA ID                              | Status   |
+| ----------------- | ------------------------------------ | -------- |
+| Overview          | `hal-op-dashboard-overview-card`     | Resolved |
+| Deployment        | `hal-op-dashboard-deployment-card`   | Resolved |
+| Documentation     | `hal-op-dashboard-documentation-card`| Resolved |
+| Health            | `hal-op-dashboard-health-card`       | Resolved |
+| Log               | `hal-op-dashboard-log-card`          | Resolved |
+| Status            | `hal-op-dashboard-status-card`       | Resolved |
+| Runtime (Host/JVM/Memory) | N/A — uses `Flex` layout, not a `Card` | Skipped |
 
-| Selector                                                        | Page Object         | Suggested OUIA ID                    |
-| --------------------------------------------------------------- | ------------------- | ------------------------------------ |
-| `getByRole("heading", { name: "Overview", level: 2 })`          | `dashboard.page.ts` | `hal-op-dashboard-overview`          |
-| `getByRole("heading", { name: "Host", level: 2 })`              | `dashboard.page.ts` | `hal-op-dashboard-host`              |
-| `getByRole("heading", { name: "JVM", level: 2 })`               | `dashboard.page.ts` | `hal-op-dashboard-jvm`               |
-| `getByRole("heading", { name: "Memory & Threads", level: 2 })`  | `dashboard.page.ts` | `hal-op-dashboard-memory`            |
-| `getByRole("heading", { name: "server.log", level: 2 })`        | `dashboard.page.ts` | `hal-op-dashboard-log`               |
-| `getByRole("heading", { name: "General Resources", level: 2 })` | `dashboard.page.ts` | `hal-op-dashboard-general-resources` |
-| `getByRole("heading", { name: "Get Help", level: 2 })`          | `dashboard.page.ts` | `hal-op-dashboard-get-help`          |
+Runtime card uses a `Flex` gallery layout which doesn't support `ouiaId()`. Its sub-cards (Host, JVM, Memory & Threads) are internal helper methods, not standalone components. Use `getByRole("heading")` selectors for these sections.
 
 ## Configuration
 
@@ -80,8 +83,10 @@ Section headings and card areas use `getByRole` because the dashboard cards don'
 | `getByRole("tree")`                                        | `configuration.page.ts` | `hal-op-configuration-tree`                                    |
 | `getByRole("treeitem", { name, exact: true })`             | `configuration.page.ts` | `hal-op-configuration-tree-item-<name>` (dynamic via `ouia()`) |
 
-## Tasks
+**Status:** Open. These are in the configuration module, not the model browser.
 
-| Selector                                   | Page Object     | Suggested OUIA ID                                |
-| ------------------------------------------ | --------------- | ------------------------------------------------ |
-| `getByRole("heading", { name, level: 2 })` | `tasks.page.ts` | `hal-op-task-card-<name>` (dynamic via `ouia()`) |
+## Resolved: Tasks
+
+| Selector                                   | OUIA ID                                  | Status   |
+| ------------------------------------------ | ---------------------------------------- | -------- |
+| task cards                                 | `hal-op-<task-id>-card` (dynamic)        | Resolved |
