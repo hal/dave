@@ -119,10 +119,22 @@ interface QuayResponse {
 async function checkContainerImage(): Promise<StatusResult> {
   const runtime = await detectRuntime();
 
-  const localDigest = await execFileAsync(runtime, ["image", "inspect", IMAGE, "--format", "{{.Digest}}"])
-    .then(({ stdout }) => stdout.trim())
+  // RepoDigests contains both the manifest-list and platform-specific digests
+  const repoDigests = await execFileAsync(runtime, [
+    "image",
+    "inspect",
+    IMAGE,
+    "--format",
+    "{{range .RepoDigests}}{{.}}\n{{end}}",
+  ])
+    .then(({ stdout }) =>
+      stdout
+        .trim()
+        .split("\n")
+        .filter((l) => l.length > 0),
+    )
     .catch(() => null);
-  if (localDigest === null) {
+  if (repoDigests === null || repoDigests.length === 0) {
     return {
       label: "Container image",
       ok: false,
@@ -153,7 +165,9 @@ async function checkContainerImage(): Promise<StatusResult> {
     const remoteDigest = data.tags[0].manifest_digest;
     const remoteModified = data.tags[0].last_modified;
 
-    if (localDigest === remoteDigest) {
+    // Check if any local RepoDigest ends with the remote manifest digest
+    const matches = repoDigests.some((rd) => rd.endsWith(remoteDigest));
+    if (matches) {
       return {
         label: "Container image",
         ok: true,
