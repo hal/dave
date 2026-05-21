@@ -1,5 +1,16 @@
 import type { Locator, Page } from "@playwright/test";
-import { MAIN_ID, NAV_MODEL_BROWSER } from "@halconsole/ouia";
+import {
+  FIND_RESOURCE_CANCEL_BTN,
+  FIND_RESOURCE_MODAL,
+  MAIN_ID,
+  MODEL_BROWSER_BACK_BTN,
+  MODEL_BROWSER_COLLAPSE_BTN,
+  MODEL_BROWSER_FIND_BTN,
+  MODEL_BROWSER_FORWARD_BTN,
+  MODEL_BROWSER_HOME_BTN,
+  MODEL_BROWSER_REFRESH_BTN,
+  NAV_MODEL_BROWSER,
+} from "@halconsole/ouia";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
@@ -25,11 +36,27 @@ export { TOP_LEVEL_RESOURCES };
 export class ModelBrowserPage extends BasePage {
   readonly tree: Locator;
   readonly resourceHeading: Locator;
+  readonly backButton: Locator;
+  readonly forwardButton: Locator;
+  readonly homeButton: Locator;
+  readonly refreshButton: Locator;
+  readonly findButton: Locator;
+  readonly collapseButton: Locator;
+  readonly findResourceModal: Locator;
+  readonly findResourceCancelButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.tree = page.getByRole("tree");
-    this.resourceHeading = page.locator(`#${MAIN_ID} h1`);
+    this.resourceHeading = page.locator(`#${MAIN_ID}`).getByRole("heading", { level: 1 });
+    this.backButton = page.locator(ouiaSelector(MODEL_BROWSER_BACK_BTN));
+    this.forwardButton = page.locator(ouiaSelector(MODEL_BROWSER_FORWARD_BTN));
+    this.homeButton = page.locator(ouiaSelector(MODEL_BROWSER_HOME_BTN));
+    this.refreshButton = page.locator(ouiaSelector(MODEL_BROWSER_REFRESH_BTN));
+    this.findButton = page.locator(ouiaSelector(MODEL_BROWSER_FIND_BTN));
+    this.collapseButton = page.locator(ouiaSelector(MODEL_BROWSER_COLLAPSE_BTN));
+    this.findResourceModal = page.locator(ouiaSelector(FIND_RESOURCE_MODAL));
+    this.findResourceCancelButton = page.locator(ouiaSelector(FIND_RESOURCE_CANCEL_BTN));
   }
 
   async navigate(): Promise<void> {

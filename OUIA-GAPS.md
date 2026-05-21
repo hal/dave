@@ -53,7 +53,35 @@ The following elements use `getByRole` or CSS selectors and would benefit from d
 
 ## Resource Detail
 
-| Selector                                | Page Object             | Suggested OUIA ID                       |
-| --------------------------------------- | ----------------------- | --------------------------------------- |
-| `${MAIN_CONTENT} h1` (resource heading) | `model-browser.page.ts` | `hal-op-model-browser-resource-heading` |
-| breadcrumb nav (`${MAIN_CONTENT} nav`)  | `model-browser.page.ts` | `hal-op-model-browser-breadcrumb`       |
+| Selector                                                                | Page Object             | Suggested OUIA ID                       |
+| ----------------------------------------------------------------------- | ----------------------- | --------------------------------------- |
+| `#${MAIN_ID}` + `getByRole("heading", { level: 1 })` (resource heading) | `model-browser.page.ts` | `hal-op-model-browser-resource-heading` |
+| breadcrumb nav (`#${MAIN_ID} nav`)                                      | `model-browser.page.ts` | `hal-op-model-browser-breadcrumb`       |
+
+## Dashboard
+
+Section headings and card areas use `getByRole` because the dashboard cards don't have OUIA IDs.
+
+| Selector                                                        | Page Object         | Suggested OUIA ID                    |
+| --------------------------------------------------------------- | ------------------- | ------------------------------------ |
+| `getByRole("heading", { name: "Overview", level: 2 })`          | `dashboard.page.ts` | `hal-op-dashboard-overview`          |
+| `getByRole("heading", { name: "Host", level: 2 })`              | `dashboard.page.ts` | `hal-op-dashboard-host`              |
+| `getByRole("heading", { name: "JVM", level: 2 })`               | `dashboard.page.ts` | `hal-op-dashboard-jvm`               |
+| `getByRole("heading", { name: "Memory & Threads", level: 2 })`  | `dashboard.page.ts` | `hal-op-dashboard-memory`            |
+| `getByRole("heading", { name: "server.log", level: 2 })`        | `dashboard.page.ts` | `hal-op-dashboard-log`               |
+| `getByRole("heading", { name: "General Resources", level: 2 })` | `dashboard.page.ts` | `hal-op-dashboard-general-resources` |
+| `getByRole("heading", { name: "Get Help", level: 2 })`          | `dashboard.page.ts` | `hal-op-dashboard-get-help`          |
+
+## Configuration
+
+| Selector                                                   | Page Object             | Suggested OUIA ID                                              |
+| ---------------------------------------------------------- | ----------------------- | -------------------------------------------------------------- |
+| `#${MAIN_ID}` + `getByRole("heading", { name, level: 1 })` | `configuration.page.ts` | `hal-op-configuration-heading`                                 |
+| `getByRole("tree")`                                        | `configuration.page.ts` | `hal-op-configuration-tree`                                    |
+| `getByRole("treeitem", { name, exact: true })`             | `configuration.page.ts` | `hal-op-configuration-tree-item-<name>` (dynamic via `ouia()`) |
+
+## Tasks
+
+| Selector                                   | Page Object     | Suggested OUIA ID                                |
+| ------------------------------------------ | --------------- | ------------------------------------------------ |
+| `getByRole("heading", { name, level: 2 })` | `tasks.page.ts` | `hal-op-task-card-<name>` (dynamic via `ouia()`) |

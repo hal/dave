@@ -54,6 +54,24 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
     await expect(modelBrowserPage.page.getByText("4 / 26 operations")).toBeVisible();
   });
 
+  test("shows toolbar buttons", async ({ modelBrowserPage }) => {
+    await expect(modelBrowserPage.backButton).toBeVisible();
+    await expect(modelBrowserPage.forwardButton).toBeVisible();
+    await expect(modelBrowserPage.homeButton).toBeVisible();
+    await expect(modelBrowserPage.refreshButton).toBeVisible();
+    await expect(modelBrowserPage.findButton).toBeVisible();
+    await expect(modelBrowserPage.collapseButton).toBeVisible();
+    await expect(modelBrowserPage.backButton).toBeDisabled();
+    await expect(modelBrowserPage.forwardButton).toBeDisabled();
+  });
+
+  test("opens find resource modal", async ({ modelBrowserPage }) => {
+    await modelBrowserPage.findButton.click();
+    await expect(modelBrowserPage.findResourceModal).toBeVisible();
+    await modelBrowserPage.findResourceCancelButton.click();
+    await expect(modelBrowserPage.findResourceModal).toBeHidden();
+  });
+
   test("shows attributes tab with filter and count", async ({ modelBrowserPage }) => {
     await modelBrowserPage.selectTab("Attributes");
 

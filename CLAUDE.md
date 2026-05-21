@@ -27,6 +27,8 @@ pnpm test:smoke                        # Run only @smoke tests
 pnpm test:dashboard                    # Run only @dashboard tests
 pnpm test:navigation                   # Run only @navigation tests
 pnpm test:model-browser                # Run only @model-browser tests
+pnpm test:configuration                # Run only @configuration tests
+pnpm test:tasks                        # Run only @tasks tests
 pnpm test -- --grep "@smoke|@dashboard"  # Combine groups (OR)
 
 pnpm lint                              # Run ESLint
@@ -86,9 +88,11 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
 - **`basePage`** — base page with shared `page` accessor
-- **`dashboardPage`** — dashboard heading checks
-- **`modelBrowserPage`** — model browser tree and resource assertions
+- **`configurationPage`** — configuration finder tree (Subsystems, Interfaces, Socket Bindings, Paths, System Properties)
+- **`dashboardPage`** — dashboard sections (overview, host, JVM, memory, log, links)
+- **`modelBrowserPage`** — model browser tree, toolbar, tabs, and resource assertions
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)
+- **`tasksPage`** — task cards (Data source, Logging, Management SSL, Reverse proxy, SSL, Statistics)
 
 Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`.
 

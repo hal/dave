@@ -13,6 +13,8 @@
     "test:dashboard": "playwright test --grep @dashboard",
     "test:navigation": "playwright test --grep @navigation",
     "test:model-browser": "playwright test --grep @model-browser",
+    "test:configuration": "playwright test --grep @configuration",
+    "test:tasks": "playwright test --grep @tasks",
     "report": "playwright show-report",
     "allure:generate": "allure generate allure-results --output allure-report",
     "allure:serve": "allure serve allure-results",
