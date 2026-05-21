@@ -37,18 +37,18 @@ Tree items get their IDs from `ModelBrowserNode` identifiers — no additional O
 
 ### Controls
 
-| Selector                                                  | OUIA ID                                          | Status   |
-| --------------------------------------------------------- | ------------------------------------------------ | -------- |
-| `getByRole("switch", { name: "Show global operations" })` | `hal-op-model-browser-global-ops-switch`         | Resolved |
-| operations filter textbox                                 | `hal-op-model-browser-operations-filter`         | Resolved |
-| attributes filter textbox                                 | `hal-op-model-browser-attributes-filter`         | Resolved |
+| Selector                                                  | OUIA ID                                  | Status   |
+| --------------------------------------------------------- | ---------------------------------------- | -------- |
+| `getByRole("switch", { name: "Show global operations" })` | `hal-op-model-browser-global-ops-switch` | Resolved |
+| operations filter textbox                                 | `hal-op-model-browser-operations-filter` | Resolved |
+| attributes filter textbox                                 | `hal-op-model-browser-attributes-filter` | Resolved |
 
 ### Resource Detail
 
-| Selector            | OUIA ID                                 | Status   |
-| ------------------- | --------------------------------------- | -------- |
-| resource heading    | `hal-op-model-browser-resource-heading` | Resolved |
-| breadcrumb nav      | `hal-op-model-browser-breadcrumb`       | Resolved |
+| Selector         | OUIA ID                                 | Status   |
+| ---------------- | --------------------------------------- | -------- |
+| resource heading | `hal-op-model-browser-resource-heading` | Resolved |
+| breadcrumb nav   | `hal-op-model-browser-breadcrumb`       | Resolved |
 
 ### Table Headers
 
@@ -63,15 +63,15 @@ Tree items get their IDs from `ModelBrowserNode` identifiers — no additional O
 
 Dashboard cards now have OUIA IDs:
 
-| Card              | OUIA ID                              | Status   |
-| ----------------- | ------------------------------------ | -------- |
-| Overview          | `hal-op-dashboard-overview-card`     | Resolved |
-| Deployment        | `hal-op-dashboard-deployment-card`   | Resolved |
-| Documentation     | `hal-op-dashboard-documentation-card`| Resolved |
-| Health            | `hal-op-dashboard-health-card`       | Resolved |
-| Log               | `hal-op-dashboard-log-card`          | Resolved |
-| Status            | `hal-op-dashboard-status-card`       | Resolved |
-| Runtime (Host/JVM/Memory) | N/A — uses `Flex` layout, not a `Card` | Skipped |
+| Card                      | OUIA ID                                | Status   |
+| ------------------------- | -------------------------------------- | -------- |
+| Overview                  | `hal-op-dashboard-overview-card`       | Resolved |
+| Deployment                | `hal-op-dashboard-deployment-card`     | Resolved |
+| Documentation             | `hal-op-dashboard-documentation-card`  | Resolved |
+| Health                    | `hal-op-dashboard-health-card`         | Resolved |
+| Log                       | `hal-op-dashboard-log-card`            | Resolved |
+| Status                    | `hal-op-dashboard-status-card`         | Resolved |
+| Runtime (Host/JVM/Memory) | N/A — uses `Flex` layout, not a `Card` | Skipped  |
 
 Runtime card uses a `Flex` gallery layout which doesn't support `ouiaId()`. Its sub-cards (Host, JVM, Memory & Threads) are internal helper methods, not standalone components. Use `getByRole("heading")` selectors for these sections.
 
@@ -87,6 +87,6 @@ Runtime card uses a `Flex` gallery layout which doesn't support `ouiaId()`. Its 
 
 ## Resolved: Tasks
 
-| Selector                                   | OUIA ID                                  | Status   |
-| ------------------------------------------ | ---------------------------------------- | -------- |
-| task cards                                 | `hal-op-<task-id>-card` (dynamic)        | Resolved |
+| Selector   | OUIA ID                           | Status   |
+| ---------- | --------------------------------- | -------- |
+| task cards | `hal-op-<task-id>-card` (dynamic) | Resolved |
