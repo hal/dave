@@ -12,6 +12,7 @@ import {
 
 const CONTAINER_SETUP_TIMEOUT_MS = 180_000;
 
+/** Test-scoped page object fixtures. */
 interface DaveFixtures {
   basePage: BasePage;
   dashboardPage: DashboardPage;
@@ -19,6 +20,7 @@ interface DaveFixtures {
   navigationPage: NavigationPage;
 }
 
+/** Worker-scoped fixtures — one WildFly container per spec file per browser project. */
 interface DaveWorkerFixtures {
   // Identifies the spec file for container naming (e.g. "smoke/dashboard").
   // Set via test.use({ specPath: "..." }) in each spec that needs WildFly.
@@ -26,6 +28,7 @@ interface DaveWorkerFixtures {
   wildfly: WildFlyContainer;
 }
 
+/** Extended test object with WildFly container and page object fixtures. */
 export const testWithWildFly = base.extend<DaveFixtures, DaveWorkerFixtures>({
   specPath: ["", { scope: "worker", option: true }],
 

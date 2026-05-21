@@ -3,6 +3,7 @@ import { promisify } from "node:util";
 
 export const execFileAsync = promisify(execFile);
 
+/** Supported container runtimes for halOP global setup/teardown. */
 export type ContainerRuntime = "podman" | "docker";
 
 async function isAvailable(binary: string): Promise<boolean> {
@@ -25,6 +26,7 @@ async function resolveRuntime(): Promise<ContainerRuntime> {
 
 let detection: Promise<ContainerRuntime> | undefined;
 
+/** Detects and caches the available container runtime (Podman preferred over Docker). */
 export function detectRuntime(): Promise<ContainerRuntime> {
   detection ??= resolveRuntime();
   return detection;

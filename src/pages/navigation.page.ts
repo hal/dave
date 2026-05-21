@@ -23,6 +23,7 @@ export type NavItem = keyof typeof NAV_ITEMS;
 
 export const NAV_ITEM_NAMES = Object.keys(NAV_ITEMS) as NavItem[];
 
+/** Sidebar navigation page object — locates and clicks nav links by OUIA ID. */
 export class NavigationPage extends BasePage {
   link(item: NavItem): Locator {
     return this.page.locator(ouiaSelector(NAV_ITEMS[item]));

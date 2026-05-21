@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 
 export const MAIN_CONTENT = "main";
 
+/** Base page object — enables OUIA, navigates to halOP with a WildFly connect parameter. */
 export class BasePage {
   constructor(
     readonly page: Page,

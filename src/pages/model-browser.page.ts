@@ -21,6 +21,7 @@ export type TopLevelResource = (typeof TOP_LEVEL_RESOURCES)[number];
 
 export { TOP_LEVEL_RESOURCES };
 
+/** Model browser page object — tree navigation, resource details, tabs, and filtering. */
 export class ModelBrowserPage extends BasePage {
   readonly tree: Locator;
   readonly resourceHeading: Locator;

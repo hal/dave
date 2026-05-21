@@ -103,6 +103,21 @@ Environment variables can be set in a `.env` file (see [`.env.example`](.env.exa
 | `HALOP_IMAGE`   | `quay.io/halconsole/hal-op:test-suite` | halOP container image                   |
 | `HALOP_PORT`    | `9090`                                 | Host port mapped to the halOP container |
 
+### Container Images
+
+| Image                                                                                           | Description                            |
+| ----------------------------------------------------------------------------------------------- | -------------------------------------- |
+| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite     |
+| [`quay.io/wado/wado-sa:development`](https://quay.io/repository/wado/wado-sa?tab=tags)          | WildFly image used for test containers |
+
+### Related Projects
+
+| Project                                            | Description                                             |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| [halOP](https://github.com/hal/foundation)         | WildFly management console (the application under test) |
+| [WildFly](https://www.wildfly.org/)                | The application server managed by halOP                 |
+| [testcontainers](https://node.testcontainers.org/) | Container management for integration tests              |
+
 ## How It Works
 
 ### Test Lifecycle
@@ -112,28 +127,43 @@ global-setup.ts              starts halOP container
                               writes state to /tmp/dave-state.json
                               sets HALOP_URL env var
 
-  test.beforeAll()            starts a WildFly container per test file
+  worker-scoped fixture       starts a WildFly container per worker
                               (via testcontainers)
   src/fixtures/test.fixture.ts  creates page objects per test
   src/tests/**/*.spec.ts        test execution
-  test.afterAll()             stops the WildFly container
+  worker teardown             stops the WildFly container
 
 global-teardown.ts            stops halOP container, cleans state file
 ```
 
-Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
+Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via a worker-scoped Playwright fixture backed by [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
+
+### WildFly Container Fixture
+
+WildFly containers are managed by a **worker-scoped Playwright fixture** defined in [`src/fixtures/test.fixture.ts`](src/fixtures/test.fixture.ts). Spec files that need a WildFly container import `testWithWildFly` and declare their spec path:
+
+```typescript
+import { testWithWildFly as test, expect } from "../../fixtures/test.fixture.js";
+
+test.use({ specPath: "smoke/dashboard" });
+```
+
+The fixture starts a container before any test in the worker runs and stops it after the last test finishes. Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). Ports are dynamically allocated.
+
+Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` directly from the fixture module.
 
 ### Page Object Model
 
 Custom Playwright fixtures in [`src/fixtures/test.fixture.ts`](src/fixtures/test.fixture.ts) provide page objects to each test:
 
-| Fixture          | Purpose                                                                   |
-| ---------------- | ------------------------------------------------------------------------- |
-| `basePage`       | OUIA enablement, navigation with `?connect=` parameter                    |
-| `dashboardPage`  | Dashboard heading assertions                                              |
-| `navigationPage` | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
+| Fixture            | Purpose                                                                   |
+| ------------------ | ------------------------------------------------------------------------- |
+| `basePage`         | OUIA enablement, navigation with `?connect=` parameter, wait for `<main>` |
+| `dashboardPage`    | Dashboard heading assertions                                              |
+| `modelBrowserPage` | Model browser tree and resource assertions                                |
+| `navigationPage`   | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
 
-Tests import `test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
+Tests import `testWithWildFly as test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
 
 ### Element Identification
 
@@ -148,8 +178,7 @@ dave/
   playwright.config.ts         # Playwright configuration
   src/
     fixtures/
-      test.fixture.ts          # Custom fixtures with page objects
-      wildfly.fixture.ts       # WildFly container lifecycle per test file
+      test.fixture.ts          # Worker-scoped WildFly fixture + page objects
     pages/
       base.page.ts             # Base page object
       dashboard.page.ts        # Dashboard page object
@@ -166,6 +195,7 @@ dave/
     utils/
       configure-testcontainers.ts  # Testcontainers config
       container-runtime.ts         # Auto-detect Podman or Docker
+      ouia.ts                      # OUIA attribute selector helper
       wildfly-container.ts         # WildFly container lifecycle
 ```
 
@@ -187,18 +217,3 @@ The latest test reports from `main` are published to **[GitHub Pages](https://ha
 - [Playwright report](https://hal.github.io/dave/reports/playwright/) — built-in Playwright HTML report
 
 Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-security/dependabot), configured for weekly npm and GitHub Actions updates.
-
-## Related Projects
-
-| Project                                            | Description                                             |
-| -------------------------------------------------- | ------------------------------------------------------- |
-| [halOP](https://github.com/hal/foundation)         | WildFly management console (the application under test) |
-| [WildFly](https://www.wildfly.org/)                | The application server managed by halOP                 |
-| [testcontainers](https://node.testcontainers.org/) | Container management for integration tests              |
-
-## Container Images
-
-| Image                                                                                           | Description                            |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------- |
-| [`quay.io/halconsole/hal-op:test-suite`](https://quay.io/repository/halconsole/hal-op?tab=tags) | halOP image used by the test suite     |
-| [`quay.io/wado/wado-sa:development`](https://quay.io/repository/wado/wado-sa?tab=tags)          | WildFly image used for test containers |
