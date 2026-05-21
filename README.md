@@ -155,11 +155,11 @@ Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and
 
 ### Page Object Model
 
-Custom Playwright fixtures in [`src/fixtures/pages.fixture.ts`](src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation by calling `open(managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
+Custom Playwright fixtures in [`src/fixtures/pages.fixture.ts`](src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
 | Fixture            | Purpose                                                                   |
 | ------------------ | ------------------------------------------------------------------------- |
-| `basePage`         | Wait for `<main>` element                                                 |
+| `basePage`         | Base page with shared `page` accessor                                     |
 | `dashboardPage`    | Dashboard heading assertions                                              |
 | `modelBrowserPage` | Model browser tree and resource assertions                                |
 | `navigationPage`   | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
@@ -198,9 +198,8 @@ Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection,
    export const test = testWithWildFly.extend<PageFixtures>({
      // ...existing entries...
      fooPage: async ({ page, wildfly }, use) => {
-       const fooPage = new FooPage(page);
-       await fooPage.open(wildfly.managementUrl);
-       await use(fooPage);
+       await openHalOp(page, wildfly.managementUrl);
+       await use(new FooPage(page));
      },
    });
    ```

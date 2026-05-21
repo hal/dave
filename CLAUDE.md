@@ -83,9 +83,9 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 
 ### Page Object Model
 
-Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation by calling `open(managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
+Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
-- **`basePage`** — wait for `<main>` element
+- **`basePage`** — base page with shared `page` accessor
 - **`dashboardPage`** — dashboard heading checks
 - **`modelBrowserPage`** — model browser tree and resource assertions
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)

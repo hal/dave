@@ -32,8 +32,7 @@ export class ModelBrowserPage extends BasePage {
     this.resourceHeading = page.locator(`${MAIN_CONTENT} h1`);
   }
 
-  async open(managementUrl: string): Promise<void> {
-    await super.open(managementUrl);
+  async navigate(): Promise<void> {
     await this.page.locator(ouiaSelector(NAV_MODEL_BROWSER)).click();
     await this.tree.waitFor({ state: "visible" });
   }

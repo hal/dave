@@ -1,8 +1,15 @@
+import type { Page } from "@playwright/test";
 import { testWithWildFly } from "./wildfly.fixture.js";
-import { BasePage } from "../pages/base.page.js";
+import { BasePage, MAIN_CONTENT } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
 import { ModelBrowserPage } from "../pages/model-browser.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
+
+/** Navigates to halOP with the WildFly connect parameter and waits for the main content. */
+async function openHalOp(page: Page, managementUrl: string): Promise<void> {
+  await page.goto(`/?connect=${managementUrl}`);
+  await page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+}
 
 /** Test-scoped page object fixtures. */
 interface PageFixtures {
@@ -15,27 +22,25 @@ interface PageFixtures {
 /** Test object with WildFly container and page object fixtures. */
 export const test = testWithWildFly.extend<PageFixtures>({
   basePage: async ({ page, wildfly }, use) => {
-    const basePage = new BasePage(page);
-    await basePage.open(wildfly.managementUrl);
-    await use(basePage);
+    await openHalOp(page, wildfly.managementUrl);
+    await use(new BasePage(page));
   },
 
   dashboardPage: async ({ page, wildfly }, use) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.open(wildfly.managementUrl);
-    await use(dashboardPage);
+    await openHalOp(page, wildfly.managementUrl);
+    await use(new DashboardPage(page));
   },
 
   modelBrowserPage: async ({ page, wildfly }, use) => {
+    await openHalOp(page, wildfly.managementUrl);
     const modelBrowserPage = new ModelBrowserPage(page);
-    await modelBrowserPage.open(wildfly.managementUrl);
+    await modelBrowserPage.navigate();
     await use(modelBrowserPage);
   },
 
   navigationPage: async ({ page, wildfly }, use) => {
-    const navigationPage = new NavigationPage(page);
-    await navigationPage.open(wildfly.managementUrl);
-    await use(navigationPage);
+    await openHalOp(page, wildfly.managementUrl);
+    await use(new NavigationPage(page));
   },
 });
 
