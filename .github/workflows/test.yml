@@ -62,15 +62,15 @@ jobs:
         if: ${{ !cancelled() }}
         continue-on-error: true
         run: |
-          PAGES_URL="https://hal.github.io/dave"
-          mkdir -p allure-results/history
-          for file in history.json history-trend.json duration-trend.json categories-trend.json retry-trend.json; do
-            curl -fsSL "${PAGES_URL}/reports/allure/history/${file}" -o "allure-results/history/${file}" || true
-          done
+          curl -fsSL "https://hal.github.io/dave/reports/allure/history.jsonl" -o history.jsonl || true
 
       - name: Generate Allure report
         if: ${{ !cancelled() }}
-        run: pnpm allure:generate
+        run: npx allure generate allure-results --output allure-report --history-path history.jsonl
+
+      - name: Update Allure history
+        if: ${{ !cancelled() }}
+        run: npx allure history allure-results --history-path history.jsonl --history-limit 50
 
       - name: Assemble GitHub Pages site
         if: ${{ !cancelled() }}
@@ -79,6 +79,7 @@ jobs:
           cp .github/pages/index.html pages-root/
           cp -r allure-report pages-root/reports/allure
           cp -r playwright-report pages-root/reports/playwright
+          cp -f history.jsonl pages-root/reports/allure/history.jsonl || true
 
       - name: Upload Pages artifact
         if: ${{ !cancelled() }}
