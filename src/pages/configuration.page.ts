@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { MAIN_ID, NAV_CONFIGURATION } from "@halconsole/ouia";
+import { MAIN_ID, NAV_CONFIGURATION } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 

@@ -1,6 +1,6 @@
 import type { Page } from "@playwright/test";
 import { testWithWildFly } from "./wildfly.fixture.js";
-import { MAIN_ID } from "@halconsole/ouia";
+import { MAIN_ID } from "../selectors/ids.js";
 import { BasePage } from "../pages/base.page.js";
 import { ConfigurationPage } from "../pages/configuration.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";

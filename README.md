@@ -161,7 +161,7 @@ Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@p
 
 ### Element Identification
 
-Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs defined in [halOP](https://github.com/hal/foundation) are collected and published as the [`@halconsole/ouia`](https://www.npmjs.com/package/@halconsole/ouia) npm package, which dave consumes to reference UI elements by stable, well-known identifiers.
+Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs are generated locally from halOP's [`Ids.java`](https://github.com/hal/foundation/blob/main/ui/src/main/java/org/jboss/hal/ui/Ids.java) source file into [`src/selectors/ids.ts`](src/selectors/ids.ts). Run `pnpm sync:ouia` to regenerate after upstream changes — no npm release required.
 
 ### Adding a New Page Object
 
@@ -226,6 +226,41 @@ Create a spec file under `src/tests/` and import from the appropriate fixture:
 
 To add a new test group, add a constant to `src/tags.ts` and optionally a pnpm script to `package.json`.
 
+## Keeping dave in Sync
+
+dave depends on two upstream artifacts from halOP: OUIA ID constants and the `hal-op:test-suite` container image. Three sync commands keep everything up to date:
+
+| Command            | Description                                                        |
+| ------------------ | ------------------------------------------------------------------ |
+| `pnpm sync:ouia`   | Fetch `Ids.java` from GitHub and regenerate `src/selectors/ids.ts` |
+| `pnpm sync:image`  | Pull the latest `hal-op:test-suite` container image                |
+| `pnpm sync:status` | Check sync state and report what needs updating                    |
+| `pnpm sync:help`   | Show sync command help                                             |
+
+### Typical workflow
+
+```bash
+# Check if everything is up to date
+pnpm sync:status
+
+# If OUIA IDs are out of date
+pnpm sync:ouia
+
+# If the container image is out of date (or a new build just finished)
+pnpm sync:image
+
+# Run tests
+pnpm test
+```
+
+`sync:status` checks three things and prints a verdict:
+
+1. **OUIA IDs** — compares local `src/selectors/ids.ts` against upstream `Ids.java`
+2. **CI build** — queries the halOP `test-suite.yml` workflow for the latest run status
+3. **Container image** — compares local image digest against the remote registry
+
+If everything is current, you'll see "Ready to test". Otherwise it tells you exactly what to run.
+
 ## Project Structure
 
 ```
@@ -233,6 +268,12 @@ dave/
   global-setup.ts              # Start halOP before tests
   global-teardown.ts           # Stop halOP after tests
   playwright.config.ts         # Playwright configuration
+  scripts/
+    lib/
+      parse-ids.ts             # Shared Ids.java parsing logic
+    sync-ouia.ts               # Generate OUIA ID constants from GitHub
+    sync-image.ts              # Pull halOP container image
+    sync-status.ts             # Check sync state and report verdict
   src/
     fixtures/
       wildfly.fixture.ts       # WildFly container lifecycle (worker-scoped)
@@ -242,6 +283,8 @@ dave/
       dashboard.page.ts        # Dashboard page object
       model-browser.page.ts    # Model browser page object
       navigation.page.ts       # Navigation page object
+    selectors/
+      ids.ts                   # Generated OUIA ID constants (do not edit)
     tags.ts                    # Tag constants for test grouping
     tests/
       smoke/                   # Smoke tests

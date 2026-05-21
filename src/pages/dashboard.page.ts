@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { LOG_SHOW_BTN, MAIN_ID, PAGE_DASHBOARD_HEADER } from "@halconsole/ouia";
+import { LOG_SHOW_BTN, MAIN_ID, PAGE_DASHBOARD_HEADER } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 

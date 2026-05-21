@@ -10,7 +10,7 @@ import {
   MODEL_BROWSER_HOME_BTN,
   MODEL_BROWSER_REFRESH_BTN,
   NAV_MODEL_BROWSER,
-} from "@halconsole/ouia";
+} from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 

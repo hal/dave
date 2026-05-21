@@ -7,7 +7,7 @@ import {
   NAV_MODEL_BROWSER,
   NAV_RUNTIME,
   NAV_TASKS,
-} from "@halconsole/ouia";
+} from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 

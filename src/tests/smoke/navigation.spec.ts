@@ -1,4 +1,4 @@
-import { MAIN_ID } from "@halconsole/ouia";
+import { MAIN_ID } from "../../selectors/ids.js";
 import { test, expect } from "../../fixtures/pages.fixture.js";
 import { NAV_ITEM_NAMES } from "../../pages/navigation.page.js";
 import { Tag } from "../../tags.js";

@@ -31,6 +31,11 @@ pnpm test:configuration                # Run only @configuration tests
 pnpm test:tasks                        # Run only @tasks tests
 pnpm test -- --grep "@smoke|@dashboard"  # Combine groups (OR)
 
+pnpm sync:ouia                         # Regenerate OUIA IDs from upstream Ids.java
+pnpm sync:image                        # Pull latest halOP container image
+pnpm sync:status                       # Check sync status (IDs, CI build, image)
+pnpm sync:help                         # Show sync command help
+
 pnpm lint                              # Run ESLint
 pnpm lint:fix                          # Run ESLint with auto-fix
 pnpm format                            # Format all files with Prettier
@@ -104,11 +109,20 @@ Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@p
 
 **New test group**: Add a constant to `src/tags.ts`, optionally add a pnpm script.
 
+### OUIA ID Sync
+
+OUIA ID constants in `src/selectors/ids.ts` are generated from [`Ids.java`](https://github.com/hal/foundation/blob/main/resources/src/main/java/org/jboss/hal/resources/Ids.java) in the hal/foundation repository. The generated file is committed to git so the project works without running sync first.
+
+- **`pnpm sync:ouia`** — fetches `Ids.java` from GitHub `main`, parses Java constants and builder methods, regenerates `src/selectors/ids.ts`, and reports what changed
+- **`pnpm sync:image`** — pulls the latest `hal-op:test-suite` container image from quay.io
+- **`pnpm sync:status`** — checks if local IDs match upstream, whether the latest CI build succeeded, and whether the local container image matches the remote digest
+
 ### Utilities
 
 - **`src/utils/wildfly-container.ts`** — testcontainers-based WildFly lifecycle (start, stop, container naming, CLI exec)
 - **`src/utils/container-runtime.ts`** — auto-detects Podman or Docker for halOP container
 - **`src/utils/ouia.ts`** — builds `[data-ouia-component-id="..."]` CSS selectors from OUIA IDs
+- **`src/selectors/ids.ts`** — generated OUIA ID constants (run `pnpm sync:ouia` to regenerate)
 - **`src/utils/configure-testcontainers.ts`** — auto-configures testcontainers for Podman (socket detection, Ryuk disabled)
 
 ## CI/CD
