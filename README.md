@@ -28,17 +28,6 @@ pnpm exec playwright install chromium firefox webkit
 pnpm test
 ```
 
-## Code Quality
-
-| Command             | Description                       |
-| ------------------- | --------------------------------- |
-| `pnpm lint`         | Run ESLint                        |
-| `pnpm lint:fix`     | Run ESLint with auto-fix          |
-| `pnpm format`       | Format all files with Prettier    |
-| `pnpm format:check` | Check formatting without changing |
-
-ESLint is configured with TypeScript and [Playwright-specific](https://github.com/playwright-community/eslint-plugin-playwright) rules. Prettier handles all formatting. See `eslint.config.js` and `.prettierrc` for details.
-
 ## Running Tests
 
 | Command                   | Description                           |
@@ -263,6 +252,17 @@ dave/
       ouia.ts                      # OUIA attribute selector helper
       wildfly-container.ts         # WildFly container lifecycle
 ```
+
+## Code Quality
+
+| Command             | Description                       |
+| ------------------- | --------------------------------- |
+| `pnpm lint`         | Run ESLint                        |
+| `pnpm lint:fix`     | Run ESLint with auto-fix          |
+| `pnpm format`       | Format all files with Prettier    |
+| `pnpm format:check` | Check formatting without changing |
+
+ESLint is configured with TypeScript and [Playwright-specific](https://github.com/playwright-community/eslint-plugin-playwright) rules. Prettier handles all formatting. See `eslint.config.js` and `.prettierrc` for details.
 
 ## CI/CD
 
