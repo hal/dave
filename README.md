@@ -129,7 +129,7 @@ global-setup.ts              starts halOP container
 
   worker-scoped fixture       starts a WildFly container per worker
                               (via testcontainers)
-  src/fixtures/test.fixture.ts  creates page objects per test
+  src/fixtures/test.fixture.ts  enables OUIA, creates page objects per test
   src/tests/**/*.spec.ts        test execution
   worker teardown             stops the WildFly container
 
@@ -158,7 +158,7 @@ Custom Playwright fixtures in [`src/fixtures/test.fixture.ts`](src/fixtures/test
 
 | Fixture            | Purpose                                                                   |
 | ------------------ | ------------------------------------------------------------------------- |
-| `basePage`         | OUIA enablement, navigation with `?connect=` parameter, wait for `<main>` |
+| `basePage`         | Navigation with `?connect=` parameter, wait for `<main>`                  |
 | `dashboardPage`    | Dashboard heading assertions                                              |
 | `modelBrowserPage` | Model browser tree and resource assertions                                |
 | `navigationPage`   | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |

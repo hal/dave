@@ -55,7 +55,7 @@ global-setup.ts              →  removes stale dave_* containers
 
   worker-scoped fixture      →  starts a WildFly container per worker
                                  (via testcontainers, dynamic ports, healthcheck wait)
-  src/fixtures/test.fixture.ts  →  creates page objects per test
+  src/fixtures/test.fixture.ts  →  enables OUIA, creates page objects per test
   src/tests/**/*.spec.ts        →  test execution
   worker teardown            →  stops the WildFly container
 
@@ -84,7 +84,7 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 
 Tests use POM via custom Playwright fixtures defined in `src/fixtures/test.fixture.ts`:
 
-- **`basePage`** — OUIA enablement via `addInitScript`, navigation with `?connect=` URL parameter, wait for `<main>` element
+- **`basePage`** — navigation with `?connect=` URL parameter, wait for `<main>` element
 - **`dashboardPage`** — dashboard heading checks
 - **`modelBrowserPage`** — model browser tree and resource assertions
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)

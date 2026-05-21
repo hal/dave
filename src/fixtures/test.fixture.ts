@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+import { test as base, type Page } from "@playwright/test";
 import { BasePage } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
 import { ModelBrowserPage } from "../pages/model-browser.page.js";
@@ -11,6 +11,12 @@ import {
 } from "../utils/wildfly-container.js";
 
 const CONTAINER_SETUP_TIMEOUT_MS = 180_000;
+
+async function enableOuia(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.setItem("ouia", "true");
+  });
+}
 
 /** Test-scoped page object fixtures. */
 interface DaveFixtures {
@@ -42,19 +48,24 @@ export const testWithWildFly = base.extend<DaveFixtures, DaveWorkerFixtures>({
     { scope: "worker", timeout: CONTAINER_SETUP_TIMEOUT_MS },
   ],
 
+  // OUIA is enabled once per page, before any page object is created
   basePage: async ({ page, wildfly }, use) => {
+    await enableOuia(page);
     await use(new BasePage(page, wildfly.managementUrl));
   },
 
   dashboardPage: async ({ page, wildfly }, use) => {
+    await enableOuia(page);
     await use(new DashboardPage(page, wildfly.managementUrl));
   },
 
   modelBrowserPage: async ({ page, wildfly }, use) => {
+    await enableOuia(page);
     await use(new ModelBrowserPage(page, wildfly.managementUrl));
   },
 
   navigationPage: async ({ page, wildfly }, use) => {
+    await enableOuia(page);
     await use(new NavigationPage(page, wildfly.managementUrl));
   },
 });
