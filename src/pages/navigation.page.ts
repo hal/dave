@@ -1,5 +1,6 @@
 import type { Locator } from "@playwright/test";
 import {
+  MAIN_ID,
   NAV_CONFIGURATION,
   NAV_DASHBOARD,
   NAV_DEPLOYMENTS,
@@ -7,7 +8,7 @@ import {
   NAV_RUNTIME,
   NAV_TASKS,
 } from "@halconsole/ouia";
-import { BasePage, MAIN_CONTENT } from "./base.page.js";
+import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
 const NAV_ITEMS = {
@@ -31,6 +32,6 @@ export class NavigationPage extends BasePage {
 
   async navigateTo(item: NavItem): Promise<void> {
     await this.link(item).click();
-    await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
   }
 }

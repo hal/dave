@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import { testWithWildFly } from "./wildfly.fixture.js";
-import { BasePage, MAIN_CONTENT } from "../pages/base.page.js";
+import { MAIN_ID } from "@halconsole/ouia";
+import { BasePage } from "../pages/base.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
 import { ModelBrowserPage } from "../pages/model-browser.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
@@ -8,7 +9,7 @@ import { NavigationPage } from "../pages/navigation.page.js";
 /** Navigates to halOP with the WildFly connect parameter and waits for the main content. */
 async function openHalOp(page: Page, managementUrl: string): Promise<void> {
   await page.goto(`/?connect=${managementUrl}`);
-  await page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+  await page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
 }
 
 /** Test-scoped page object fixtures. */

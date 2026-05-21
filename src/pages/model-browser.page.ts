@@ -1,6 +1,6 @@
 import type { Locator, Page } from "@playwright/test";
-import { NAV_MODEL_BROWSER } from "@halconsole/ouia";
-import { BasePage, MAIN_CONTENT } from "./base.page.js";
+import { MAIN_ID, NAV_MODEL_BROWSER } from "@halconsole/ouia";
+import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
 export type TabName = "Data" | "Attributes" | "Operations" | "Capabilities";
@@ -29,7 +29,7 @@ export class ModelBrowserPage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.tree = page.getByRole("tree");
-    this.resourceHeading = page.locator(`${MAIN_CONTENT} h1`);
+    this.resourceHeading = page.locator(`#${MAIN_ID} h1`);
   }
 
   async navigate(): Promise<void> {
@@ -43,7 +43,7 @@ export class ModelBrowserPage extends BasePage {
 
   async selectTreeItem(name: string): Promise<void> {
     await this.treeItem(name).click();
-    await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
   }
 
   async expandTreeItem(name: string): Promise<void> {
@@ -60,11 +60,11 @@ export class ModelBrowserPage extends BasePage {
     const childItem = this.treeItem(child);
     await childItem.waitFor({ state: "visible" });
     await childItem.click();
-    await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
+    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(MAIN_CONTENT).locator("nav").last();
+    return this.page.locator(`#${MAIN_ID}`).locator("nav").last();
   }
 
   async breadcrumbText(): Promise<string | null> {
