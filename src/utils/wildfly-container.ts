@@ -18,13 +18,11 @@ export interface WildFlyContainer {
   readonly container: StartedTestContainer;
   readonly httpUrl: string;
   readonly managementUrl: string;
-  /** Management URL reachable from other containers on the shared network. */
-  readonly managementInternalUrl: string;
 }
 
-export async function startWildFlyContainer(name: string, networkName?: string): Promise<WildFlyContainer> {
+export async function startWildFlyContainer(name: string): Promise<WildFlyContainer> {
   const image = process.env.WILDFLY_IMAGE ?? DEFAULT_IMAGE;
-  let builder = new GenericContainer(image)
+  const container = await new GenericContainer(image)
     .withName(name)
     .withCommand(["-c", "standalone-no-auth.xml"])
     .withExposedPorts(HTTP_CONTAINER_PORT, MANAGEMENT_CONTAINER_PORT)
@@ -36,22 +34,15 @@ export async function startWildFlyContainer(name: string, networkName?: string):
       startPeriod: 30_000,
     })
     .withWaitStrategy(Wait.forHealthCheck())
-    .withStartupTimeout(STARTUP_TIMEOUT_MS);
+    .withStartupTimeout(STARTUP_TIMEOUT_MS)
+    .start();
 
-  if (networkName) {
-    builder = builder.withNetworkMode(networkName);
-  }
-
-  const container = await builder.start();
   const httpPort = container.getMappedPort(HTTP_CONTAINER_PORT);
   const managementPort = container.getMappedPort(MANAGEMENT_CONTAINER_PORT);
   return {
     container,
     httpUrl: `http://localhost:${httpPort}`,
     managementUrl: `http://localhost:${managementPort}`,
-    managementInternalUrl: networkName
-      ? `http://${name}:${MANAGEMENT_CONTAINER_PORT}`
-      : `http://localhost:${managementPort}`,
   };
 }
 

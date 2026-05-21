@@ -56,20 +56,19 @@ pnpm format:check                      # Check formatting without changing
 ### Test Lifecycle
 
 ```
-global-setup.ts              →  removes stale dave_* containers and network
-                                 creates dave_network (shared Docker network)
-                                 starts halOP container on dave_network
+global-setup.ts              →  removes stale dave_* containers
+                                 starts halOP container (via testcontainers)
                                  writes state to /tmp/dave-state.json
                                  sets HALOP_URL env var
 
-  worker-scoped fixture      →  starts a WildFly container per worker on dave_network
+  worker-scoped fixture      →  starts a WildFly container per worker
                                  (via testcontainers, dynamic ports, healthcheck wait)
   src/fixtures/wildfly.fixture.ts →  WildFly container lifecycle (worker-scoped)
   src/fixtures/pages.fixture.ts  →  enables OUIA, navigates to halOP, creates page objects
   src/tests/**/*.spec.ts        →  test execution
   worker teardown            →  stops the WildFly container
 
-global-teardown.ts           →  stops halOP container, removes dave_network, cleans state file
+global-teardown.ts           →  stops halOP container, cleans state file
 ```
 
 ### WildFly Container Fixture
@@ -84,7 +83,7 @@ test.use({ specPath: "smoke/dashboard" });
 
 The fixture starts a container before any test in the worker runs and stops it after the last test finishes. Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` from `wildfly.fixture.ts`.
 
-Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). All containers (halOP and WildFly) share a Docker network (`dave_network`) so halOP can reach WildFly by container name. Use `wildfly.managementInternalUrl` for the URL passed to halOP (container-to-container) and `wildfly.managementUrl` / `wildfly.httpUrl` for host-side access (e.g., CLI commands).
+Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). halOP is an SPA — the browser makes management API calls directly using `wildfly.managementUrl` (`localhost:<mapped-port>`). Use `wildfly.httpUrl` for deployment-related host-side access.
 
 The container's built-in HEALTHCHECK is used as the wait strategy (`Wait.forHealthCheck()`), ensuring the management interface is fully ready before tests run.
 

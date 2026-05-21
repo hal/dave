@@ -3,7 +3,7 @@ import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { FullConfig } from "@playwright/test";
-import { GenericContainer, Network, type StartedNetwork } from "testcontainers";
+import { GenericContainer } from "testcontainers";
 import "./src/utils/configure-testcontainers.js";
 import { detectRuntime, execFileAsync } from "./src/utils/container-runtime.js";
 
@@ -14,8 +14,6 @@ export interface HalOpInstance {
 
 export interface DaveState {
   readonly halop: HalOpInstance;
-  readonly networkName: string;
-  readonly networkId: string;
 }
 
 const STATE_FILE = join(tmpdir(), "dave-state.json");
@@ -27,14 +25,9 @@ const CONTAINER_PREFIX = "dave_";
 
 export { STATE_FILE };
 
-async function createNetwork(): Promise<StartedNetwork> {
-  return new Network().start();
-}
-
-async function startHalOp(image: string, port: number, network: StartedNetwork): Promise<HalOpInstance> {
+async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
   const container = await new GenericContainer(image)
     .withName(CONTAINER_NAME)
-    .withNetwork(network)
     .withExposedPorts({ container: CONTAINER_INTERNAL_PORT, host: port })
     .start();
   return {
@@ -70,12 +63,6 @@ async function removeStaleContainers(): Promise<void> {
 async function globalSetup(_config: FullConfig): Promise<void> {
   await removeStaleContainers();
 
-  console.log("Creating shared network...");
-  const network = await createNetwork();
-  const networkName = network.getName();
-  const networkId = network.getId();
-  console.log(`Network "${networkName}" created`);
-
   const halopImage = process.env.HALOP_IMAGE ?? DEFAULT_HALOP_IMAGE;
   const halopPortRaw = process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT;
   const halopPort = Number(halopPortRaw);
@@ -84,10 +71,10 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   }
 
   console.log(`Starting halOP from "${halopImage}" on port ${halopPort}...`);
-  const halop = await startHalOp(halopImage, halopPort, network);
+  const halop = await startHalOp(halopImage, halopPort);
   console.log(`halOP started (container: ${halop.containerId.slice(0, 12)})`);
 
-  const state: DaveState = { halop, networkName, networkId };
+  const state: DaveState = { halop };
   writeFileSync(STATE_FILE, JSON.stringify(state));
 
   process.env.HALOP_URL = `http://localhost:${halop.port}`;
