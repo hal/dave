@@ -1,8 +1,6 @@
 import type { Page } from "@playwright/test";
-import { MAIN_ID } from "@halconsole/ouia";
-import { ouiaSelector } from "../utils/ouia.js";
 
-export const MAIN_CONTENT = ouiaSelector(MAIN_ID);
+export const MAIN_CONTENT = "main";
 
 export class BasePage {
   constructor(

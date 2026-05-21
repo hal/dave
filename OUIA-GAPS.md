@@ -2,7 +2,23 @@
 
 Selectors in dave that still use `getByRole` or CSS because halOP doesn't assign OUIA IDs to these elements yet. Tracked here so OUIA IDs can be added in the [halOP codebase](https://github.com/hal/foundation).
 
+## Resolved: Stale console.js
+
+~~The compiled `console.js` used non-standard OUIA attribute names. Fixed in PF Java v0.8.3 (commit `affa7902`). The `test-suite` image was rebuilt successfully and now renders correct `data-ouia-component-id` / `data-ouia-component-type` attributes.~~
+
+**Status:** Resolved. OUIA selectors are working and used in `navigation.page.ts` and `dashboard.page.ts`.
+
+## pageMain Does Not Set OUIA ID
+
+`pageMain(Ids.MAIN_ID)` in `Skeleton.java:111` sets the HTML `id` attribute (`id="hal-main-id"`), **not** `data-ouia-component-id`. The `<main>` element does not participate in OUIA.
+
+**Workaround:** Use `main` element selector instead of OUIA selector.
+
+**Fix:** Add `.ouiaId(Ids.MAIN_ID)` to the `pageMain` call in `Skeleton.java`, or chain it on the `PageMain` instance if `PageSubComponent` supports `OuiaSupport`.
+
 ## Model Browser
+
+The following elements use `getByRole` or CSS selectors and would benefit from dedicated OUIA IDs:
 
 ### Tree
 

@@ -1,7 +1,7 @@
 import type { Locator, Page } from "@playwright/test";
 import { NAV_MODEL_BROWSER } from "@halconsole/ouia";
-import { ouiaSelector } from "../utils/ouia.js";
 import { BasePage, MAIN_CONTENT } from "./base.page.js";
+import { ouiaSelector } from "../utils/ouia.js";
 
 export type TabName = "Data" | "Attributes" | "Operations" | "Capabilities";
 
@@ -64,7 +64,7 @@ export class ModelBrowserPage extends BasePage {
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(MAIN_CONTENT).locator("nav");
+    return this.page.locator(MAIN_CONTENT).locator("nav").last();
   }
 
   async breadcrumbText(): Promise<string | null> {

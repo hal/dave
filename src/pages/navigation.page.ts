@@ -7,8 +7,8 @@ import {
   NAV_RUNTIME,
   NAV_TASKS,
 } from "@halconsole/ouia";
-import { ouiaSelector } from "../utils/ouia.js";
 import { BasePage, MAIN_CONTENT } from "./base.page.js";
+import { ouiaSelector } from "../utils/ouia.js";
 
 const NAV_ITEMS = {
   Dashboard: NAV_DASHBOARD,
@@ -21,7 +21,7 @@ const NAV_ITEMS = {
 
 export type NavItem = keyof typeof NAV_ITEMS;
 
-const NAV_ITEM_NAMES = Object.keys(NAV_ITEMS) as NavItem[];
+export const NAV_ITEM_NAMES = Object.keys(NAV_ITEMS) as NavItem[];
 
 export class NavigationPage extends BasePage {
   link(item: NavItem): Locator {
@@ -33,5 +33,3 @@ export class NavigationPage extends BasePage {
     await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
   }
 }
-
-export { NAV_ITEM_NAMES, NAV_ITEMS };
