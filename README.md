@@ -5,9 +5,9 @@
 
 Named after astronaut Dave Bowman, the only one who could keep HAL in check. In the same spirit, **dave** keeps an eye on [halOP](https://github.com/hal/foundation) — the WildFly management console — making sure it behaves as expected.
 
-UI test suite for [halOP](https://github.com/hal/foundation), the WildFly management console. Built with [Playwright](https://playwright.dev/) and TypeScript.
+dave is the UI test suite for [halOP](https://github.com/hal/foundation), the WildFly management console. Built with [Playwright](https://playwright.dev/) and TypeScript.
 
-dave automatically starts a WildFly server and halOP container, runs end-to-end tests against the management console, and tears everything down when finished.
+dave automatically starts a [WildFly server](https://quay.io/repository/wado/wado-sa?tab=info) and [halOP container](https://quay.io/repository/halconsole/hal-op?tab=info), runs end-to-end tests against the management console, and tears everything down when finished.
 
 ## Prerequisites
 
@@ -41,8 +41,10 @@ pnpm test
 | `pnpm allure:serve`       | Serve Allure report with live reload  |
 | `pnpm allure:open`        | Open a generated Allure report        |
 | `pnpm test:smoke`         | Run only `@smoke` tests               |
-| `pnpm test:dashboard`     | Run only `@dashboard` tests           |
 | `pnpm test:navigation`    | Run only `@navigation` tests          |
+| `pnpm test:dashboard`     | Run only `@dashboard` tests           |
+| `pnpm test:configuration` | Run only `@configuration` tests       |
+| `pnpm test:tasks`         | Run only `@tasks` tests               |
 | `pnpm test:model-browser` | Run only `@model-browser` tests       |
 
 Filter tests by pattern, file, or browser:
@@ -62,8 +64,10 @@ Tests are tagged by feature area using [Playwright's tag API](https://playwright
 | Tag              | Group                 | Test Files                             |
 | ---------------- | --------------------- | -------------------------------------- |
 | `@smoke`         | Smoke tests           | `app-loads`, `dashboard`, `navigation` |
-| `@dashboard`     | Dashboard feature     | `dashboard`                            |
 | `@navigation`    | Navigation feature    | `navigation`                           |
+| `@dashboard`     | Dashboard feature     | `dashboard`                            |
+| `@configuration` | Configuration feature | `configuration`                        |
+| `@tasks`         | Tasks feature         | `tasks`                                |
 | `@model-browser` | Model browser feature | `model-browser`                        |
 
 Tests can belong to multiple groups. Combine groups with OR logic:
@@ -78,7 +82,7 @@ Exclude a group:
 pnpm test -- --grep-invert @smoke
 ```
 
-Tags are displayed as badges in the [HTML test report](https://hal.github.io/dave/reports/allure/) and can be used to filter results.
+Tags are displayed in the [Playwright report](https://hal.github.io/dave/reports/playwright/) and [Allure report](https://hal.github.io/dave/reports/allure/) and can be used to filter results.
 
 To add a new group, add a constant to `src/tags.ts` and apply it to test files via the `tag` option on `test.describe()`.
 
