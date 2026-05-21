@@ -3,6 +3,8 @@ import { writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { FullConfig } from "@playwright/test";
+import { Network, type StartedNetwork } from "testcontainers";
+import "./src/utils/configure-testcontainers.js";
 import { detectRuntime, execFileAsync } from "./src/utils/container-runtime.js";
 
 export interface HalOpInstance {
@@ -13,6 +15,7 @@ export interface HalOpInstance {
 export interface DaveState {
   readonly halop: HalOpInstance;
   readonly networkName: string;
+  readonly networkId: string;
 }
 
 const STATE_FILE = join(tmpdir(), "dave-state.json");
@@ -20,21 +23,14 @@ const DEFAULT_HALOP_IMAGE = "quay.io/halconsole/hal-op:test-suite";
 const DEFAULT_HALOP_PORT = 9090;
 const CONTAINER_INTERNAL_PORT = 9090;
 const CONTAINER_NAME = "dave_halop";
-const NETWORK_NAME = "dave_network";
 
 export { STATE_FILE };
 
-async function createNetwork(): Promise<void> {
-  const runtime = await detectRuntime();
-  try {
-    await execFileAsync(runtime, ["network", "rm", NETWORK_NAME]);
-  } catch {
-    // network didn't exist yet
-  }
-  await execFileAsync(runtime, ["network", "create", NETWORK_NAME]);
+async function createNetwork(): Promise<StartedNetwork> {
+  return new Network().start();
 }
 
-async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
+async function startHalOp(image: string, port: number, networkName: string): Promise<HalOpInstance> {
   const runtime = await detectRuntime();
   const { stdout } = await execFileAsync(runtime, [
     "run",
@@ -42,7 +38,7 @@ async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
     "--name",
     CONTAINER_NAME,
     "--network",
-    NETWORK_NAME,
+    networkName,
     "-p",
     `${port}:${CONTAINER_INTERNAL_PORT}`,
     image,
@@ -79,17 +75,31 @@ async function removeStaleContainers(): Promise<void> {
     // No stale containers or runtime not ready yet
   }
   try {
-    await execFileAsync(runtime, ["network", "rm", NETWORK_NAME]);
+    const { stdout: networks } = await execFileAsync(runtime, [
+      "network",
+      "ls",
+      "--filter",
+      "name=^dave_",
+      "--format",
+      "{{.Name}}",
+    ]);
+    for (const net of networks.trim().split("\n").filter(Boolean)) {
+      console.log(`Removing stale network: ${net}`);
+      await execFileAsync(runtime, ["network", "rm", net]);
+    }
   } catch {
-    // No stale network
+    // No stale networks
   }
 }
 
 async function globalSetup(_config: FullConfig): Promise<void> {
   await removeStaleContainers();
 
-  console.log(`Creating network "${NETWORK_NAME}"...`);
-  await createNetwork();
+  console.log("Creating shared network...");
+  const network = await createNetwork();
+  const networkName = network.getName();
+  const networkId = network.getId();
+  console.log(`Network "${networkName}" created`);
 
   const halopImage = process.env.HALOP_IMAGE ?? DEFAULT_HALOP_IMAGE;
   const halopPortRaw = process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT;
@@ -99,10 +109,10 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   }
 
   console.log(`Starting halOP from "${halopImage}" on port ${halopPort}...`);
-  const halop = await startHalOp(halopImage, halopPort);
+  const halop = await startHalOp(halopImage, halopPort, networkName);
   console.log(`halOP started (container: ${halop.containerId.slice(0, 12)})`);
 
-  const state: DaveState = { halop, networkName: NETWORK_NAME };
+  const state: DaveState = { halop, networkName, networkId };
   writeFileSync(STATE_FILE, JSON.stringify(state));
 
   process.env.HALOP_URL = `http://localhost:${halop.port}`;

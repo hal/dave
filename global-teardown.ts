@@ -10,9 +10,9 @@ async function stopHalOp(containerId: string): Promise<void> {
   await execFileAsync(runtime, ["rm", containerId]);
 }
 
-async function removeNetwork(networkName: string): Promise<void> {
+async function removeNetwork(networkId: string): Promise<void> {
   const runtime = await detectRuntime();
-  await execFileAsync(runtime, ["network", "rm", networkName]);
+  await execFileAsync(runtime, ["network", "rm", networkId]);
 }
 
 async function globalTeardown(_config: FullConfig): Promise<void> {
@@ -32,9 +32,9 @@ async function globalTeardown(_config: FullConfig): Promise<void> {
     console.error("Failed to stop halOP:", error);
   }
 
-  if (state.networkName) {
+  if (state.networkId) {
     try {
-      await removeNetwork(state.networkName);
+      await removeNetwork(state.networkId);
       console.log(`Network "${state.networkName}" removed`);
     } catch {
       // network already removed or didn't exist
