@@ -133,7 +133,7 @@ GitHub Actions workflows in `.github/workflows/`:
 - **`lint.yml`** — runs `pnpm format:check` and `pnpm lint` on push/PR to `main`
 - **`sync.yml`** — detects OUIA ID drift on push/PR to `main`; regenerates `ids.ts` from upstream `Ids.java` and fails if the result differs from the committed file
 - **`smoke.yml`** — fast pass/fail gate on push/PR to `main`; runs only `@smoke` tests in Chromium; no reports or artifacts
-- **`test.yml`** — full Playwright suite (all tests, all browsers); triggers on pushes to `main` when test/config files change, daily at 05:00 UTC, or manually via `workflow_dispatch`; uploads test results and JUnit report as artifacts; deploys Allure and Playwright reports to GitHub Pages
+- **`test.yml`** — full Playwright suite (all tests, all browsers); triggers automatically after Smoke succeeds on `main`, daily at 05:00 UTC, or manually via `workflow_dispatch`; uploads test results and JUnit report as artifacts; deploys Allure and Playwright reports to GitHub Pages
 
 Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub Actions updates.
 

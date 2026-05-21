@@ -1,15 +1,10 @@
 name: Test
 
 on:
-  push:
+  workflow_run:
+    workflows: [Smoke]
+    types: [completed]
     branches: [main]
-    paths:
-      - "src/**"
-      - "playwright.config.ts"
-      - "global-setup.ts"
-      - "global-teardown.ts"
-      - "package.json"
-      - "pnpm-lock.yaml"
   schedule:
     - cron: "0 5 * * *"
   workflow_dispatch:
@@ -20,11 +15,14 @@ permissions:
   id-token: write
 
 concurrency:
-  group: test-${{ github.ref }}
+  group: test-${{ github.event.workflow_run.head_branch || github.ref }}
   cancel-in-progress: true
 
 jobs:
   test:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -75,7 +73,7 @@ jobs:
         run: pnpm allure:generate
 
       - name: Assemble GitHub Pages site
-        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        if: ${{ !cancelled() }}
         run: |
           mkdir -p pages-root/reports
           cp .github/pages/index.html pages-root/
@@ -83,13 +81,13 @@ jobs:
           cp -r playwright-report pages-root/reports/playwright
 
       - name: Upload Pages artifact
-        if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-pages-artifact@v5
         with:
           path: pages-root/
 
   deploy-report:
-    if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+    if: ${{ !cancelled() }}
     needs: test
     runs-on: ubuntu-latest
     concurrency:
