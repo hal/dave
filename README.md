@@ -171,10 +171,15 @@ dave/
 
 ## CI/CD
 
-GitHub Actions runs lint and tests on every push to `main` and on pull requests:
+GitHub Actions workflows in `.github/workflows/`:
 
-- **Lint** — checks formatting (Prettier) and linting (ESLint)
-- **Test** — installs Chromium, Firefox, and WebKit, runs the full Playwright suite, and uploads test results as artifacts
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| **Lint** | Push / PR to `main` | Checks formatting (Prettier) and linting (ESLint) |
+| **Smoke** | Push / PR to `main` | Runs `@smoke` tests in Chromium only — fast pass/fail gate, no reports |
+| **Test** | Push to `main` (path-filtered), daily at 05:00 UTC, manual | Full suite across Chromium, Firefox, and WebKit; uploads artifacts and deploys reports to GitHub Pages |
+
+The **Test** workflow only triggers on pushes to `main` that change test or config files (`src/**`, `playwright.config.ts`, `global-setup.ts`, `global-teardown.ts`, `package.json`, `pnpm-lock.yaml`). A daily schedule catches regressions from upstream WildFly or halOP image changes. It can also be triggered manually via `workflow_dispatch`.
 
 The latest test reports from `main` are published to **[GitHub Pages](https://hal.github.io/dave/)**:
 
