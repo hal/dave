@@ -87,11 +87,11 @@ export class ModelBrowserPage extends BasePage {
     const childItem = this.treeItem(child);
     await childItem.waitFor({ state: "visible" });
     await childItem.click();
-    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
+    await this.resourceHeading.filter({ hasText: child }).waitFor({ state: "visible" });
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(`#${MAIN_ID}`).locator("nav").last();
+    return this.page.locator(`#${MAIN_ID}`).locator("nav").last().getByRole("list");
   }
 
   async breadcrumbText(): Promise<string | null> {

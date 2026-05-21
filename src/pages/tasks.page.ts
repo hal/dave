@@ -23,6 +23,8 @@ export class TasksPage extends BasePage {
   }
 
   taskCard(name: string): Locator {
-    return this.page.getByRole("heading", { name, level: 2, exact: true });
+    return this.page
+      .locator('[data-ouia-component-type="PF5/Card"]')
+      .filter({ has: this.page.getByRole("heading", { name, level: 2, exact: true }) });
   }
 }

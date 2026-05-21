@@ -19,8 +19,7 @@ test.describe("Tasks", { tag: [Tag.TASKS] }, () => {
   test("shows launch buttons", async ({ tasksPage }) => {
     for (const name of TASK_NAMES) {
       const card = tasksPage.taskCard(name);
-      const section = card.locator("..");
-      await expect(section.getByRole("button", { name: "Launch" })).toBeVisible();
+      await expect(card.getByRole("button", { name: "Launch" })).toBeVisible();
     }
   });
 });
