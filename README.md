@@ -82,7 +82,7 @@ Exclude a group:
 pnpm test -- --grep-invert @smoke
 ```
 
-Tags are displayed in the [Playwright report](https://hal.github.io/dave/reports/playwright/) and [Allure report](https://hal.github.io/dave/reports/allure/) and can be used to filter results.
+Tags are displayed in the [Playwright](https://hal.github.io/dave/reports/playwright/) and [Allure](https://hal.github.io/dave/reports/allure/) reports and can be used to filter results.
 
 To add a new group, add a constant to `src/tags.ts` and apply it to test files via the `tag` option on `test.describe()`.
 
@@ -282,7 +282,7 @@ The **Test** workflow only triggers on pushes to `main` that change test or conf
 
 The latest test reports from `main` are published to **[GitHub Pages](https://hal.github.io/dave/)**:
 
-- [Allure report](https://hal.github.io/dave/reports/allure/) — includes trend charts that track pass/fail rates across runs
 - [Playwright report](https://hal.github.io/dave/reports/playwright/) — built-in Playwright HTML report
+- [Allure report](https://hal.github.io/dave/reports/allure/) — includes trend charts that track pass/fail rates across runs
 
 Dependency updates are managed by [Dependabot](https://docs.github.com/en/code-security/dependabot), configured for weekly npm and GitHub Actions updates.
