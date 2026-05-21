@@ -16,17 +16,22 @@ async function isAvailable(binary: string): Promise<boolean> {
 }
 
 async function resolveRuntime(): Promise<ContainerRuntime> {
+  const dockerHost = process.env.DOCKER_HOST ?? "";
+  if (dockerHost.includes("podman") && (await isAvailable("podman"))) {
+    return "podman";
+  }
+  if (await isAvailable("docker")) {
+    return "docker";
+  }
   if (await isAvailable("podman")) {
     return "podman";
-  } else if (await isAvailable("docker")) {
-    return "docker";
   }
   throw new Error("No container runtime found. Install podman or docker.");
 }
 
 let detection: Promise<ContainerRuntime> | undefined;
 
-/** Detects and caches the available container runtime (Podman preferred over Docker). */
+/** Detects and caches the available container runtime. Prefers the runtime matching DOCKER_HOST. */
 export function detectRuntime(): Promise<ContainerRuntime> {
   detection ??= resolveRuntime();
   return detection;

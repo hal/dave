@@ -1,18 +1,31 @@
 /* eslint-disable no-console */
 import { readFileSync, unlinkSync } from "node:fs";
 import type { FullConfig } from "@playwright/test";
+import "./src/utils/configure-testcontainers.js";
 import { detectRuntime, execFileAsync } from "./src/utils/container-runtime.js";
 import { STATE_FILE, type DaveState } from "./global-setup.js";
 
-async function stopHalOp(containerId: string): Promise<void> {
+async function stopContainer(containerId: string): Promise<void> {
   const runtime = await detectRuntime();
-  await execFileAsync(runtime, ["stop", containerId]);
-  await execFileAsync(runtime, ["rm", containerId]);
+  try {
+    await execFileAsync(runtime, ["stop", containerId]);
+  } catch {
+    // container already stopped
+  }
+  try {
+    await execFileAsync(runtime, ["rm", "-f", containerId]);
+  } catch {
+    // container already removed
+  }
 }
 
 async function removeNetwork(networkId: string): Promise<void> {
   const runtime = await detectRuntime();
-  await execFileAsync(runtime, ["network", "rm", networkId]);
+  try {
+    await execFileAsync(runtime, ["network", "rm", networkId]);
+  } catch {
+    // network already removed
+  }
 }
 
 async function globalTeardown(_config: FullConfig): Promise<void> {
@@ -26,19 +39,15 @@ async function globalTeardown(_config: FullConfig): Promise<void> {
 
   console.log("Stopping halOP...");
   try {
-    await stopHalOp(state.halop.containerId);
+    await stopContainer(state.halop.containerId);
     console.log("halOP stopped");
   } catch (error) {
     console.error("Failed to stop halOP:", error);
   }
 
   if (state.networkId) {
-    try {
-      await removeNetwork(state.networkId);
-      console.log(`Network "${state.networkName}" removed`);
-    } catch {
-      // network already removed or didn't exist
-    }
+    await removeNetwork(state.networkId);
+    console.log(`Network "${state.networkName}" removed`);
   }
 
   try {
