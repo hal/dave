@@ -1,8 +1,10 @@
 /* eslint-disable no-console */
 import { resolve } from "node:path";
 
-import { detectRuntime, execFileAsync } from "../src/utils/container-runtime.js";
+import { execFileAsync } from "../src/utils/container-runtime.js";
 import { GENERATED_IDS_PATH, fetchIdsJava, parseIdsJava, readLocalConstants } from "./lib/parse-ids.js";
+import { dim, green, red, yellow } from "./lib/format.js";
+import { requireCommands, requireContainerRuntime } from "./lib/preflight.js";
 
 const IMAGE = "quay.io/halconsole/hal-op:test-suite";
 const QUAY_API_URL = "https://quay.io/api/v1/repository/halconsole/hal-op/tag/?specificTag=test-suite";
@@ -100,7 +102,7 @@ async function checkCiBuild(): Promise<StatusResult> {
     return {
       label: "CI build",
       ok: false,
-      message: "Failed to check (is gh CLI installed and authenticated?)",
+      message: "Failed to check (is gh CLI authenticated?)",
     };
   }
 }
@@ -116,9 +118,7 @@ interface QuayResponse {
   readonly tags: readonly QuayTag[];
 }
 
-async function checkContainerImage(): Promise<StatusResult> {
-  const runtime = await detectRuntime();
-
+async function checkContainerImage(runtime: "podman" | "docker"): Promise<StatusResult> {
   // RepoDigests contains both the manifest-list and platform-specific digests
   const repoDigests = await execFileAsync(runtime, [
     "image",
@@ -204,19 +204,23 @@ function formatTimeAgo(date: Date): string {
 }
 
 function printResult(result: StatusResult): void {
-  const icon = result.ok ? "OK" : "!!";
-  console.log(`  [${icon}] ${result.label}: ${result.message}`);
+  const icon = result.ok ? green("✓") : red("✗");
+  const message = result.ok ? result.message : red(result.message);
+  console.log(`  ${icon} ${result.label}: ${message}`);
   if (result.action) {
-    console.log(`       -> ${result.action}`);
+    console.log(`    ${dim("↳")} ${dim(result.action)}`);
   }
 }
 
 // ------------------------------------------------------ main
 
 async function main(): Promise<void> {
-  console.log("Checking sync status...\n");
+  await requireCommands("gh");
+  const runtime = await requireContainerRuntime();
 
-  const results = await Promise.all([checkOuiaIds(), checkCiBuild(), checkContainerImage()]);
+  console.log("Checking sync status…\n");
+
+  const results = await Promise.all([checkOuiaIds(), checkCiBuild(), checkContainerImage(runtime)]);
 
   for (const result of results) {
     printResult(result);
@@ -225,9 +229,9 @@ async function main(): Promise<void> {
   const allOk = results.every((r) => r.ok);
   console.log("");
   if (allOk) {
-    console.log("Ready to test.");
+    console.log(green("✓ Ready to test."));
   } else {
-    console.log("Action required — see suggestions above.");
+    console.log(yellow("⚠ Action required — see suggestions above."));
   }
 }
 

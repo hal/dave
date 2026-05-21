@@ -12,6 +12,7 @@ import {
   type ParsedMethod,
   type ParsedParam,
 } from "./lib/parse-ids.js";
+import { dim, green, red } from "./lib/format.js";
 
 // ------------------------------------------------------ emit TypeScript
 
@@ -129,20 +130,20 @@ async function main(): Promise<void> {
   writeFileSync(outputPath, output, "utf-8");
   execFileSync("pnpm", ["exec", "prettier", "--write", outputPath], { stdio: "ignore" });
 
-  console.log(`Generated ${outputPath}`);
+  console.log(`Generated ${dim(outputPath)}`);
   console.log(`  ${parsed.constants.length} constants, ${parsed.methods.length} functions`);
   if (added.length > 0) {
-    console.log(`  + ${added.length} added: ${added.map((c) => c.name).join(", ")}`);
+    console.log(green(`  + ${added.length} added: ${added.map((c) => c.name).join(", ")}`));
   }
   if (removed.length > 0) {
-    console.log(`  - ${removed.length} removed: ${removed.join(", ")}`);
+    console.log(red(`  - ${removed.length} removed: ${removed.join(", ")}`));
   }
   if (unchanged.length > 0 && added.length === 0 && removed.length === 0) {
-    console.log("  No changes");
+    console.log(green("  ✓ No changes"));
   }
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error(red(`✗ ${err instanceof Error ? err.message : String(err)}`));
   process.exit(1);
 });
