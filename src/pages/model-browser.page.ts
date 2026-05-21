@@ -26,14 +26,14 @@ export class ModelBrowserPage extends BasePage {
   readonly tree: Locator;
   readonly resourceHeading: Locator;
 
-  constructor(page: Page, managementUrl: string) {
-    super(page, managementUrl);
+  constructor(page: Page) {
+    super(page);
     this.tree = page.getByRole("tree");
     this.resourceHeading = page.locator(`${MAIN_CONTENT} h1`);
   }
 
-  async open(): Promise<void> {
-    await super.open();
+  async open(managementUrl: string): Promise<void> {
+    await super.open(managementUrl);
     await this.page.locator(ouiaSelector(NAV_MODEL_BROWSER)).click();
     await this.tree.waitFor({ state: "visible" });
   }

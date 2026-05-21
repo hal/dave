@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures/test.fixture.js";
+import { test, expect } from "../../fixtures/wildfly.fixture.js";
 import { Tag } from "../../tags.js";
 
 test.describe("App loads", { tag: [Tag.SMOKE] }, () => {

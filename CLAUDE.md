@@ -55,7 +55,8 @@ global-setup.ts              →  removes stale dave_* containers
 
   worker-scoped fixture      →  starts a WildFly container per worker
                                  (via testcontainers, dynamic ports, healthcheck wait)
-  src/fixtures/test.fixture.ts  →  enables OUIA, creates page objects per test
+  src/fixtures/wildfly.fixture.ts →  enables OUIA (via page fixture override)
+  src/fixtures/pages.fixture.ts  →  creates page objects and navigates to halOP
   src/tests/**/*.spec.ts        →  test execution
   worker teardown            →  stops the WildFly container
 
@@ -64,15 +65,15 @@ global-teardown.ts           →  stops halOP container, cleans state file
 
 ### WildFly Container Fixture
 
-WildFly containers are managed by a **worker-scoped Playwright fixture** in `src/fixtures/test.fixture.ts`. Spec files that need WildFly import `testWithWildFly` and declare their spec path via `test.use()`:
+WildFly containers are managed by a **worker-scoped Playwright fixture** in `src/fixtures/wildfly.fixture.ts`. Spec files that need WildFly and page objects import `test` from `pages.fixture.ts` and declare their spec path via `test.use()`:
 
 ```typescript
-import { testWithWildFly as test, expect } from "../../fixtures/test.fixture.js";
+import { test, expect } from "../../fixtures/pages.fixture.js";
 
 test.use({ specPath: "smoke/dashboard" });
 ```
 
-The fixture starts a container before any test in the worker runs and stops it after the last test finishes. Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` directly.
+The fixture starts a container before any test in the worker runs and stops it after the last test finishes. Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` from `wildfly.fixture.ts`.
 
 Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). Ports are dynamically allocated — use `wildfly.managementUrl` and `wildfly.httpUrl` instead of hardcoded ports.
 
@@ -82,14 +83,22 @@ Tests that modify WildFly configuration can use `executeCliCommand()` to run JBo
 
 ### Page Object Model
 
-Tests use POM via custom Playwright fixtures defined in `src/fixtures/test.fixture.ts`:
+Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation by calling `open(managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
-- **`basePage`** — navigation with `?connect=` URL parameter, wait for `<main>` element
+- **`basePage`** — wait for `<main>` element
 - **`dashboardPage`** — dashboard heading checks
 - **`modelBrowserPage`** — model browser tree and resource assertions
 - **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)
 
-Tests import `testWithWildFly as test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
+Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`.
+
+### Adding New Pages and Tests
+
+**New page object**: Create `src/pages/foo.page.ts` extending `BasePage`, then register it in `src/fixtures/pages.fixture.ts` (import, interface entry, fixture). No other files need changes — OUIA and WildFly lifecycle are automatic.
+
+**New test**: Create a spec file under `src/tests/`, import `test` and `expect` from `pages.fixture.ts` (with WildFly) or `wildfly.fixture.ts` (without), set `specPath` via `test.use()`.
+
+**New test group**: Add a constant to `src/tags.ts`, optionally add a pnpm script.
 
 ### Utilities
 

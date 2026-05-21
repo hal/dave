@@ -1,4 +1,4 @@
-import { testWithWildFly as test, expect } from "../../fixtures/test.fixture.js";
+import { test, expect } from "../../fixtures/pages.fixture.js";
 import { TOP_LEVEL_RESOURCES } from "../../pages/model-browser.page.js";
 import { Tag } from "../../tags.js";
 
@@ -6,8 +6,6 @@ test.use({ specPath: "model-browser/model-browser" });
 
 test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   test("shows tree and root resource", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
-
     await expect(modelBrowserPage.tree).toBeVisible();
     for (const resource of TOP_LEVEL_RESOURCES) {
       await expect(modelBrowserPage.treeItem(resource)).toBeVisible();
@@ -18,7 +16,6 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   });
 
   test("selects resource in tree", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
     await modelBrowserPage.selectTreeItem("subsystem");
 
     await expect(modelBrowserPage.resourceHeading).toContainText("subsystem");
@@ -27,7 +24,6 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   });
 
   test("navigates to specific subsystem", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
     await modelBrowserPage.navigateToChild("subsystem", "datasources");
 
     await expect(modelBrowserPage.resourceHeading).toContainText("datasources");
@@ -36,7 +32,6 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   });
 
   test("switches tabs", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
     await modelBrowserPage.navigateToChild("subsystem", "datasources");
 
     await expect(modelBrowserPage.tab("Data")).toBeVisible();
@@ -52,7 +47,6 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   });
 
   test("shows operations with global toggle", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
     await modelBrowserPage.navigateToChild("subsystem", "datasources");
     await modelBrowserPage.selectTab("Operations");
 
@@ -61,7 +55,6 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
   });
 
   test("shows attributes tab with filter and count", async ({ modelBrowserPage }) => {
-    await modelBrowserPage.open();
     await modelBrowserPage.selectTab("Attributes");
 
     const attributesPanel = modelBrowserPage.tabPanel("Attributes");

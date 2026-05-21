@@ -4,13 +4,10 @@ export const MAIN_CONTENT = "main";
 
 /** Base page object — navigates to halOP with a WildFly connect parameter. */
 export class BasePage {
-  constructor(
-    readonly page: Page,
-    readonly managementUrl: string,
-  ) {}
+  constructor(readonly page: Page) {}
 
-  async open(): Promise<void> {
-    await this.page.goto(`/?connect=${this.managementUrl}`);
+  async open(managementUrl: string): Promise<void> {
+    await this.page.goto(`/?connect=${managementUrl}`);
     await this.page.locator(MAIN_CONTENT).waitFor({ state: "visible" });
   }
 }

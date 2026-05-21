@@ -8,7 +8,7 @@ The current cycle for fixing or adding OUIA CSS selectors is heavyweight:
 2. Add the OUIA selector to [halOP](https://github.com/hal/foundation)
 3. Do a full halOP release (required to publish `@halconsole/ouia` package, which has version alignment)
 4. Rebuild `quay.io/halconsole/hal-op:test-suite` image (automated by halOP GitHub workflows)
-5. Fix the test in dave
+5. Fix and verify the test in dave
 
 A single typo forces the entire cycle again. We need a faster feedback loop.
 

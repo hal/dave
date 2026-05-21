@@ -129,7 +129,8 @@ global-setup.ts              starts halOP container
 
   worker-scoped fixture       starts a WildFly container per worker
                               (via testcontainers)
-  src/fixtures/test.fixture.ts  enables OUIA, creates page objects per test
+  src/fixtures/wildfly.fixture.ts  enables OUIA (via page fixture override)
+  src/fixtures/pages.fixture.ts   creates page objects and navigates to halOP
   src/tests/**/*.spec.ts        test execution
   worker teardown             stops the WildFly container
 
@@ -140,34 +141,98 @@ Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tes
 
 ### WildFly Container Fixture
 
-WildFly containers are managed by a **worker-scoped Playwright fixture** defined in [`src/fixtures/test.fixture.ts`](src/fixtures/test.fixture.ts). Spec files that need a WildFly container import `testWithWildFly` and declare their spec path:
+WildFly containers are managed by a **worker-scoped Playwright fixture** defined in [`src/fixtures/wildfly.fixture.ts`](src/fixtures/wildfly.fixture.ts). Spec files that need WildFly and page objects import `test` from `pages.fixture.ts` and declare their spec path:
 
 ```typescript
-import { testWithWildFly as test, expect } from "../../fixtures/test.fixture.js";
+import { test, expect } from "../../fixtures/pages.fixture.js";
 
 test.use({ specPath: "smoke/dashboard" });
 ```
 
 The fixture starts a container before any test in the worker runs and stops it after the last test finishes. Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_dashboard_chromium`). Ports are dynamically allocated.
 
-Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` directly from the fixture module.
+Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and `expect` from `wildfly.fixture.ts`.
 
 ### Page Object Model
 
-Custom Playwright fixtures in [`src/fixtures/test.fixture.ts`](src/fixtures/test.fixture.ts) provide page objects to each test:
+Custom Playwright fixtures in [`src/fixtures/pages.fixture.ts`](src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation by calling `open(managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
 | Fixture            | Purpose                                                                   |
 | ------------------ | ------------------------------------------------------------------------- |
-| `basePage`         | Navigation with `?connect=` parameter, wait for `<main>`                  |
+| `basePage`         | Wait for `<main>` element                                                 |
 | `dashboardPage`    | Dashboard heading assertions                                              |
 | `modelBrowserPage` | Model browser tree and resource assertions                                |
 | `navigationPage`   | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
 
-Tests import `testWithWildFly as test` and `expect` from `../fixtures/test.fixture` instead of `@playwright/test`.
+Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`.
 
 ### Element Identification
 
 Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs defined in [halOP](https://github.com/hal/foundation) are collected and published as the [`@halconsole/ouia`](https://www.npmjs.com/package/@halconsole/ouia) npm package, which dave consumes to reference UI elements by stable, well-known identifiers.
+
+### Adding a New Page Object
+
+1. Create `src/pages/foo.page.ts` extending `BasePage`:
+
+   ```typescript
+   import type { Page } from "@playwright/test";
+   import { BasePage } from "./base.page.js";
+
+   export class FooPage extends BasePage {
+     constructor(page: Page) {
+       super(page);
+     }
+   }
+   ```
+
+2. Register the fixture in `src/fixtures/pages.fixture.ts` — add the import, the interface entry, and the fixture:
+
+   ```typescript
+   import { FooPage } from "../pages/foo.page.js";
+
+   interface PageFixtures {
+     // ...existing entries...
+     fooPage: FooPage;
+   }
+
+   export const test = testWithWildFly.extend<PageFixtures>({
+     // ...existing entries...
+     fooPage: async ({ page, wildfly }, use) => {
+       const fooPage = new FooPage(page);
+       await fooPage.open(wildfly.managementUrl);
+       await use(fooPage);
+     },
+   });
+   ```
+
+No other files need to change. OUIA enablement and WildFly container lifecycle are handled automatically by `wildfly.fixture.ts`.
+
+### Adding a New Test
+
+Create a spec file under `src/tests/` and import from the appropriate fixture:
+
+- **With WildFly + page objects** — import from `pages.fixture.ts`:
+
+  ```typescript
+  import { test, expect } from "../../fixtures/pages.fixture.js";
+  import { Tag } from "../../tags.js";
+
+  test.use({ specPath: "category/foo" });
+
+  test.describe("Foo", { tag: [Tag.SMOKE] }, () => {
+    test("does something", async ({ fooPage }) => {
+      // page is already navigated — start asserting...
+    });
+  });
+  ```
+
+- **Without WildFly** — import from `wildfly.fixture.ts`:
+
+  ```typescript
+  import { test, expect } from "../../fixtures/wildfly.fixture.js";
+  ```
+
+To add a new test group, add a constant to `src/tags.ts` and optionally a pnpm script to `package.json`.
 
 ## Project Structure
 
@@ -178,7 +243,8 @@ dave/
   playwright.config.ts         # Playwright configuration
   src/
     fixtures/
-      test.fixture.ts          # Worker-scoped WildFly fixture + page objects
+      wildfly.fixture.ts       # WildFly container lifecycle + OUIA enablement
+      pages.fixture.ts         # Page object registry (add new pages here)
     pages/
       base.page.ts             # Base page object
       dashboard.page.ts        # Dashboard page object
