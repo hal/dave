@@ -12,6 +12,7 @@ export interface HalOpInstance {
 
 export interface DaveState {
   readonly halop: HalOpInstance;
+  readonly networkName: string;
 }
 
 const STATE_FILE = join(tmpdir(), "dave-state.json");
@@ -19,8 +20,19 @@ const DEFAULT_HALOP_IMAGE = "quay.io/halconsole/hal-op:test-suite";
 const DEFAULT_HALOP_PORT = 9090;
 const CONTAINER_INTERNAL_PORT = 9090;
 const CONTAINER_NAME = "dave_halop";
+const NETWORK_NAME = "dave_network";
 
 export { STATE_FILE };
+
+async function createNetwork(): Promise<void> {
+  const runtime = await detectRuntime();
+  try {
+    await execFileAsync(runtime, ["network", "rm", NETWORK_NAME]);
+  } catch {
+    // network didn't exist yet
+  }
+  await execFileAsync(runtime, ["network", "create", NETWORK_NAME]);
+}
 
 async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
   const runtime = await detectRuntime();
@@ -29,6 +41,8 @@ async function startHalOp(image: string, port: number): Promise<HalOpInstance> {
     "-d",
     "--name",
     CONTAINER_NAME,
+    "--network",
+    NETWORK_NAME,
     "-p",
     `${port}:${CONTAINER_INTERNAL_PORT}`,
     image,
@@ -64,10 +78,18 @@ async function removeStaleContainers(): Promise<void> {
   } catch {
     // No stale containers or runtime not ready yet
   }
+  try {
+    await execFileAsync(runtime, ["network", "rm", NETWORK_NAME]);
+  } catch {
+    // No stale network
+  }
 }
 
 async function globalSetup(_config: FullConfig): Promise<void> {
   await removeStaleContainers();
+
+  console.log(`Creating network "${NETWORK_NAME}"...`);
+  await createNetwork();
 
   const halopImage = process.env.HALOP_IMAGE ?? DEFAULT_HALOP_IMAGE;
   const halopPortRaw = process.env.HALOP_PORT ?? DEFAULT_HALOP_PORT;
@@ -80,7 +102,7 @@ async function globalSetup(_config: FullConfig): Promise<void> {
   const halop = await startHalOp(halopImage, halopPort);
   console.log(`halOP started (container: ${halop.containerId.slice(0, 12)})`);
 
-  const state: DaveState = { halop };
+  const state: DaveState = { halop, networkName: NETWORK_NAME };
   writeFileSync(STATE_FILE, JSON.stringify(state));
 
   process.env.HALOP_URL = `http://localhost:${halop.port}`;

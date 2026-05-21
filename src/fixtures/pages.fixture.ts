@@ -38,36 +38,36 @@ export const test = testWithWildFly.extend<PageFixtures>({
   },
 
   basePage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     await use(new BasePage(page));
   },
 
   configurationPage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     const configurationPage = new ConfigurationPage(page);
     await configurationPage.navigate();
     await use(configurationPage);
   },
 
   dashboardPage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     await use(new DashboardPage(page));
   },
 
   modelBrowserPage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     const modelBrowserPage = new ModelBrowserPage(page);
     await modelBrowserPage.navigate();
     await use(modelBrowserPage);
   },
 
   navigationPage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     await use(new NavigationPage(page));
   },
 
   tasksPage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
+    await openHalOp(page, wildfly.managementInternalUrl);
     const tasksPage = new TasksPage(page);
     await tasksPage.navigate();
     await use(tasksPage);

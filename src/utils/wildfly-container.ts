@@ -12,24 +12,33 @@ export interface WildFlyContainer {
   readonly container: StartedTestContainer;
   readonly httpUrl: string;
   readonly managementUrl: string;
+  /** Management URL reachable from other containers on the shared network. */
+  readonly managementInternalUrl: string;
 }
 
-export async function startWildFlyContainer(name: string): Promise<WildFlyContainer> {
+export async function startWildFlyContainer(name: string, networkName?: string): Promise<WildFlyContainer> {
   const image = process.env.WILDFLY_IMAGE ?? DEFAULT_IMAGE;
-  const container = await new GenericContainer(image)
+  let builder = new GenericContainer(image)
     .withName(name)
     .withCommand(["-c", "standalone-no-auth.xml"])
     .withExposedPorts(HTTP_CONTAINER_PORT, MANAGEMENT_CONTAINER_PORT)
     .withWaitStrategy(Wait.forHealthCheck())
-    .withStartupTimeout(STARTUP_TIMEOUT_MS)
-    .start();
+    .withStartupTimeout(STARTUP_TIMEOUT_MS);
 
+  if (networkName) {
+    builder = builder.withNetworkMode(networkName).withNetworkAliases(name);
+  }
+
+  const container = await builder.start();
   const httpPort = container.getMappedPort(HTTP_CONTAINER_PORT);
   const managementPort = container.getMappedPort(MANAGEMENT_CONTAINER_PORT);
   return {
     container,
     httpUrl: `http://localhost:${httpPort}`,
     managementUrl: `http://localhost:${managementPort}`,
+    managementInternalUrl: networkName
+      ? `http://${name}:${MANAGEMENT_CONTAINER_PORT}`
+      : `http://localhost:${managementPort}`,
   };
 }
 
