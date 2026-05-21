@@ -66,7 +66,7 @@ jobs:
 
       - name: Generate Allure report
         if: ${{ !cancelled() }}
-        run: npx allure generate allure-results --output allure-report --history-path history.jsonl
+        run: npx allure awesome allure-results --output allure-report --history-path history.jsonl
 
       - name: Update Allure history
         if: ${{ !cancelled() }}

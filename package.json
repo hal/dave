@@ -16,7 +16,7 @@
     "test:tasks": "playwright test --grep @tasks",
     "test:model-browser": "playwright test --grep @model-browser",
     "report": "playwright show-report",
-    "allure:generate": "allure generate allure-results --output allure-report",
+    "allure:generate": "allure awesome allure-results --output allure-report",
     "allure:serve": "allure serve allure-results",
     "allure:open": "allure open allure-report",
     "lint": "eslint .",
