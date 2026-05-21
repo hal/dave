@@ -3,8 +3,16 @@ name: Test
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - "src/**"
+      - "playwright.config.ts"
+      - "global-setup.ts"
+      - "global-teardown.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read

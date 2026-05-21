@@ -96,7 +96,8 @@ Tests import the custom `test` and `expect` from `../fixtures/test.fixture` inst
 GitHub Actions workflows in `.github/workflows/`:
 
 - **`lint.yml`** — runs `pnpm format:check` and `pnpm lint` on push/PR to `main`
-- **`test.yml`** — runs the full Playwright suite, uploads test results and JUnit report as artifacts, and deploys the Allure report (with trend history) to GitHub Pages on `main` pushes
+- **`smoke.yml`** — fast pass/fail gate on push/PR to `main`; runs only `@smoke` tests in Chromium; no reports or artifacts
+- **`test.yml`** — full Playwright suite (all tests, all browsers); triggers on pushes to `main` when test/config files change, daily at 05:00 UTC, or manually via `workflow_dispatch`; uploads test results and JUnit report as artifacts; deploys Allure and Playwright reports to GitHub Pages
 
 Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub Actions updates.
 
