@@ -6,6 +6,12 @@ import { DashboardPage } from "../pages/dashboard.page.js";
 import { ModelBrowserPage } from "../pages/model-browser.page.js";
 import { NavigationPage } from "../pages/navigation.page.js";
 
+async function enableOuia(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    localStorage.setItem("ouia", "true");
+  });
+}
+
 /** Navigates to halOP with the WildFly connect parameter and waits for the main content. */
 async function openHalOp(page: Page, managementUrl: string): Promise<void> {
   await page.goto(`/?connect=${managementUrl}`);
@@ -20,8 +26,13 @@ interface PageFixtures {
   navigationPage: NavigationPage;
 }
 
-/** Test object with WildFly container and page object fixtures. */
+/** Test object with WildFly container, OUIA enablement, and page object fixtures. */
 export const test = testWithWildFly.extend<PageFixtures>({
+  page: async ({ page }, use) => {
+    await enableOuia(page);
+    await use(page);
+  },
+
   basePage: async ({ page, wildfly }, use) => {
     await openHalOp(page, wildfly.managementUrl);
     await use(new BasePage(page));

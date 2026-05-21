@@ -55,8 +55,8 @@ global-setup.ts              →  removes stale dave_* containers
 
   worker-scoped fixture      →  starts a WildFly container per worker
                                  (via testcontainers, dynamic ports, healthcheck wait)
-  src/fixtures/wildfly.fixture.ts →  enables OUIA (via page fixture override)
-  src/fixtures/pages.fixture.ts  →  creates page objects and navigates to halOP
+  src/fixtures/wildfly.fixture.ts →  WildFly container lifecycle (worker-scoped)
+  src/fixtures/pages.fixture.ts  →  enables OUIA, navigates to halOP, creates page objects
   src/tests/**/*.spec.ts        →  test execution
   worker teardown            →  stops the WildFly container
 

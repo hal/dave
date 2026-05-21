@@ -129,8 +129,8 @@ global-setup.ts              starts halOP container
 
   worker-scoped fixture       starts a WildFly container per worker
                               (via testcontainers)
-  src/fixtures/wildfly.fixture.ts  enables OUIA (via page fixture override)
-  src/fixtures/pages.fixture.ts   creates page objects and navigates to halOP
+  src/fixtures/wildfly.fixture.ts  WildFly container lifecycle (worker-scoped)
+  src/fixtures/pages.fixture.ts   enables OUIA, navigates to halOP, creates page objects
   src/tests/**/*.spec.ts        test execution
   worker teardown             stops the WildFly container
 
@@ -204,7 +204,7 @@ Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection,
    });
    ```
 
-No other files need to change. OUIA enablement and WildFly container lifecycle are handled automatically by `wildfly.fixture.ts`.
+No other files need to change. OUIA enablement and navigation are handled by `pages.fixture.ts`, WildFly container lifecycle by `wildfly.fixture.ts`.
 
 ### Adding a New Test
 
@@ -242,8 +242,8 @@ dave/
   playwright.config.ts         # Playwright configuration
   src/
     fixtures/
-      wildfly.fixture.ts       # WildFly container lifecycle + OUIA enablement
-      pages.fixture.ts         # Page object registry (add new pages here)
+      wildfly.fixture.ts       # WildFly container lifecycle (worker-scoped)
+      pages.fixture.ts         # OUIA enablement, navigation, page object registry
     pages/
       base.page.ts             # Base page object
       dashboard.page.ts        # Dashboard page object
