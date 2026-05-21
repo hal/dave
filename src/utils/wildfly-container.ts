@@ -6,12 +6,6 @@ const HTTP_CONTAINER_PORT = 8080;
 const MANAGEMENT_CONTAINER_PORT = 9990;
 const STARTUP_TIMEOUT_MS = 120_000;
 const JBOSS_CLI_PATH = "/opt/jboss/wildfly/bin/jboss-cli.sh";
-const HEALTHCHECK_CMD = [
-  "CMD-SHELL",
-  `curl -sf http://localhost:${MANAGEMENT_CONTAINER_PORT}/health/ready || ` +
-    `curl -s -o /dev/null -w '%{http_code}' http://localhost:${MANAGEMENT_CONTAINER_PORT}/management | ` +
-    `grep -qE '^([23]|401|403)' || exit 1`,
-] as const;
 
 /** Running WildFly container with mapped HTTP and management URLs. */
 export interface WildFlyContainer {
@@ -26,13 +20,6 @@ export async function startWildFlyContainer(name: string): Promise<WildFlyContai
     .withName(name)
     .withCommand(["-c", "standalone-no-auth.xml"])
     .withExposedPorts(HTTP_CONTAINER_PORT, MANAGEMENT_CONTAINER_PORT)
-    .withHealthCheck({
-      test: [...HEALTHCHECK_CMD],
-      interval: 5_000,
-      timeout: 3_000,
-      retries: 20,
-      startPeriod: 30_000,
-    })
     .withWaitStrategy(Wait.forHealthCheck())
     .withStartupTimeout(STARTUP_TIMEOUT_MS)
     .start();
