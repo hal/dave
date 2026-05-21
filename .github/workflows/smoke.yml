@@ -21,6 +21,6 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
 
       - name: Run smoke tests
-        run: pnpm test:smoke -- --project=chromium
+        run: pnpm exec playwright test --grep @smoke --project=chromium
         env:
           CI: true
