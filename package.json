@@ -28,7 +28,10 @@
     "sync:image": "tsx scripts/sync-image.ts",
     "sync:status": "tsx scripts/sync-status.ts",
     "sync:ci": "tsx scripts/sync-ci.ts",
-    "sync:help": "tsx scripts/sync-help.ts"
+    "sync:help": "tsx scripts/sync-help.ts",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -45,7 +48,8 @@
     "testcontainers": "^11.14.0",
     "tsx": "^4.19.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.59.4",
+    "vitepress": "^1.6.4"
   },
   "packageManager": "pnpm@11.1.3"
 }

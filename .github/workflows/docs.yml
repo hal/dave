@@ -1,0 +1,93 @@
+# Docs workflow — builds VitePress documentation and deploys to GitHub Pages.
+#
+# IMPORTANT: GitHub Pages deploys the entire site as one atomic artifact.
+# There is no way to deploy just a subdirectory. This means both this workflow
+# and the Test workflow must assemble the COMPLETE site (docs + reports) to
+# avoid overwriting each other. This workflow fetches existing reports from the
+# live Pages site and includes them in the deployment artifact.
+
+name: Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build docs
+        run: pnpm docs:build
+
+      - name: Assemble GitHub Pages site
+        run: |
+          # Start with the VitePress build output as the site root
+          mkdir -p pages-root
+          cp -r docs/.vitepress/dist/* pages-root/
+
+          # Fetch existing reports from the live Pages site so we don't
+          # overwrite them. GitHub Pages is an atomic deployment — we must
+          # include everything in every deploy.
+          mkdir -p pages-root/reports/playwright pages-root/reports/allure
+          curl -fsSL "https://hal.github.io/dave/reports/playwright/index.html" \
+            -o pages-root/reports/playwright/index.html 2>/dev/null || true
+          curl -fsSL "https://hal.github.io/dave/reports/allure/index.html" \
+            -o pages-root/reports/allure/index.html 2>/dev/null || true
+
+          # Fetch the full Playwright report archive if available
+          cd pages-root/reports/playwright
+          curl -fsSL "https://hal.github.io/dave/reports/playwright/" \
+            | grep -oP 'href="\K[^"]+' \
+            | while read -r file; do
+                curl -fsSL "https://hal.github.io/dave/reports/playwright/$file" -o "$file" 2>/dev/null || true
+              done
+          cd -
+
+          # Fetch the full Allure report if available
+          cd pages-root/reports/allure
+          for f in index.html app.js styles.css history.jsonl; do
+            curl -fsSL "https://hal.github.io/dave/reports/allure/$f" -o "$f" 2>/dev/null || true
+          done
+          for dir in data export history plugins widgets; do
+            mkdir -p "$dir"
+            curl -fsSL "https://hal.github.io/dave/reports/allure/$dir/" \
+              | grep -oP 'href="\K[^"]+' \
+              | while read -r file; do
+                  curl -fsSL "https://hal.github.io/dave/reports/allure/$dir/$file" -o "$dir/$file" 2>/dev/null || true
+                done
+          done
+          cd -
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: pages-root/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

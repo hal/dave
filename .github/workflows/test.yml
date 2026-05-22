@@ -1,3 +1,11 @@
+# Test workflow — runs the full Playwright suite and deploys reports to GitHub Pages.
+#
+# IMPORTANT: GitHub Pages deploys the entire site as one atomic artifact.
+# There is no way to deploy just a subdirectory. This means both this workflow
+# and the Docs workflow must assemble the COMPLETE site (docs + reports) to
+# avoid overwriting each other. This workflow builds VitePress docs alongside
+# the test reports so the documentation is preserved when reports are deployed.
+
 name: Test
 
 on:
@@ -72,11 +80,20 @@ jobs:
         if: ${{ !cancelled() }}
         run: npx allure history allure-results --history-path history.jsonl --history-limit 50
 
+      # Build VitePress docs so they are included in the Pages deployment.
+      # GitHub Pages is an atomic deployment — we must include everything
+      # (docs + reports) in every deploy to avoid overwriting the other.
+      - name: Build docs
+        if: ${{ !cancelled() }}
+        run: pnpm docs:build
+
       - name: Assemble GitHub Pages site
         if: ${{ !cancelled() }}
         run: |
           mkdir -p pages-root/reports
-          cp .github/pages/index.html pages-root/
+          # Use VitePress build output as the site root
+          cp -r docs/.vitepress/dist/* pages-root/
+          # Add fresh test reports
           cp -r allure-report pages-root/reports/allure
           cp -r playwright-report pages-root/reports/playwright
           cp -f history.jsonl pages-root/reports/allure/history.jsonl || true
