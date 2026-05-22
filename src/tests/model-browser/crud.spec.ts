@@ -1,5 +1,5 @@
 import { test, expect } from "../../fixtures/pages.fixture.js";
-import { executeCliCommand } from "../../utils/wildfly-container.js";
+import { readAttribute, resourceExists } from "../../utils/dmr.js";
 import { Tag } from "../../tags.js";
 
 test.use({ specPath: "model-browser/crud" });
@@ -14,8 +14,8 @@ test.describe.serial("Model Browser CRUD", { tag: [Tag.MODEL_BROWSER.value, Tag.
     await expect(modelBrowserPage.successAlert()).toBeVisible();
     await expect(modelBrowserPage.childResourceText("foo")).toBeVisible();
 
-    const output = await executeCliCommand(wildfly, "/system-property=foo:read-resource");
-    expect(output).toContain('"value" => "bar"');
+    const value = await readAttribute(wildfly.managementUrl, ["system-property", "foo"], "value");
+    expect(value).toBe("bar");
   });
 
   test("reads system property attributes", async ({ modelBrowserPage }) => {
@@ -45,8 +45,8 @@ test.describe.serial("Model Browser CRUD", { tag: [Tag.MODEL_BROWSER.value, Tag.
     await expect(modelBrowserPage.successAlert()).toBeVisible();
     await expect(modelBrowserPage.tabPanel("Data").getByText("changed")).toBeVisible();
 
-    const output = await executeCliCommand(wildfly, "/system-property=foo:read-attribute(name=value)");
-    expect(output).toContain("changed");
+    const value = await readAttribute(wildfly.managementUrl, ["system-property", "foo"], "value");
+    expect(value).toBe("changed");
   });
 
   test("deletes system property", async ({ modelBrowserPage, wildfly }) => {
@@ -58,6 +58,7 @@ test.describe.serial("Model Browser CRUD", { tag: [Tag.MODEL_BROWSER.value, Tag.
     await expect(modelBrowserPage.successAlert()).toBeVisible();
     await expect(modelBrowserPage.noChildResources()).toBeVisible();
 
-    await expect(executeCliCommand(wildfly, "/system-property=foo:read-resource")).rejects.toThrow();
+    const exists = await resourceExists(wildfly.managementUrl, ["system-property", "foo"]);
+    expect(exists).toBe(false);
   });
 });

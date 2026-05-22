@@ -5,7 +5,6 @@ const DEFAULT_IMAGE = "quay.io/wado/wado-sa:development";
 const HTTP_CONTAINER_PORT = 8080;
 const MANAGEMENT_CONTAINER_PORT = 9990;
 const STARTUP_TIMEOUT_MS = 120_000;
-const JBOSS_CLI_PATH = "/opt/jboss/wildfly/bin/jboss-cli.sh";
 
 /** Running WildFly container with mapped HTTP and management URLs. */
 export interface WildFlyContainer {
@@ -35,20 +34,6 @@ export async function startWildFlyContainer(name: string): Promise<WildFlyContai
 
 export async function stopWildFlyContainer(wildfly: WildFlyContainer): Promise<void> {
   await wildfly.container.stop();
-}
-
-/** Runs a JBoss CLI command inside the container and returns stdout. */
-export async function executeCliCommand(wildfly: WildFlyContainer, command: string): Promise<string> {
-  const result = await wildfly.container.exec([
-    JBOSS_CLI_PATH,
-    `--connect`,
-    `--controller=localhost:${MANAGEMENT_CONTAINER_PORT}`,
-    `--commands=${command}`,
-  ]);
-  if (result.exitCode !== 0) {
-    throw new Error(`CLI command failed (exit ${result.exitCode}): ${result.output}`);
-  }
-  return result.output;
 }
 
 /** Derives a container name from the spec path and browser project (e.g. `dave_smoke_dashboard_chromium`). */

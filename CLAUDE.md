@@ -83,7 +83,7 @@ Container names follow the pattern `dave_<path>_<project>` (e.g., `dave_smoke_da
 
 The container's built-in HEALTHCHECK is used as the wait strategy (`Wait.forHealthCheck()`), ensuring the management interface is fully ready before tests run.
 
-Tests that modify WildFly configuration can use `executeCliCommand()` to run JBoss CLI commands inside the container.
+Tests that need to verify or modify WildFly configuration use the DMR utilities in `src/utils/dmr.ts`. The `dmr()` function posts JSON operations to the management API via HTTP. Higher-level helpers include `readAttribute()`, `writeAttribute()`, `addResource()`, `removeResource()`, and `resourceExists()`. All take `wildfly.managementUrl` and a `DmrAddress` (e.g., `["system-property", "foo"]`).
 
 ### Page Object Model
 
@@ -116,7 +116,8 @@ OUIA ID constants in `src/selectors/ids.ts` are generated from [`Ids.java`](http
 
 ### Utilities
 
-- **`src/utils/wildfly-container.ts`** — testcontainers-based WildFly lifecycle (start, stop, container naming, CLI exec)
+- **`src/utils/wildfly-container.ts`** — testcontainers-based WildFly lifecycle (start, stop, container naming)
+- **`src/utils/dmr.ts`** — HTTP-based DMR operations against the WildFly management API (read/write attributes, add/remove resources, existence checks)
 - **`src/utils/container-runtime.ts`** — auto-detects Podman or Docker for halOP container
 - **`src/utils/ouia.ts`** — builds `[data-ouia-component-id="..."]` CSS selectors from OUIA IDs
 - **`src/selectors/ids.ts`** — generated OUIA ID constants (run `pnpm sync:ouia` to regenerate)
