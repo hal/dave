@@ -36,10 +36,6 @@ pnpm test
 | `pnpm test:headed`        | Run with a visible browser window     |
 | `pnpm test:ui`            | Playwright interactive UI mode        |
 | `pnpm test:debug`         | Debug mode with Playwright inspector  |
-| `pnpm report`             | Open the last HTML test report        |
-| `pnpm allure:generate`    | Generate Allure report from results   |
-| `pnpm allure:serve`       | Serve Allure report with live reload  |
-| `pnpm allure:open`        | Open a generated Allure report        |
 | `pnpm test:smoke`         | Run only `@smoke` tests               |
 | `pnpm test:navigation`    | Run only `@navigation` tests          |
 | `pnpm test:dashboard`     | Run only `@dashboard` tests           |
