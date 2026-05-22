@@ -2,24 +2,75 @@
 
 ## Test Lifecycle
 
-```
-global-setup.ts              starts halOP container
-                              writes state to /tmp/dave-state.json
-                              sets HALOP_URL env var
+```mermaid
+flowchart TB
+    subgraph global["Global (once per test run)"]
+        gs["global-setup.ts"]
+        gt["global-teardown.ts"]
+    end
 
-  worker-scoped fixture       starts a WildFly container per worker
-                              (via testcontainers)
-  src/fixtures/wildfly.fixture.ts  WildFly container lifecycle (worker-scoped)
-  src/fixtures/pages.fixture.ts   enables OUIA, navigates to halOP, creates page objects
-  src/tests/**/*.spec.ts        test execution
-  worker teardown             stops the WildFly container
+    subgraph worker["Worker (one per spec file x browser)"]
+        wf["wildfly.fixture.ts — start WildFly container"]
+        pf["pages.fixture.ts — enable OUIA, navigate, create page objects"]
+        spec["spec file — test execution"]
+        wd["worker teardown — stop WildFly container"]
+    end
 
-global-teardown.ts            stops halOP container, cleans state file
+    gs -->|"starts halOP container\nwrites /tmp/dave-state.json\nsets HALOP_URL"| worker
+    wf --> pf --> spec --> wd
+    worker --> gt
+    gt -->|"stops halOP container\ncleans state file"| done(( ))
+
+    style global fill:#e8f4fd,stroke:#2196f3
+    style worker fill:#fff3e0,stroke:#ff9800
 ```
 
 Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via a worker-scoped Playwright fixture backed by [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
 
 For a detailed walkthrough of the four fixture layers, see [Fixtures](./fixtures.md).
+
+## Parallelism and Container Instances
+
+The key relationship is: **one WildFly container per spec file per browser project**.
+
+Playwright runs three browser projects (Chromium, Firefox, WebKit). For each project, spec files are distributed across workers. The WildFly fixture is worker-scoped, and each worker runs exactly one spec file:
+
+```mermaid
+flowchart LR
+    subgraph chromium["Chromium"]
+        cw1["Worker 1\ndashboard.spec.ts"] --- cc1[/"dave_smoke_dashboard_chromium"/]
+        cw2["Worker 2\nnavigation.spec.ts"] --- cc2[/"dave_smoke_navigation_chromium"/]
+        cw3["Worker 3\nconfiguration.spec.ts"] --- cc3[/"dave_configuration_configuration_chromium"/]
+        cw4["Worker 4\nmodel-browser.spec.ts"] --- cc4[/"dave_model-browser_model-browser_chromium"/]
+    end
+
+    subgraph firefox["Firefox"]
+        fw1["Worker 5\ndashboard.spec.ts"] --- fc1[/"dave_smoke_dashboard_firefox"/]
+        fw2["Worker 6\nnavigation.spec.ts"] --- fc2[/"dave_smoke_navigation_firefox"/]
+        fw3["..."] --- fc3[/"..."/]
+    end
+
+    subgraph webkit["WebKit"]
+        ww1["Worker 9\ndashboard.spec.ts"] --- wc1[/"dave_smoke_dashboard_webkit"/]
+        ww2["..."] --- wc2[/"..."/]
+    end
+
+    style chromium fill:#e8f4fd,stroke:#2196f3
+    style firefox fill:#fff3e0,stroke:#ff9800
+    style webkit fill:#f3e5f5,stroke:#9c27b0
+```
+
+| Concept | Relationship |
+| --- | --- |
+| **Spec file** | Gets its own dedicated WildFly container — full isolation between specs |
+| **Worker** | Runs one spec file; owns one WildFly container for its lifetime |
+| **Browser project** | Each spec runs independently per browser, so the same spec gets a separate container in Chromium, Firefox, and WebKit |
+| **Parallelism** | Up to `workers` spec files run simultaneously per browser project (4 local, 2 CI) |
+| **Tests within a spec** | Run sequentially (`fullyParallel: false`), sharing that spec's WildFly container |
+
+**Total WildFly containers** at peak = `min(workers, spec_count)` per browser project. With 10 spec files and 4 workers running Chromium, at most 4 containers run concurrently for Chromium; finished workers pick up the next spec file.
+
+The container lifecycle: started before the first test in a worker, shared by all tests in that spec file, stopped after the last test finishes.
 
 ## WildFly Container Fixture
 

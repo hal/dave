@@ -19,11 +19,19 @@ You never call `new DashboardPage()` or start containers yourself. The **fixture
 
 The fixture chain has four layers, each building on the previous one:
 
-```
-Layer 1: Global Setup       → starts halOP container (once for entire test run)
-Layer 2: Playwright Config  → sets base URL, browsers, worker count
-Layer 3: WildFly Fixture    → starts one WildFly container per spec file (worker-scoped)
-Layer 4: Page Fixtures      → creates page objects for each test (test-scoped)
+```mermaid
+flowchart TB
+    L1["Layer 1: Global Setup\nstarts halOP container\n(once for entire test run)"]
+    L2["Layer 2: Playwright Config\nsets base URL, browsers, worker count"]
+    L3["Layer 3: WildFly Fixture\nstarts one WildFly container per spec file\n(worker-scoped)"]
+    L4["Layer 4: Page Fixtures\ncreates page objects for each test\n(test-scoped)"]
+
+    L1 --> L2 --> L3 --> L4
+
+    style L1 fill:#e8f4fd,stroke:#2196f3
+    style L2 fill:#e0f2f1,stroke:#009688
+    style L3 fill:#fff3e0,stroke:#ff9800
+    style L4 fill:#f3e5f5,stroke:#9c27b0
 ```
 
 ### Layer 1: Global Setup (`global-setup.ts`)
@@ -161,39 +169,54 @@ test("shows dashboard heading", async ({ dashboardPage }) => {
 });
 ```
 
-```
-1. PROCESS START
-   global-setup.ts runs:
-   ├── removes stale dave_* containers
-   ├── starts halOP container on port 9090
-   └── sets HALOP_URL=http://localhost:9090
+```mermaid
+sequenceDiagram
+    participant GS as global-setup.ts
+    participant WF as wildfly.fixture.ts
+    participant PF as pages.fixture.ts
+    participant T as Test Function
+    participant GT as global-teardown.ts
 
-2. WORKER START (one per spec file × browser)
-   wildfly.fixture.ts activates:
-   ├── reads specPath: "smoke/dashboard"
-   ├── derives name: "dave_smoke_dashboard_chromium"
-   ├── starts WildFly container (ports 8080, 9990 mapped to random host ports)
-   └── waits for healthcheck to pass
+    Note over GS: 1. PROCESS START
+    activate GS
+    GS->>GS: Remove stale dave_* containers
+    GS->>GS: Start halOP container on port 9090
+    GS->>GS: Set HALOP_URL=http://localhost:9090
+    deactivate GS
 
-3. TEST START (for each test in the file)
-   pages.fixture.ts activates:
-   ├── page fixture: enables OUIA via addInitScript
-   ├── dashboardPage fixture:
-   │   ├── navigates to /?connect=http://localhost:<mgmt-port>
-   │   ├── waits for #hal-root-container to be visible
-   │   └── creates new DashboardPage(page)
-   └── test function runs with the ready dashboardPage
+    Note over WF: 2. WORKER START (one per spec file x browser)
+    activate WF
+    WF->>WF: Read specPath: "smoke/dashboard"
+    WF->>WF: Derive name: "dave_smoke_dashboard_chromium"
+    WF->>WF: Start WildFly container (dynamic ports)
+    WF->>WF: Wait for healthcheck to pass
 
-4. TEST END
-   └── page object and page are cleaned up
+    loop For each test in the spec file
+        Note over PF: 3. TEST START
+        activate PF
+        PF->>PF: Enable OUIA via addInitScript
+        PF->>PF: Navigate to /?connect=localhost:<mgmt-port>
+        PF->>PF: Wait for #hal-root-container
+        PF->>PF: Create DashboardPage(page)
 
-5. WORKER END (after all tests in this spec file finish)
-   └── WildFly container is stopped
+        activate T
+        Note over T: 4. Test runs with ready dashboardPage
+        deactivate T
 
-6. PROCESS END
-   global-teardown.ts runs:
-   ├── stops halOP container
-   └── removes /tmp/dave-state.json
+        Note over PF: 5. TEST END
+        PF->>PF: Clean up page object and page
+        deactivate PF
+    end
+
+    Note over WF: 6. WORKER END
+    WF->>WF: Stop WildFly container
+    deactivate WF
+
+    Note over GT: 7. PROCESS END
+    activate GT
+    GT->>GT: Stop halOP container
+    GT->>GT: Remove /tmp/dave-state.json
+    deactivate GT
 ```
 
 ## Lazy Evaluation
@@ -226,16 +249,22 @@ The `use()` call is the boundary: setup above, teardown below. Playwright guaran
 
 Fixtures can depend on other fixtures. The chain in this project:
 
-```
-Playwright built-in: page
-       ↓
-pages.fixture.ts: page (enhanced with OUIA)
-       ↓
-wildfly.fixture.ts: wildfly (depends on specPath)
-       ↓
-pages.fixture.ts: dashboardPage (depends on page + wildfly)
-       ↓
-test function: receives dashboardPage
+```mermaid
+flowchart TB
+    pw["Playwright built-in: page"]
+    ouia["pages.fixture.ts: page (enhanced with OUIA)"]
+    wf["wildfly.fixture.ts: wildfly (depends on specPath)"]
+    dp["pages.fixture.ts: dashboardPage (depends on page + wildfly)"]
+    test["test function: receives dashboardPage"]
+
+    pw --> ouia --> dp
+    wf --> dp --> test
+
+    style pw fill:#e8f4fd,stroke:#2196f3
+    style ouia fill:#e0f2f1,stroke:#009688
+    style wf fill:#fff3e0,stroke:#ff9800
+    style dp fill:#f3e5f5,stroke:#9c27b0
+    style test fill:#e8f5e9,stroke:#4caf50
 ```
 
 Playwright resolves the dependency graph automatically. When you request `dashboardPage`, Playwright knows it needs `page` and `wildfly` first, creates them in order, and tears them down in reverse order.
