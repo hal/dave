@@ -5,7 +5,7 @@ import { Tag } from "../../tags.js";
 
 test.use({ specPath: "smoke/navigation" });
 
-test.describe("Navigation", { tag: [Tag.SMOKE, Tag.NAVIGATION] }, () => {
+test.describe("Navigation", { tag: [Tag.SMOKE.value, Tag.NAVIGATION.value] }, () => {
   for (const item of NAV_ITEM_NAMES) {
     test(`navigates to ${item}`, async ({ navigationPage }) => {
       await navigationPage.navigateTo(item);

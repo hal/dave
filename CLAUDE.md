@@ -23,13 +23,9 @@ pnpm test -- src/tests/smoke/app-loads.spec.ts  # Run single spec file
 pnpm test -- --project=chromium        # Run only in Chromium
 pnpm test -- --project=firefox         # Run only in Firefox
 pnpm test -- --project=webkit          # Run only in WebKit
-pnpm test:smoke                        # Run only @smoke tests
-pnpm test:dashboard                    # Run only @dashboard tests
-pnpm test:navigation                   # Run only @navigation tests
-pnpm test:model-browser                # Run only @model-browser tests
-pnpm test:configuration                # Run only @configuration tests
-pnpm test:tasks                        # Run only @tasks tests
-pnpm test -- --grep "@smoke|@dashboard"  # Combine groups (OR)
+pnpm test:tag <name> [name...]          # Run tests for one or more tags (tags defined in src/tags.ts)
+pnpm test:tag smoke -- --project=chromium  # Run tag with extra Playwright options
+pnpm test:tag                          # List all available tags
 
 pnpm sync:ouia                         # Regenerate OUIA IDs from upstream Ids.java
 pnpm sync:image                        # Pull latest halOP container image
@@ -146,4 +142,4 @@ Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub A
 - OUIA attributes used for element identification (PatternFly testing convention)
 - halOP state shared between setup/teardown via `/tmp/dave-state.json`
 - ESLint with TypeScript + Playwright rules, Prettier for formatting
-- Test grouping via Playwright tags — constants in `src/tags.ts`, applied via `tag` option on `test.describe()`. Tests can belong to multiple groups. Filter with `--grep @tag` or use group-specific pnpm scripts.
+- Test grouping via Playwright tags — constants in `src/tags.ts`, applied via `tag` option on `test.describe()`. Tests can belong to multiple groups. Filter with `pnpm test:tag` or `--grep @tag`.

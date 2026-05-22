@@ -4,7 +4,7 @@ import { Tag } from "../../tags.js";
 
 test.use({ specPath: "model-browser/model-browser" });
 
-test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER] }, () => {
+test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER.value] }, () => {
   test("shows tree and root resource", async ({ modelBrowserPage }) => {
     await expect(modelBrowserPage.tree).toBeVisible();
     for (const resource of TOP_LEVEL_RESOURCES) {

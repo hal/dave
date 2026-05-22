@@ -412,20 +412,16 @@ test.describe("Runtime", { tag: [Tag.SMOKE] }, () => {
 
 ### Step 4: Add a Tag (Optional)
 
-If this is a new test group, add a constant to `src/tags.ts`:
+If this is a new test group, add an entry to `src/tags.ts`:
 
 ```typescript
 export const Tag = {
   // ...existing tags...
-  RUNTIME: "@runtime",
-} as const;
+  RUNTIME: { value: "@runtime", description: "Runtime feature" },
+} as const satisfies Record<string, TagDefinition>;
 ```
 
-And optionally add a pnpm script to `package.json`:
-
-```json
-"test:runtime": "playwright test --grep @runtime"
-```
+That's it — `pnpm test:tag runtime` works automatically. No other files need changes.
 
 ## Debugging Tests
 

@@ -2,18 +2,14 @@
 
 ## Commands
 
-| Command                   | Description                           |
-| ------------------------- | ------------------------------------- |
-| `pnpm test`               | Run all tests headless (all browsers) |
-| `pnpm test:headed`        | Run with a visible browser window     |
-| `pnpm test:ui`            | Playwright interactive UI mode        |
-| `pnpm test:debug`         | Debug mode with Playwright inspector  |
-| `pnpm test:smoke`         | Run only `@smoke` tests               |
-| `pnpm test:navigation`    | Run only `@navigation` tests          |
-| `pnpm test:dashboard`     | Run only `@dashboard` tests           |
-| `pnpm test:configuration` | Run only `@configuration` tests       |
-| `pnpm test:tasks`         | Run only `@tasks` tests               |
-| `pnpm test:model-browser` | Run only `@model-browser` tests       |
+| Command                          | Description                           |
+| -------------------------------- | ------------------------------------- |
+| `pnpm test`                      | Run all tests headless (all browsers) |
+| `pnpm test:headed`               | Run with a visible browser window     |
+| `pnpm test:ui`                   | Playwright interactive UI mode        |
+| `pnpm test:debug`                | Debug mode with Playwright inspector  |
+| `pnpm test:tag <name> [name...]` | Run tests for one or more tags        |
+| `pnpm test:tag`                  | List all available tags               |
 
 ## Filtering Tests
 
@@ -29,20 +25,12 @@ pnpm test -- --project=webkit
 
 ## Test Groups
 
-Tests are tagged by feature area using [Playwright's tag API](https://playwright.dev/docs/test-annotations#tag-tests). Tags are defined as typed constants in [`src/tags.ts`](https://github.com/hal/dave/blob/main/src/tags.ts).
-
-| Tag              | Group                 | Test Files                             |
-| ---------------- | --------------------- | -------------------------------------- |
-| `@smoke`         | Smoke tests           | `app-loads`, `dashboard`, `navigation` |
-| `@navigation`    | Navigation feature    | `navigation`                           |
-| `@dashboard`     | Dashboard feature     | `dashboard`                            |
-| `@configuration` | Configuration feature | `configuration`                        |
-| `@tasks`         | Tasks feature         | `tasks`                                |
-| `@model-browser` | Model browser feature | `model-browser`                        |
+Tests are tagged by feature area using [Playwright's tag API](https://playwright.dev/docs/test-annotations#tag-tests). Tags are defined as typed constants in [`src/tags.ts`](https://github.com/hal/dave/blob/main/src/tags.ts) — each tag has a value and a description. Run `pnpm test:tag` with no arguments to list all available tags.
 
 Tests can belong to multiple groups. Combine groups with OR logic:
 
 ```bash
+pnpm test:tag smoke model-browser
 pnpm test -- --grep "@smoke|@model-browser"
 ```
 

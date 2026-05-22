@@ -4,7 +4,7 @@ import { Tag } from "../../tags.js";
 
 test.use({ specPath: "configuration/configuration" });
 
-test.describe("Configuration", { tag: [Tag.CONFIGURATION] }, () => {
+test.describe("Configuration", { tag: [Tag.CONFIGURATION.value] }, () => {
   test("shows configuration heading", async ({ configurationPage }) => {
     await expect(configurationPage.heading).toBeVisible();
     await expect(configurationPage.heading).toHaveText("Configuration");

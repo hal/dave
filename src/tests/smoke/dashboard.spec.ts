@@ -3,7 +3,7 @@ import { Tag } from "../../tags.js";
 
 test.use({ specPath: "smoke/dashboard" });
 
-test.describe("Dashboard", { tag: [Tag.SMOKE, Tag.DASHBOARD] }, () => {
+test.describe("Dashboard", { tag: [Tag.SMOKE.value, Tag.DASHBOARD.value] }, () => {
   test("shows dashboard heading", async ({ dashboardPage }) => {
     await expect(dashboardPage.heading).toBeVisible();
   });

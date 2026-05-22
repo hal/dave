@@ -4,7 +4,7 @@ import { Tag } from "../../tags.js";
 
 test.use({ specPath: "tasks/tasks" });
 
-test.describe("Tasks", { tag: [Tag.TASKS] }, () => {
+test.describe("Tasks", { tag: [Tag.TASKS.value] }, () => {
   test("shows tasks heading", async ({ tasksPage }) => {
     await expect(tasksPage.heading).toBeVisible();
     await expect(tasksPage.heading).toHaveText("Tasks");

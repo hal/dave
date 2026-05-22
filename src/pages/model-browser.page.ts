@@ -34,6 +34,7 @@ export { TOP_LEVEL_RESOURCES };
 
 /** Model browser page object — tree navigation, resource details, tabs, and filtering. */
 export class ModelBrowserPage extends BasePage {
+  readonly main: Locator;
   readonly tree: Locator;
   readonly resourceHeading: Locator;
   readonly backButton: Locator;
@@ -47,8 +48,9 @@ export class ModelBrowserPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
+    this.main = page.locator(`#${MAIN_ID}`);
     this.tree = page.getByRole("tree");
-    this.resourceHeading = page.locator(`#${MAIN_ID}`).getByRole("heading", { level: 1 });
+    this.resourceHeading = this.main.getByRole("heading", { level: 1 });
     this.backButton = page.locator(ouiaSelector(MODEL_BROWSER_BACK_BTN));
     this.forwardButton = page.locator(ouiaSelector(MODEL_BROWSER_FORWARD_BTN));
     this.homeButton = page.locator(ouiaSelector(MODEL_BROWSER_HOME_BTN));
@@ -57,6 +59,75 @@ export class ModelBrowserPage extends BasePage {
     this.collapseButton = page.locator(ouiaSelector(MODEL_BROWSER_COLLAPSE_BTN));
     this.findResourceModal = page.locator(ouiaSelector(FIND_RESOURCE_MODAL));
     this.findResourceCancelButton = page.locator(ouiaSelector(FIND_RESOURCE_CANCEL_BTN));
+  }
+
+  // ------------------------------------------------------ child resources
+
+  noChildResources(): Locator {
+    return this.main.getByRole("heading", { name: "No child resources", level: 4 });
+  }
+
+  childResourceText(name: string): Locator {
+    return this.main.getByText(name, { exact: true });
+  }
+
+  addButton(): Locator {
+    return this.main.getByRole("button", { name: "Add", exact: true });
+  }
+
+  viewButton(name: string): Locator {
+    return this.main.locator(`li:has-text("${name}")`).getByRole("button", { name: "View", exact: true });
+  }
+
+  removeButton(name: string): Locator {
+    return this.main.locator(`li:has-text("${name}")`).getByRole("button", { name: "Remove", exact: true });
+  }
+
+  async addChildResource(fields: Record<string, string>): Promise<void> {
+    await this.addButton().click();
+    const modal = this.page.getByRole("dialog");
+    await modal.waitFor({ state: "visible" });
+    for (const [label, value] of Object.entries(fields)) {
+      await modal.getByRole("textbox", { name: label }).fill(value);
+    }
+    await modal.getByRole("button", { name: "Add", exact: true }).click();
+    await modal.waitFor({ state: "hidden" });
+  }
+
+  async removeChildResource(name: string): Promise<void> {
+    await this.removeButton(name).click();
+    const dialog = this.page.getByRole("dialog");
+    await dialog.waitFor({ state: "visible" });
+    await dialog.getByRole("button", { name: "Delete", exact: true }).click();
+    await dialog.waitFor({ state: "hidden" });
+  }
+
+  // ------------------------------------------------------ data tab editing
+
+  editButton(): Locator {
+    return this.tabPanel("Data").locator('[id^="edit-"]');
+  }
+
+  saveButton(): Locator {
+    return this.tabPanel("Data").getByRole("button", { name: "Save", exact: true });
+  }
+
+  cancelEditButton(): Locator {
+    return this.tabPanel("Data").getByRole("button", { name: "Cancel", exact: true });
+  }
+
+  dataAttributeInput(attrName: string): Locator {
+    return this.tabPanel("Data").getByRole("textbox", { name: attrName });
+  }
+
+  dataAttributeValue(attrName: string): Locator {
+    return this.tabPanel("Data").getByText(attrName).locator("..").locator("+ dd");
+  }
+
+  // ------------------------------------------------------ alerts
+
+  successAlert(): Locator {
+    return this.page.getByText("success alert:", { exact: false });
   }
 
   async navigate(): Promise<void> {
