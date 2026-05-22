@@ -6,7 +6,13 @@ import globals from "globals";
 
 export default tseslint.config(
   {
-    ignores: ["node_modules/", "test-results/", "playwright-report/"],
+    ignores: [
+      "node_modules/",
+      "test-results/",
+      "playwright-report/",
+      "docs/.vitepress/dist/",
+      "docs/.vitepress/cache/",
+    ],
   },
 
   js.configs.recommended,

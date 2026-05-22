@@ -60,13 +60,13 @@ flowchart LR
     style webkit fill:#f3e5f5,stroke:#9c27b0
 ```
 
-| Concept | Relationship |
-| --- | --- |
-| **Spec file** | Gets its own dedicated WildFly container — full isolation between specs |
-| **Worker** | Runs one spec file; owns one WildFly container for its lifetime |
-| **Browser project** | Each spec runs independently per browser, so the same spec gets a separate container in Chromium, Firefox, and WebKit |
-| **Parallelism** | Up to `workers` spec files run simultaneously per browser project (4 local, 2 CI) |
-| **Tests within a spec** | Run sequentially (`fullyParallel: false`), sharing that spec's WildFly container |
+| Concept                 | Relationship                                                                                                          |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Spec file**           | Gets its own dedicated WildFly container — full isolation between specs                                               |
+| **Worker**              | Runs one spec file; owns one WildFly container for its lifetime                                                       |
+| **Browser project**     | Each spec runs independently per browser, so the same spec gets a separate container in Chromium, Firefox, and WebKit |
+| **Parallelism**         | Up to `workers` spec files run simultaneously per browser project (4 local, 2 CI)                                     |
+| **Tests within a spec** | Run sequentially (`fullyParallel: false`), sharing that spec's WildFly container                                      |
 
 **Total WildFly containers** at peak = `min(workers, spec_count)` per browser project. With 10 spec files and 4 workers running Chromium, at most 4 containers run concurrently for Chromium; finished workers pick up the next spec file.
 

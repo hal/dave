@@ -2,4 +2,16 @@ allowBuilds:
   cpu-features: true
   esbuild: true
   protobufjs: true
+  simple-git-hooks: true
   ssh2: true
+
+# Known vulnerabilities in transitive dev dependencies (VitePress 1.x → vite 5.x → esbuild 0.21.x).
+# Both are moderate severity, dev-only, and only affect the local docs preview server.
+# No compatible fix exists until VitePress 2.0 ships with vite 6.x.
+# Re-evaluate when upgrading VitePress to 2.x.
+auditConfig:
+  ignoreGhsas:
+    # esbuild <=0.24.2: dev server request forgery
+    - GHSA-67mh-4wv8-2f99
+    # vite <=6.4.1: path traversal in optimized deps .map handling
+    - GHSA-4w7w-66w2-5vf9
