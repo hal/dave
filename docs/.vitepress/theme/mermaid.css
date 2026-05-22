@@ -1,0 +1,22 @@
+/* Prevent Mermaid diagrams from being cut off at the bottom */
+.mermaid {
+  text-align: center;
+  padding: 1rem 0 2rem;
+}
+
+.mermaid svg {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Match edge label background to page background so arrows are masked without a visible box */
+.mermaid .edgeLabel,
+.mermaid .edgeLabel p,
+.mermaid .labelBkg {
+  background-color: var(--vp-c-bg, #fff) !important;
+}
+
+.mermaid .edgeLabel rect {
+  fill: var(--vp-c-bg, #fff) !important;
+}
+

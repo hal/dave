@@ -4,25 +4,12 @@
 
 ```mermaid
 flowchart TB
-    subgraph global["Global (once per test run)"]
-        gs["global-setup.ts"]
-        gt["global-teardown.ts"]
-    end
-
-    subgraph worker["Worker (one per spec file x browser)"]
-        wf["wildfly.fixture.ts — start WildFly container"]
-        pf["pages.fixture.ts — enable OUIA, navigate, create page objects"]
-        spec["spec file — test execution"]
-        wd["worker teardown — stop WildFly container"]
-    end
-
-    gs -->|"starts halOP container\nwrites /tmp/dave-state.json\nsets HALOP_URL"| worker
-    wf --> pf --> spec --> wd
-    worker --> gt
-    gt -->|"stops halOP container\ncleans state file"| done(( ))
-
-    style global fill:#e8f4fd,stroke:#2196f3
-    style worker fill:#fff3e0,stroke:#ff9800
+    gs["global-setup"] -->|start halOP| wf
+    wf["wildfly.fixture"] -->|start WildFly| pf["pages.fixture"]
+    pf -->|OUIA + navigate| spec["spec file"]
+    spec --> wd["teardown"]
+    wd -->|stop WildFly| gt["global-teardown"]
+    gt -->|stop halOP| done(( ))
 ```
 
 Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via a worker-scoped Playwright fixture backed by [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
@@ -36,29 +23,30 @@ The key relationship is: **one WildFly container per spec file per browser proje
 Playwright runs three browser projects (Chromium, Firefox, WebKit). For each project, spec files are distributed across workers. The WildFly fixture is worker-scoped, and each worker runs exactly one spec file:
 
 ```mermaid
-flowchart LR
-    subgraph chromium["Chromium"]
-        cw1["Worker 1\ndashboard.spec.ts"] --- cc1[/"dave_smoke_dashboard_chromium"/]
-        cw2["Worker 2\nnavigation.spec.ts"] --- cc2[/"dave_smoke_navigation_chromium"/]
-        cw3["Worker 3\nconfiguration.spec.ts"] --- cc3[/"dave_configuration_configuration_chromium"/]
-        cw4["Worker 4\nmodel-browser.spec.ts"] --- cc4[/"dave_model-browser_model-browser_chromium"/]
+flowchart TB
+    subgraph chromium["Chromium (Workers 1–4)"]
+        c1["dashboard.spec"] ~~~ c2["navigation.spec"]
+        c3["configuration.spec"] ~~~ c4["model-browser.spec"]
     end
 
-    subgraph firefox["Firefox"]
-        fw1["Worker 5\ndashboard.spec.ts"] --- fc1[/"dave_smoke_dashboard_firefox"/]
-        fw2["Worker 6\nnavigation.spec.ts"] --- fc2[/"dave_smoke_navigation_firefox"/]
-        fw3["..."] --- fc3[/"..."/]
+    subgraph firefox["Firefox (Workers 5–8)"]
+        f1["dashboard.spec"] ~~~ f2["navigation.spec"]
+        f3["configuration.spec"] ~~~ f4["model-browser.spec"]
     end
 
-    subgraph webkit["WebKit"]
-        ww1["Worker 9\ndashboard.spec.ts"] --- wc1[/"dave_smoke_dashboard_webkit"/]
-        ww2["..."] --- wc2[/"..."/]
+    subgraph webkit["WebKit (Workers 9–12)"]
+        w1["dashboard.spec"] ~~~ w2["navigation.spec"]
+        w3["configuration.spec"] ~~~ w4["model-browser.spec"]
     end
+
+    chromium ~~~ firefox ~~~ webkit
 
     style chromium fill:#e8f4fd,stroke:#2196f3
     style firefox fill:#fff3e0,stroke:#ff9800
     style webkit fill:#f3e5f5,stroke:#9c27b0
 ```
+
+Each worker runs one spec file with its own WildFly container.
 
 | Concept                 | Relationship                                                                                                          |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |

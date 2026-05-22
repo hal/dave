@@ -1,8 +1,8 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 
-export default withMermaid(
-  defineConfig({
+export default withMermaid({
+  ...defineConfig({
     title: "dave",
     description: "UI test suite for halOP — the WildFly management console",
     base: "/dave/",
@@ -67,4 +67,10 @@ export default withMermaid(
       },
     },
   }),
-);
+
+  mermaid: {
+    theme: "default",
+    flowchart: { useMaxWidth: true, rankSpacing: 80 },
+    sequence: { useMaxWidth: true },
+  },
+});

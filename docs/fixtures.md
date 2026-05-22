@@ -21,10 +21,10 @@ The fixture chain has four layers, each building on the previous one:
 
 ```mermaid
 flowchart TB
-    L1["Layer 1: Global Setup\nstarts halOP container\n(once for entire test run)"]
-    L2["Layer 2: Playwright Config\nsets base URL, browsers, worker count"]
-    L3["Layer 3: WildFly Fixture\nstarts one WildFly container per spec file\n(worker-scoped)"]
-    L4["Layer 4: Page Fixtures\ncreates page objects for each test\n(test-scoped)"]
+    L1["Global Setup\nstart halOP once"]
+    L2["Playwright Config\nURL, browsers, workers"]
+    L3["WildFly Fixture\ncontainer per spec"]
+    L4["Page Fixtures\npage objects per test"]
 
     L1 --> L2 --> L3 --> L4
 
@@ -171,52 +171,40 @@ test("shows dashboard heading", async ({ dashboardPage }) => {
 
 ```mermaid
 sequenceDiagram
-    participant GS as global-setup.ts
-    participant WF as wildfly.fixture.ts
-    participant PF as pages.fixture.ts
-    participant T as Test Function
-    participant GT as global-teardown.ts
+    participant GS as Global Setup
+    participant WF as WildFly Fixture
+    participant PF as Page Fixture
+    participant T as Test
 
-    Note over GS: 1. PROCESS START
+    Note over GS: Process start
     activate GS
-    GS->>GS: Remove stale dave_* containers
-    GS->>GS: Start halOP container on port 9090
-    GS->>GS: Set HALOP_URL=http://localhost:9090
+    GS->>GS: Start halOP, set HALOP_URL
     deactivate GS
 
-    Note over WF: 2. WORKER START (one per spec file x browser)
+    Note over WF: Worker start
     activate WF
-    WF->>WF: Read specPath: "smoke/dashboard"
-    WF->>WF: Derive name: "dave_smoke_dashboard_chromium"
-    WF->>WF: Start WildFly container (dynamic ports)
-    WF->>WF: Wait for healthcheck to pass
+    WF->>WF: Start WildFly container
 
-    loop For each test in the spec file
-        Note over PF: 3. TEST START
+    loop Each test in spec file
         activate PF
-        PF->>PF: Enable OUIA via addInitScript
-        PF->>PF: Navigate to /?connect=localhost:<mgmt-port>
-        PF->>PF: Wait for #hal-root-container
-        PF->>PF: Create DashboardPage(page)
+        PF->>PF: Enable OUIA, navigate
+        PF->>PF: Create page object
 
         activate T
-        Note over T: 4. Test runs with ready dashboardPage
+        Note over T: Test runs
         deactivate T
 
-        Note over PF: 5. TEST END
-        PF->>PF: Clean up page object and page
+        PF->>PF: Clean up
         deactivate PF
     end
 
-    Note over WF: 6. WORKER END
-    WF->>WF: Stop WildFly container
+    WF->>WF: Stop WildFly
     deactivate WF
 
-    Note over GT: 7. PROCESS END
-    activate GT
-    GT->>GT: Stop halOP container
-    GT->>GT: Remove /tmp/dave-state.json
-    deactivate GT
+    Note over GS: Process end
+    activate GS
+    GS->>GS: Stop halOP, clean up
+    deactivate GS
 ```
 
 ## Lazy Evaluation
@@ -252,10 +240,10 @@ Fixtures can depend on other fixtures. The chain in this project:
 ```mermaid
 flowchart TB
     pw["Playwright built-in: page"]
-    ouia["pages.fixture.ts: page (enhanced with OUIA)"]
-    wf["wildfly.fixture.ts: wildfly (depends on specPath)"]
-    dp["pages.fixture.ts: dashboardPage (depends on page + wildfly)"]
-    test["test function: receives dashboardPage"]
+    ouia["pages.fixture: page + OUIA"]
+    wf["wildfly.fixture: wildfly"]
+    dp["pages.fixture: dashboardPage"]
+    test["test function"]
 
     pw --> ouia --> dp
     wf --> dp --> test
