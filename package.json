@@ -63,7 +63,8 @@
       "eslint",
       "prettier --check"
     ],
-    "*.{json,md,yml,yaml}": "prettier --check"
+    "*.{json,md,yml,yaml}": "prettier --check",
+    ".prettierrc": "prettier --check"
   },
   "packageManager": "pnpm@11.1.3"
 }
