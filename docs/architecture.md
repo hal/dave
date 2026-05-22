@@ -2,6 +2,8 @@
 
 ## Test Lifecycle
 
+The test lifecycle is bookended by global setup and teardown. Global setup starts the shared halOP container once, then each Playwright worker starts its own WildFly container via a worker-scoped fixture. Page objects are created per test, and everything tears down in reverse order when tests complete.
+
 ```mermaid
 flowchart TB
     gs["global-setup"] -->|start halOP| wf
@@ -18,35 +20,45 @@ For a detailed walkthrough of the four fixture layers, see [Fixtures](./fixtures
 
 ## Parallelism and Container Instances
 
-The key relationship is: **one WildFly container per spec file per browser project**.
+The simple rule is: **each spec file gets its own WildFly container**. Two spec files never share a container, and tests within the same spec file always share one.
 
-Playwright runs three browser projects (Chromium, Firefox, WebKit). For each project, spec files are distributed across workers. The WildFly fixture is worker-scoped, and each worker runs exactly one spec file:
+This works because Playwright assigns each spec file to a **worker** (an OS process), and the WildFly container is created by a **worker-scoped fixture** — a Playwright mechanism that ties the container's lifetime to the worker. Since each worker runs exactly one spec file, the mapping is always 1:1:1:
+
+> **one worker = one spec file = one WildFly container**
+
+The _fixture_ is the code that starts and stops the container (defined in `wildfly.fixture.ts`). The _container_ is the actual Docker/Podman instance running WildFly. There's always exactly one container per fixture instance, so in practice the terms refer to the same thing — but "container" is what matters to test authors.
+
+Playwright runs three browser projects (Chromium, Firefox, WebKit). Each project runs every spec file independently, so the same spec gets a separate container in each browser:
 
 ```mermaid
 flowchart TB
-    subgraph chromium["Chromium (Workers 1–4)"]
-        c1["dashboard.spec"] ~~~ c2["navigation.spec"]
-        c3["configuration.spec"] ~~~ c4["model-browser.spec"]
+    subgraph chromium["Chromium"]
+        cw1["Worker 1"]
+        cs1["dashboard.spec"]
+        cc1["WildFly Container"]
+        ct1["Test 1 → Test 2 → ..."]
+        cw1 --> cs1 --> cc1 --> ct1
+
+        cw2["Worker 2"]
+        cs2["navigation.spec"]
+        cc2["WildFly Container"]
+        ct2["Test 1 → Test 2 → ..."]
+        cw2 --> cs2 --> cc2 --> ct2
     end
 
-    subgraph firefox["Firefox (Workers 5–8)"]
-        f1["dashboard.spec"] ~~~ f2["navigation.spec"]
-        f3["configuration.spec"] ~~~ f4["model-browser.spec"]
+    subgraph firefox["Firefox"]
+        fw1["Worker 3"]
+        fs1["dashboard.spec"]
+        fc1["WildFly Container"]
+        ft1["Test 1 → Test 2 → ..."]
+        fw1 --> fs1 --> fc1 --> ft1
     end
 
-    subgraph webkit["WebKit (Workers 9–12)"]
-        w1["dashboard.spec"] ~~~ w2["navigation.spec"]
-        w3["configuration.spec"] ~~~ w4["model-browser.spec"]
-    end
-
-    chromium ~~~ firefox ~~~ webkit
+    chromium ~~~ firefox
 
     style chromium fill:#e8f4fd,stroke:#2196f3
     style firefox fill:#fff3e0,stroke:#ff9800
-    style webkit fill:#f3e5f5,stroke:#9c27b0
 ```
-
-Each worker runs one spec file with its own WildFly container.
 
 | Concept                 | Relationship                                                                                                          |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
@@ -99,47 +111,22 @@ See [Sync](./sync.md) for details on keeping OUIA IDs up to date.
 
 ```
 dave/
-  global-setup.ts              # Start halOP before tests
-  global-teardown.ts           # Stop halOP after tests
-  playwright.config.ts         # Playwright configuration
-  scripts/
-    lib/
-      emit-ids.ts              # Shared TypeScript code generation for OUIA IDs
-      format.ts                # ANSI color helpers for CLI output
-      parse-ids.ts             # Shared Ids.java parsing logic
-      preflight.ts             # Pre-flight checks for required commands
-    sync-ci.ts                 # CI drift detection for OUIA IDs
-    sync-ouia.ts               # Generate OUIA ID constants from GitHub
-    sync-image.ts              # Pull halOP container image
-    sync-status.ts             # Check sync state and report verdict
+  global-setup.ts                    # Start halOP before tests
+  global-teardown.ts                 # Stop halOP after tests
+  playwright.config.ts               # Playwright configuration
+  scripts/                           # Sync scripts (OUIA IDs, container image)
   src/
     fixtures/
-      wildfly.fixture.ts       # WildFly container lifecycle (worker-scoped)
-      pages.fixture.ts         # OUIA enablement, navigation, page object registry
-    pages/
-      base.page.ts             # Base page object
-      configuration.page.ts    # Configuration page object
-      dashboard.page.ts        # Dashboard page object
-      model-browser.page.ts    # Model browser page object
-      navigation.page.ts       # Navigation page object
-      tasks.page.ts            # Tasks page object
+      wildfly.fixture.ts             # WildFly container lifecycle (worker-scoped)
+      pages.fixture.ts               # OUIA enablement, navigation, page object registry
+    pages/                           # Page objects (one per UI section)
     selectors/
-      ids.ts                   # Generated OUIA ID constants (do not edit)
-    tags.ts                    # Tag constants for test grouping
-    tests/
-      smoke/                   # Smoke tests
-        app-loads.spec.ts
-        dashboard.spec.ts
-        navigation.spec.ts
-      configuration/           # Configuration tests
-        configuration.spec.ts
-      model-browser/           # Model browser tests
-        model-browser.spec.ts
-      tasks/                   # Tasks tests
-        tasks.spec.ts
+      ids.ts                         # Generated OUIA ID constants (do not edit)
+    tags.ts                          # Tag constants for test grouping
+    tests/                           # Test specs organized by feature (smoke/, configuration/, ...)
     utils/
-      configure-testcontainers.ts  # Testcontainers config
-      container-runtime.ts         # Auto-detect Podman or Docker
-      ouia.ts                      # OUIA attribute selector helper
-      wildfly-container.ts         # WildFly container lifecycle
+      wildfly-container.ts           # WildFly container lifecycle
+      ouia.ts                        # OUIA attribute selector helper
+      container-runtime.ts           # Auto-detect Podman or Docker
+      configure-testcontainers.ts    # Testcontainers config
 ```

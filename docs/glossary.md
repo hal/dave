@@ -6,7 +6,7 @@ Key terms used throughout this project and in Playwright testing.
 
 ### Fixture
 
-A **fixture** is Playwright's dependency injection mechanism. It provides objects to your tests — you list what you need in the test function's parameter list, and Playwright creates, sets up, and tears down those objects automatically.
+A **fixture** is [Playwright's dependency injection mechanism](https://playwright.dev/docs/test-fixtures). It provides objects to your tests — you list what you need in the test function's parameter list, and Playwright creates, sets up, and tears down those objects automatically.
 
 ```typescript
 // { page } is a built-in fixture — Playwright creates a fresh browser page for each test
@@ -15,7 +15,7 @@ test("example", async ({ page }) => {
 });
 ```
 
-Fixtures can be **built-in** (provided by Playwright) or **custom** (defined by you). This project defines custom fixtures for WildFly containers and page objects.
+Fixtures can be **built-in** (provided by Playwright) or **custom** (defined by you). This project defines custom fixtures for [WildFly](https://www.wildfly.org/) containers and page objects.
 
 ### Built-in Fixtures
 
@@ -28,7 +28,7 @@ Playwright provides several fixtures out of the box. The ones relevant to this p
 | `browserName` | The current browser: `"chromium"`, `"firefox"`, etc. |
 | `request`     | An API request context for making HTTP calls         |
 
-See the [Playwright docs](https://playwright.dev/docs/test-fixtures#built-in-fixtures) for the full list.
+See the [Playwright fixture docs](https://playwright.dev/docs/test-fixtures#built-in-fixtures) for the full list.
 
 ### Fixture Scope
 
@@ -67,7 +67,7 @@ test.use({ specPath: "smoke/navigation" });
 
 ### Locator
 
-A Playwright object that represents a way to find element(s) on the page. Locators are **lazy** — they don't search the DOM until you perform an action or assertion. They auto-wait and auto-retry.
+A [Playwright object](https://playwright.dev/docs/locators) that represents a way to find element(s) on the page. Locators are **lazy** — they don't search the DOM until you perform an action or assertion. They auto-wait and auto-retry.
 
 ```typescript
 // These are all locators — no DOM query happens yet
@@ -109,22 +109,22 @@ All page objects extend `BasePage` and receive a `Page` in their constructor.
 
 ### OUIA
 
-**Open UI Automation** — a convention from the PatternFly component library. Components render `data-ouia-component-id` attributes in the DOM, providing stable selectors for testing. This project uses OUIA IDs as the primary way to locate elements.
+**[Open UI Automation](https://ouia.readthedocs.io/)** — a convention from the [PatternFly](https://www.patternfly.org/) component library. Components render `data-ouia-component-id` attributes in the DOM, providing stable selectors for testing following [PatternFly's OUIA implementation](https://www.patternfly.org/developer-resources/open-ui-automation). The Java-based UI in halOP uses [PatternFly Java](https://github.com/patternfly-java/patternfly-java) which implements the same convention. This project uses OUIA IDs as the primary way to locate elements.
 
 ### halOP
 
-The WildFly management console (an SPA) that this test suite exercises. It runs as a container and connects to WildFly instances via their management API.
+The [WildFly management console](https://github.com/hal/foundation) (an SPA) that this test suite exercises. It runs as a container and connects to WildFly instances via their management API.
 
 ### WildFly Container
 
-A Docker/Podman container running a WildFly application server. Each test file gets its own isolated WildFly instance, started via the `testcontainers` library. The container exposes two ports:
+A Docker/Podman container running a [WildFly](https://www.wildfly.org/) application server. Each test file gets its own isolated WildFly instance, started via the `testcontainers` library. The container exposes two ports:
 
 - **HTTP** (8080) — for deployment testing
 - **Management** (9990) — for the management API that halOP connects to
 
 ### testcontainers
 
-A library that manages Docker/Podman containers programmatically from test code. This project uses it to start both halOP and WildFly containers.
+A [library](https://node.testcontainers.org/) that manages Docker/Podman containers programmatically from test code. This project uses it to start both halOP and WildFly containers.
 
 ### Global Setup / Teardown
 
