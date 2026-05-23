@@ -141,6 +141,8 @@ Available fixtures:
 | `modelBrowserPage`  | `ModelBrowserPage`  | test   | Model Browser section |
 | `tasksPage`         | `TasksPage`         | test   | Tasks section         |
 
+In addition to these, Playwright's [built-in fixtures](https://playwright.dev/docs/api/class-fixtures) are always available: `context` (the `BrowserContext`), `browser` (the `Browser` instance), `browserName` (`"chromium"`, `"firefox"`, or `"webkit"`), and `request` (an `APIRequestContext` for direct HTTP calls). These are rarely needed since `page` covers most cases.
+
 ### Importing from `wildfly.fixture.ts` (simple tests)
 
 For tests that don't need page objects (e.g., just checking halOP loads):
