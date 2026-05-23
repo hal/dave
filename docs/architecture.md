@@ -14,8 +14,9 @@ flowchart TB
     gt -->|stop halOP| done(( ))
 ```
 
-Spec files run **in parallel
-** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential. Each test file gets its own isolated WildFly container per browser project via a worker-scoped Playwright fixture backed by [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
+Spec files run **in parallel** across multiple workers (4 locally, 2 in CI). Tests within a spec file are sequential.
+Each test file gets its own isolated WildFly container per browser project via a worker-scoped Playwright fixture
+backed by [testcontainers](https://node.testcontainers.org/). Tests run in Chromium, Firefox, and WebKit.
 
 For a detailed walkthrough of the four fixture layers, see [Fixtures](./fixtures.md).
 
