@@ -22,19 +22,23 @@ For a detailed walkthrough of the four fixture layers, see [Fixtures](./fixtures
 
 ## Parallelism and Container Instances
 
-The simple rule is: **each spec file gets its own WildFly container
-**. Two spec files never share a container, and tests within the same spec file always share one.
+The simple rule is:
+**each spec file gets its own WildFly container**. Two spec files never share a container,
+and tests within the same spec file always share one.
 
-This works because Playwright assigns each spec file to a **worker** (an OS process), and the WildFly container is created by a
-**worker-scoped fixture
-** — a Playwright mechanism that ties the container's lifetime to the worker. Since each worker runs exactly one spec file, the mapping is always 1:1:1:
+This works because Playwright assigns each spec file to a **worker** (an OS process),
+and the WildFly container is created by a **worker-scoped fixture** — a Playwright mechanism that ties the container's
+lifetime to the worker. Since each worker runs exactly one spec file, the mapping is always 1:1:1:
 
 > **one worker = one spec file = one WildFly container**
 
-The _fixture_ is the code that starts and stops the container (defined in `wildfly.fixture.ts`). The
-_container_ is the actual Docker/Podman instance running WildFly. There's always exactly one container per fixture instance, so in practice the terms refer to the same thing — but "container" is what matters to test authors.
+The _fixture_ is the code that starts and stops the container (defined in `wildfly.fixture.ts`).
+The _container_ is the actual Docker/Podman instance running WildFly.
+There's always exactly one container per fixture instance,
+so in practice the terms refer to the same thing — but "container" is what matters to test authors.
 
-Playwright runs three browser projects (Chromium, Firefox, WebKit). Each project runs every spec file independently, so the same spec gets a separate container in each browser:
+Playwright runs three browser projects (Chromium, Firefox, WebKit). Each project runs every spec file independently,
+so the same spec gets a separate container in each browser:
 
 ```mermaid
 flowchart TB
