@@ -12,6 +12,11 @@
       "name": "hal-explore",
       "path": "skills/hal-explore/SKILL.md",
       "description": "Analyze halOP test coverage gaps and explore the UI to propose new test scenarios"
+    },
+    {
+      "name": "hal-implement",
+      "path": "skills/hal-implement/SKILL.md",
+      "description": "Implement new halOP tests interactively with propose-approve-implement loop"
     }
   ]
 }
