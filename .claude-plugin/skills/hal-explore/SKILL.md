@@ -232,3 +232,84 @@ Based on the gap analysis:
 3. Which new page objects are needed
 4. Which OUIA IDs are available vs. need to be added upstream
 ```
+
+## Phase 2: Browser-Driven Exploration
+
+Requires the dev environment to be running (`/hal-dev-env start`).
+
+### Step 1: Navigate and Capture Snapshots
+
+For each halOP feature identified in Phase 1 (especially those with gaps), navigate to the feature in the browser and capture an accessibility tree snapshot:
+
+1. Navigate to halOP with WildFly connected:
+
+```
+navigate_page → http://localhost:19090/?connect=http://localhost:19990
+```
+
+2. Wait for the application to load:
+
+```
+wait_for → ["Dashboard"]
+```
+
+3. Take a snapshot to get the current page structure:
+
+```
+take_snapshot
+```
+
+4. Navigate to each feature area using sidebar navigation:
+   - Dashboard → click the Dashboard nav link
+   - Configuration → click Configuration, then explore sub-sections
+   - Runtime → click Runtime
+   - Deployments → click Deployments
+   - Management model → click Management model
+   - Tasks → click Tasks (quick-start link)
+
+5. For each feature area, take a snapshot and identify:
+   - Available OUIA component IDs (`data-ouia-component-id` attributes)
+   - Interactive elements (buttons, links, inputs, selects)
+   - Data tables and their columns
+   - Form fields and their labels
+   - Tree structures and their nodes
+
+### Step 2: Interactive Flow Exploration
+
+For features with FULL GAP or NEEDS TESTS status from Phase 1, perform deeper exploration:
+
+1. **Configuration features**: Navigate into each configuration sub-section (Subsystems, Interfaces, Socket Bindings, Paths, System Properties). For each:
+   - Take snapshot of the finder/column view
+   - Click into a resource to see the detail view
+   - Identify form fields and their OUIA IDs
+   - Note which fields are editable vs. read-only
+
+2. **Runtime features**: Navigate to Runtime section:
+   - Take snapshot of server status view
+   - Explore subsystem runtime views (if available)
+   - Identify monitoring/metrics displays
+
+3. **Deployment features**: Navigate to Deployments:
+   - Take snapshot of deployment list
+   - Identify upload/deploy actions
+   - Note OUIA IDs on deployment cards/table
+
+4. **Endpoint features**: Look for endpoint-related UI:
+   - REST endpoints display
+   - Endpoint details/forms
+
+### Step 3: Selector Availability Check
+
+For each explored feature, cross-reference discovered UI elements with available OUIA IDs in `src/selectors/ids.ts`:
+
+```bash
+echo "=== Selector Availability ==="
+echo "| Feature | UI Element | OUIA ID in ids.ts | Status |"
+echo "|---------|-----------|-------------------|--------|"
+```
+
+For each element found in snapshots:
+
+- Check if an OUIA ID constant exists in `src/selectors/ids.ts`
+- If yes, the element can be targeted with `ouiaSelector()`
+- If no, note it as "NEEDS OUIA ID" — may require upstream hal/foundation change
