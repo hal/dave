@@ -1,0 +1,12 @@
+{
+  "name": "hal",
+  "version": "0.1.0",
+  "description": "Skills for developing and testing halOP — the WildFly management console",
+  "skills": [
+    {
+      "name": "hal-dev-env",
+      "path": "skills/hal-dev-env/SKILL.md",
+      "description": "Start and manage a local WildFly + halOP dev environment"
+    }
+  ]
+}
