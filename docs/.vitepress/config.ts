@@ -46,6 +46,7 @@ export default withMermaid({
           text: "Contributing",
           items: [
             { text: "Writing Tests", link: "/writing-tests" },
+            { text: "Skills", link: "/skills" },
             { text: "Sync", link: "/sync" },
             { text: "CI/CD", link: "/ci-cd" },
           ],
