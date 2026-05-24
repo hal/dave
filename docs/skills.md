@@ -15,7 +15,7 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
 
 ## hal-dev-env
 
-**Trigger:** `/hal-dev-env`, "start dev environment", "start halop", "dev env status"
+**Trigger:** `/hal-dev-env`, "start dev environment", "start halop", "start wildfly for dev", "stop dev environment", "dev env status"
 
 Manages a containerized local development environment for halOP. Starts WildFly and halOP containers on dedicated ports (19990 and 19090) that don't conflict with the test suite's default ports.
 
