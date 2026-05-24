@@ -381,3 +381,28 @@ Order proposals by:
 
 Present all proposals in a single report. If the output is large, save to `docs/explore-report-<date>.md` for reference.
 ```
+
+## Error Handling
+
+Handle these error cases:
+
+1. **Foundation path not found** — Exit with clear message and instructions to set `foundationDir` in `.claude/hal-config.json`
+2. **Dev environment not running (Phase 2)** — Exit with message to run `/hal-dev-env start` first
+3. **No halOP features found** — Exit with message to verify foundation path points to correct repository
+4. **Chrome DevTools MCP not available (Phase 2)** — Fall back to Phase 1 only, note that browser exploration requires Chrome DevTools MCP
+5. **Browser navigation timeout** — Report which page failed to load and suggest checking dev environment status
+6. **Empty snapshot** — Report the page URL and suggest the page may not have rendered; retry once after a 3-second wait
+
+## Anti-Patterns
+
+**Never:**
+
+- Write or modify test files (this skill only proposes — hal-implement writes code)
+- Write or modify page objects (same — hal-implement writes code)
+- Start or stop containers (that is hal-dev-env's responsibility)
+- Modify halOP source code or OUIA IDs (those changes happen upstream in hal/foundation)
+- Cache or persist gap analysis results between invocations (always scan fresh)
+- Skip Phase 1 when running `explore` argument (always run gap analysis first)
+- Propose tests without specifying DMR setup/teardown when server state is needed
+- Propose tests using CSS selectors when OUIA IDs are available
+- Propose tests that depend on specific WildFly configuration not set up by DMR
