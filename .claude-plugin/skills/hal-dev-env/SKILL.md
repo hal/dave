@@ -228,7 +228,7 @@ if [ -n "$WILDFLY_RUNNING" ] && [ -n "$HALOP_RUNNING" ]; then
   echo ""
   echo "halOP:    http://localhost:19090"
   echo "WildFly:  http://localhost:19990/management"
-  echo "Console:  http://localhost:19090/?connect=http://localhost:19090"
+  echo "Console:  http://localhost:19090/?connect=http://localhost:19990"
 elif [ -n "$WILDFLY_RUNNING" ]; then
   echo "⚠ Partial: Only WildFly running"
   echo "WildFly:  http://localhost:19990/management"
