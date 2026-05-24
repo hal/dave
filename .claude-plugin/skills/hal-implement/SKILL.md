@@ -106,7 +106,7 @@ Page objects live in `src/pages/` and extend `BasePage` from `src/pages/base.pag
 
 ```typescript
 import type { Locator, Page } from "@playwright/test";
-import { SOME_ID } from "../selectors/ids.js";
+import { MAIN_ID, NAV_EXAMPLE } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
@@ -189,7 +189,7 @@ test.describe("<Feature Name>", { tag: [Tag.FEATURE.value] }, () => {
 
 **Rules:**
 
-- Import `test` and `expect` from `../../fixtures/pages.fixture.js` (for tests that need WildFly)
+- Import `test` and `expect` from `../../fixtures/pages.fixture.js` (for tests using page objects)
 - Import from `../../fixtures/wildfly.fixture.js` only for tests that don't need page objects
 - Set `specPath` via `test.use()` — this determines the WildFly container name
 - Wrap tests in `test.describe()` with appropriate tags
