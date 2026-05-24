@@ -576,3 +576,33 @@ When the session ends, present:
 
 - <element> in <feature> needs OUIA ID → run /hal-ouia
 ```
+
+## Error Handling
+
+Handle these error cases:
+
+1. **Foundation path not found** — Exit with clear message and instructions to set `foundationDir` in `.claude/hal-config.json`
+2. **Dev environment not running** — Exit with message to run `/hal-dev-env start` first
+3. **No halOP features found for target** — Report the searched path and suggest checking the feature name
+4. **Chrome DevTools MCP not available** — Fall back to code-only reconnaissance (skip browser snapshot steps), warn that selectors may be less accurate
+5. **Browser navigation timeout** — Report which page failed to load and suggest checking dev environment status
+6. **Empty snapshot** — Report the page URL and suggest the page may not have rendered; retry once after a 3-second wait
+7. **Test failure after 3 retries** — Report the full error to the user, show the failing test code, and ask how to proceed (fix, skip, or stop)
+8. **Lint/format failure** — Show the error, fix automatically if possible, otherwise report to user
+
+## Anti-Patterns
+
+**Never:**
+
+- Write code without user approval of the proposal (Phase 2 → approval → Phase 3)
+- Create page objects that don't extend `BasePage`
+- Use CSS class selectors when OUIA IDs or role selectors are available
+- Import from `@playwright/test` in spec files (import from fixture files instead)
+- Skip fixture registration when creating a new page object
+- Hardcode WildFly URLs in page objects or tests (use `wildfly.managementUrl`)
+- Create tests that depend on specific WildFly configuration not set up by DMR
+- Skip formatting and linting before committing
+- Leave test resources uncleaned after tests (always add DMR teardown)
+- Propose tests for features that aren't visible in the running console
+- Modify halOP source code or OUIA IDs (those changes happen via `/hal-ouia`)
+- Bundle multiple unrelated test scenarios in one proposal
