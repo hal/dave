@@ -496,3 +496,83 @@ pnpm lint:fix
 ````
 
 Fix any issues reported by ESLint or Prettier before proceeding.
+
+## Phase 4: Verify
+
+Run the newly created test to verify it passes.
+
+### Step 1: Run the Test
+
+```bash
+pnpm test -- src/tests/<category>/<name>.spec.ts --project=chromium
+```
+
+### Step 2: Evaluate Results
+
+**If the test passes:**
+
+- Report success to the user
+- Show the test output summary
+- Proceed to Phase 5
+
+**If the test fails:**
+
+- Read the error output carefully
+- Identify whether the failure is in:
+  - **Selector** — element not found → take a new browser snapshot, check the actual DOM
+  - **Assertion** — value mismatch → check expected vs. actual, adjust assertion or test logic
+  - **DMR** — setup/teardown failure → verify the management model address is correct
+  - **Timeout** — page didn't load → check navigation steps, add explicit waits
+- Fix the issue in the relevant file (page object, spec, or fixture)
+- Re-run the test
+- Maximum 3 fix-and-retry attempts. If still failing after 3 attempts, report the failure to the user with the error details and ask how to proceed.
+
+### Step 3: Commit Passing Test
+
+After the test passes:
+
+```bash
+pnpm format
+pnpm lint:fix
+git add src/pages/<name>.page.ts src/tests/<category>/<name>.spec.ts src/fixtures/pages.fixture.ts src/tags.ts
+git commit -m "test: add <feature> <scenario> test"
+```
+
+Only stage files that were actually created or modified.
+
+## Phase 5: Iterate
+
+After a test is committed, propose the next test case.
+
+### Iteration Loop
+
+1. **Same feature** — if there are more scenarios to test for the current feature:
+   - Skip Phase 1 (reconnaissance already done)
+   - Go to Phase 2 (propose next test case)
+
+2. **New feature** — if the user wants to move to a different feature:
+   - Go to Phase 1 (new reconnaissance)
+
+3. **Stop** — if the user says stop, end the session with a summary.
+
+### Session Summary
+
+When the session ends, present:
+
+```markdown
+## Implementation Summary
+
+**Tests created:** <count>
+**Files created/modified:**
+
+- `src/pages/<name>.page.ts` — NEW
+- `src/tests/<category>/<name>.spec.ts` — NEW
+- `src/fixtures/pages.fixture.ts` — MODIFIED
+- `src/tags.ts` — MODIFIED (if new tags added)
+
+**Test results:** All passing ✓
+
+**OUIA gaps identified:** (if any)
+
+- <element> in <feature> needs OUIA ID → run /hal-ouia
+```
