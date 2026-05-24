@@ -256,3 +256,94 @@ Selector priority order:
 4. **CSS selectors** — `page.locator(".css-class")` only as a last resort
 
 Check `src/selectors/ids.ts` for available OUIA ID constants before writing selectors.
+
+## Phase 1: Reconnaissance
+
+Before proposing any test, gather information about the target feature.
+
+### Step 1: Identify the Target
+
+Determine what feature to test based on the user's input:
+
+- **Feature name** → map to halOP source directory (e.g., "deployment" → `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/deployment/`)
+- **hal-explore gap** → use the gap report to identify the feature directory
+- **halOP source path** → use directly
+- **No input** → ask the user what feature to test via `AskUserQuestion`
+
+### Step 2: Read halOP Source
+
+Scan the feature directory in halOP to understand the UI structure:
+
+```bash
+FEATURE_DIR="$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/<feature>"
+
+echo "=== Feature Source Files ==="
+find "$FEATURE_DIR" -name "*.java" -type f | sort
+
+echo ""
+echo "=== Key Classes ==="
+grep -l "Page\|Column\|Form\|Table\|Modal" "$FEATURE_DIR"/*.java 2>/dev/null
+
+echo ""
+echo "=== OUIA IDs Used ==="
+grep -rh "Ids\." "$FEATURE_DIR"/ | grep -oP 'Ids\.\w+' | sort -u
+```
+
+Read the key Java files to understand:
+
+- What pages and views exist
+- What forms, tables, and interactive elements are present
+- What OUIA IDs are applied to elements
+- What management model resources are displayed
+
+### Step 3: Check Existing Dave Coverage
+
+Check what tests and page objects already exist for this feature:
+
+```bash
+echo "=== Existing Spec Files ==="
+find src/tests -name "*<feature>*" -type f 2>/dev/null
+
+echo ""
+echo "=== Existing Page Objects ==="
+find src/pages -name "*<feature>*" -type f 2>/dev/null
+
+echo ""
+echo "=== OUIA IDs Available ==="
+grep -i "<feature>" src/selectors/ids.ts 2>/dev/null
+```
+
+### Step 4: Browser Reconnaissance
+
+Navigate to the feature in the running halOP console to observe the actual UI:
+
+1. Navigate to halOP:
+
+```
+navigate_page → http://localhost:19090/?connect=http://localhost:19990
+```
+
+2. Wait for the application to load:
+
+```
+wait_for → ["Dashboard"]
+```
+
+3. Navigate to the target feature area using sidebar navigation or direct URL
+
+4. Take a snapshot to capture the accessibility tree:
+
+```
+take_snapshot
+```
+
+5. Identify from the snapshot:
+   - Available `data-ouia-component-id` attributes
+   - Interactive elements (buttons, links, inputs, selects, trees)
+   - Data tables and their columns
+   - Form fields and their labels
+   - Navigation structure within the feature
+
+6. Cross-reference discovered elements with OUIA IDs in `src/selectors/ids.ts`:
+   - Elements with OUIA IDs → use `ouiaSelector()`
+   - Elements without OUIA IDs → use role/text selectors, note for potential `hal-ouia` work
