@@ -433,6 +433,66 @@ After presenting the proposal, ask the user:
 
 Wait for the user's response. Do NOT proceed to implementation without explicit approval.
 
-```
+````
 
-```
+## Phase 3: Implement
+
+After the user approves a proposal, implement the test case. Follow these steps in order.
+
+### Step 1: Create or Update Page Object
+
+If the proposal specifies a NEW page object:
+
+1. Create `src/pages/<name>.page.ts`
+2. Follow the Page Object Pattern from the Dave Convention Reference exactly
+3. Import `BasePage` and extend it
+4. Declare all locators as `readonly` properties
+5. Add `navigate()` method if the page needs explicit navigation
+6. Add action methods as proposed
+
+If the proposal specifies EXTEND:
+
+1. Read the existing page object first
+2. Add new locators and methods without modifying existing ones
+3. Maintain the same code style as the existing file
+
+### Step 2: Register Fixture (new page objects only)
+
+If a new page object was created, update `src/fixtures/pages.fixture.ts`:
+
+1. Read the entire file first to understand the current structure
+2. Add the import at the top with existing imports (alphabetical order)
+3. Add the property to the `PageFixtures` interface (alphabetical order)
+4. Add the fixture definition in the `test.extend<PageFixtures>()` call
+
+### Step 3: Add Tag (if needed)
+
+If the proposal uses a new tag not yet in `src/tags.ts`:
+
+1. Read `src/tags.ts` first
+2. Add the new tag constant in alphabetical order within the `Tag` object
+3. Follow the Tag Pattern from the Dave Convention Reference
+
+### Step 4: Create Spec File
+
+Create the spec file at `src/tests/<category>/<name>.spec.ts`:
+
+1. Follow the Spec File Pattern from the Dave Convention Reference exactly
+2. Import `test` and `expect` from the correct fixture file
+3. Import `Tag` from `../../tags.js`
+4. Import DMR utilities if setup/teardown is needed
+5. Set `specPath` via `test.use()`
+6. Wrap tests in `test.describe()` with tags
+7. Use `test.describe.serial()` for ordered test sequences (CRUD)
+8. Implement each test case as proposed
+
+### Step 5: Format and Lint
+
+After writing all files, run formatting and linting:
+
+```bash
+pnpm format
+pnpm lint:fix
+````
+
+Fix any issues reported by ESLint or Prettier before proceeding.
