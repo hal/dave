@@ -7,6 +7,11 @@
       "name": "hal-dev-env",
       "path": "skills/hal-dev-env/SKILL.md",
       "description": "Start and manage a local WildFly + halOP dev environment"
+    },
+    {
+      "name": "hal-explore",
+      "path": "skills/hal-explore/SKILL.md",
+      "description": "Analyze halOP test coverage gaps and explore the UI to propose new test scenarios"
     }
   ]
 }
