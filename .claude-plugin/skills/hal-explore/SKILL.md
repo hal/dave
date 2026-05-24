@@ -20,10 +20,10 @@ This skill uses the following pre-allowed tools:
 
 Browser exploration (Phase 2) uses Chrome DevTools MCP tools:
 
-- **mcp\_\_plugin_chrome-devtools-mcp_chrome-devtools\_\_navigate_page** — Navigate to halOP pages
-- **mcp\_\_plugin_chrome-devtools-mcp_chrome-devtools\_\_take_snapshot** — Capture a11y tree snapshots
-- **mcp\_\_plugin_chrome-devtools-mcp_chrome-devtools\_\_click** — Interact with UI elements
-- **mcp\_\_plugin_chrome-devtools-mcp_chrome-devtools\_\_take_screenshot** — Capture visual state
+- `mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page` — Navigate to halOP pages
+- `mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot` — Capture a11y tree snapshots
+- `mcp__plugin_chrome-devtools-mcp_chrome-devtools__click` — Interact with UI elements
+- `mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot` — Capture visual state
 
 ## Arguments
 
