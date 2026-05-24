@@ -23,7 +23,7 @@ pnpm test
 
 ## Documentation
 
-Full documentation is available at **[hal.github.io/dave](https://hal.github.io/dave/)** — including architecture details, fixture system docs, a contributor guide for writing tests, and CI/CD setup.
+Full documentation is available at **[hal.github.io/dave](https://hal.github.io/dave/)** — including architecture details, fixture system docs, a contributor guide for writing tests, CI/CD setup, and [Claude Code skills](https://hal.github.io/dave/skills) for AI-assisted test development.
 
 ## Reports
 
