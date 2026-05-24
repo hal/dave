@@ -43,3 +43,50 @@ DAVE_DMR_UTILS      = src/utils/dmr.ts
 DAVE_FIXTURE_FILE   = src/fixtures/pages.fixture.ts
 CONFIG_FILE         = .claude/hal-config.json
 ```
+
+## Foundation Path Resolution
+
+The skill requires the path to the `hal/foundation` repository. Uses the same resolution logic as hal-dev-env:
+
+1. Check if `.claude/hal-config.json` exists and has `foundationDir`
+2. Check if `../foundation` exists relative to dave root
+3. Prompt user via `AskUserQuestion`: "Enter the absolute path to the hal/foundation repository:"
+4. Validate that `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/` exists
+5. Save valid path to `.claude/hal-config.json`
+
+```bash
+CONFIG_FILE=".claude/hal-config.json"
+if [ -f "$CONFIG_FILE" ]; then
+  FOUNDATION_DIR=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('foundationDir', ''))" 2>/dev/null)
+fi
+
+if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
+  if [ -d "../foundation" ]; then
+    FOUNDATION_DIR="../foundation"
+  fi
+fi
+
+if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/" ]; then
+  echo "ERROR: Cannot locate hal/foundation repository."
+  echo "Run /hal-dev-env first, or set foundationDir in .claude/hal-config.json"
+  exit 1
+fi
+```
+
+## Dev Environment Check (Phase 2 only)
+
+Phase 2 (browser exploration) requires the dev environment to be running. Check before proceeding:
+
+```bash
+if ! curl -sf http://localhost:19090 >/dev/null 2>&1; then
+  echo "ERROR: halOP is not running on port 19090."
+  echo "Run /hal-dev-env start first."
+  exit 1
+fi
+
+if ! curl -sf http://localhost:19990/management >/dev/null 2>&1; then
+  echo "ERROR: WildFly is not running on port 19990."
+  echo "Run /hal-dev-env start first."
+  exit 1
+fi
+```
