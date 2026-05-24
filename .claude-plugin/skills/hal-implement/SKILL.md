@@ -347,3 +347,92 @@ take_snapshot
 6. Cross-reference discovered elements with OUIA IDs in `src/selectors/ids.ts`:
    - Elements with OUIA IDs → use `ouiaSelector()`
    - Elements without OUIA IDs → use role/text selectors, note for potential `hal-ouia` work
+
+## Phase 2: Propose Test Case
+
+After reconnaissance, propose a concrete test case to the user for approval.
+
+### Proposal Format
+
+Present each proposal in this format:
+
+```markdown
+## Proposed Test: <feature> / <scenario>
+
+**Category:** <test directory name, e.g., "configuration", "runtime", "deployment">
+**Tags:** [Tag.<TAG>.value, ...]
+**Spec path:** <category>/<name>
+
+### Page Object
+
+**Status:** NEW — `src/pages/<name>.page.ts` | EXTEND — `src/pages/<existing>.page.ts`
+
+Locators:
+
+- `heading` → `page.locator('#hal-main').getByRole('heading', { name: '<Name>', level: 1 })`
+- `<element>` → `ouiaSelector(ids.<CONSTANT>)` or `page.getByRole(...)`
+
+Methods:
+
+- `navigate()` → clicks nav link, waits for heading
+- `<action>()` → describes what the method does
+
+### Fixture Registration
+
+Changes needed in `src/fixtures/pages.fixture.ts`:
+
+- Import: `import { ExamplePage } from "../pages/example.page.js";`
+- Interface: `examplePage: ExamplePage;`
+- Fixture: `examplePage: async ({ page, wildfly }, use) => { ... }`
+
+### Test Cases
+
+1. **<test name>** — <what it verifies>
+   - Navigate to <page>
+   - Assert <element> is visible
+   - Perform <action>
+   - Verify <result>
+
+2. **<test name>** — <what it verifies>
+   - ...
+
+### DMR Setup/Teardown
+
+\`\`\`typescript
+// Setup
+await addResource(wildfly.managementUrl, ["resource-type", "name"], { attr: "value" });
+
+// Teardown
+await removeResource(wildfly.managementUrl, ["resource-type", "name"]);
+\`\`\`
+
+### OUIA Coverage
+
+- Available: <list of OUIA IDs that exist for this feature>
+- Missing: <list of elements that need OUIA IDs — requires /hal-ouia>
+```
+
+### Proposal Rules
+
+1. **One test scenario per proposal** — don't bundle multiple unrelated scenarios
+2. **Concrete selectors** — every locator must reference either an OUIA constant from `src/selectors/ids.ts` or a specific role/text selector observed in the browser snapshot
+3. **Concrete DMR addresses** — every setup/teardown must use actual management model paths
+4. **Realistic assertions** — only assert things that were observed in the browser snapshot
+5. **Follow conventions** — all code snippets must match the Dave Convention Reference exactly
+
+### User Approval
+
+After presenting the proposal, ask the user:
+
+> "Does this test proposal look good? You can:
+>
+> - **Approve** — I'll implement it
+> - **Adjust** — tell me what to change
+> - **Skip** — move to the next scenario
+> - **Stop** — end the session"
+
+Wait for the user's response. Do NOT proceed to implementation without explicit approval.
+
+```
+
+```
