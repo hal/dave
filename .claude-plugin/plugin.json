@@ -17,6 +17,11 @@
       "name": "hal-implement",
       "path": "skills/hal-implement/SKILL.md",
       "description": "Implement new halOP tests interactively with propose-approve-implement loop"
+    },
+    {
+      "name": "hal-ouia",
+      "path": "skills/hal-ouia/SKILL.md",
+      "description": "Add missing OUIA IDs to halOP for testability, create PRs, and sync back to dave"
     }
   ]
 }

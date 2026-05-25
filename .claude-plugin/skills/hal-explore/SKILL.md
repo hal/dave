@@ -400,7 +400,7 @@ Handle these error cases:
 - Write or modify test files (this skill only proposes — hal-implement writes code)
 - Write or modify page objects (same — hal-implement writes code)
 - Start or stop containers (that is hal-dev-env's responsibility)
-- Modify halOP source code or OUIA IDs (those changes happen upstream in hal/foundation)
+- Modify halOP source code or OUIA IDs (use `/hal-ouia` to add missing IDs upstream in hal/foundation)
 - Cache or persist gap analysis results between invocations (always scan fresh)
 - Skip Phase 1 when running `explore` argument (always run gap analysis first)
 - Propose tests without specifying DMR setup/teardown when server state is needed

@@ -10,7 +10,8 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
 └── skills/
     ├── hal-dev-env/SKILL.md     # Dev environment management
     ├── hal-explore/SKILL.md     # Coverage gap analysis
-    └── hal-implement/SKILL.md   # Interactive test implementation
+    ├── hal-implement/SKILL.md   # Interactive test implementation
+    └── hal-ouia/SKILL.md        # OUIA ID management & upstream sync
 ```
 
 ## hal-dev-env
@@ -124,6 +125,65 @@ The skill follows dave's established patterns exactly:
 - Tags follow the `UPPER_SNAKE_CASE` key / `@kebab-case` value convention
 - DMR utilities (`addResource`, `removeResource`) handle server state setup and teardown
 
+## hal-ouia
+
+**Trigger:** `/hal-ouia`, "add ouia id", "add ouia ids", "missing ouia", "fix selectors", "make testable"
+
+Adds missing OUIA IDs to halOP Java source, creates PRs on `hal/foundation`, monitors CI, and syncs the generated constants back to dave. Closes the loop between discovering missing IDs (via `/hal-explore` or `/hal-implement`) and making elements testable.
+
+### Arguments
+
+| Argument       | Description                                                              |
+| -------------- | ------------------------------------------------------------------------ |
+| (none)         | Interactive mode: browse the live UI to find elements missing OUIA IDs   |
+| Spec file path | Audit an existing test's selectors for OUIA ID replacement opportunities |
+| Element list   | Targeted mode: add specific missing IDs from a gap report                |
+| `sync`         | Skip to Phase 4: wait for CI and sync dave                               |
+| `status`       | Check CI pipeline and container image status                             |
+
+### Workflow
+
+```mermaid
+flowchart TD
+    A[Phase 1: Identify Missing IDs] --> B[Phase 2: Propose Changes]
+    B --> C{User approves?}
+    C -->|Yes| D[Phase 3: Implement & PR]
+    C -->|No / Modify| B
+    D --> E[User merges PR]
+    E --> F[Phase 4: Wait & Sync]
+    F --> G{IDs available?}
+    G -->|Yes| H[Ready for /hal-implement]
+    G -->|No| F
+```
+
+**Phase 1 — Identify Missing IDs:** Accepts input from three modes: audit an existing spec file's selectors, interactively browse the live UI, or parse a gap report from `/hal-explore` or `/hal-implement`.
+
+**Phase 2 — Propose Changes:** Presents the list of `Ids.java` constants to add and Java files to modify. Waits for user approval before writing any code.
+
+**Phase 3 — Implement & PR:** Adds constants to `Ids.java`, chains `.ouiaId()` calls in Java source, verifies compilation (`./mvnw compile -P op`), commits, and creates a PR on `hal/foundation`.
+
+**Phase 4 — Wait & Sync:** After the user merges the PR, monitors CI pipelines, waits for the new container image, then runs `pnpm sync:ouia` and `pnpm sync:image` to bring the new IDs into dave.
+
+### Spec File Audit
+
+When given a spec file path, the skill traces imports to find page objects and classifies every selector:
+
+- **Already OUIA** — uses `ouiaSelector()`, no action needed
+- **Can replace with OUIA** — uses `getByRole()`, `getByText()`, or CSS selectors for elements with stable identity
+- **Not suitable** — dynamic text or elements where semantic locators are correct
+
+For each replacement candidate, the skill locates the corresponding Java file where `.ouiaId()` should be added.
+
+## Skill Workflow
+
+The four skills form a pipeline for test development:
+
+```
+hal-dev-env (start) → hal-explore (find gaps) → hal-ouia (add missing IDs) → hal-implement (write tests)
+                                                       ↓
+                                                  PR + CI + sync
+```
+
 ## Prerequisites
 
 All skills require:
@@ -131,7 +191,11 @@ All skills require:
 - **Podman** or **Docker** — for running containers
 - **hal/foundation repository** — path configured in `.claude/hal-config.json` or at `../foundation`
 
-Browser exploration (hal-explore Phase 2, hal-implement Phase 1) additionally requires:
+Browser exploration (hal-explore Phase 2, hal-implement Phase 1, hal-ouia interactive mode) additionally requires:
 
 - **Chrome DevTools MCP** — for browser interaction
 - **Running dev environment** — start with `/hal-dev-env start`
+
+OUIA ID management (hal-ouia) additionally requires:
+
+- **GitHub CLI (`gh`)** — for creating PRs and monitoring CI workflows
