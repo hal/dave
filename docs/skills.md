@@ -8,10 +8,20 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
 .claude-plugin/
 ├── plugin.json                  # Plugin manifest
 └── skills/
-    ├── hal-dev-env/SKILL.md     # Dev environment management
-    ├── hal-explore/SKILL.md     # Coverage gap analysis
-    ├── hal-implement/SKILL.md   # Interactive test implementation
-    └── hal-ouia/SKILL.md        # OUIA ID management & upstream sync
+    ├── hal-dev-env/
+    │   └── SKILL.md             # Dev environment management
+    ├── hal-explore/
+    │   ├── SKILL.md             # Coverage gap analysis
+    │   └── references/
+    │       └── proposal-format.md   # Test scenario proposal template
+    ├── hal-implement/
+    │   ├── SKILL.md             # Interactive test implementation
+    │   └── references/
+    │       └── conventions.md       # Dave conventions (page objects, fixtures, specs, DMR, tags)
+    └── hal-ouia/
+        ├── SKILL.md             # OUIA ID management & upstream sync
+        └── references/
+            └── conventions.md       # OUIA ID naming rules and Ids.java organization
 ```
 
 ## hal-dev-env

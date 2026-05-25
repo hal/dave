@@ -1,6 +1,6 @@
 ---
 name: hal-ouia
-description: Add missing OUIA IDs to halOP for testability, create PRs on hal/foundation, and sync back to dave. Trigger with /hal-ouia, "add ouia id", "add ouia ids", "missing ouia", "fix selectors", or "make testable".
+description: This skill should be used when the user asks to "add ouia id", "add ouia ids", "missing ouia", "fix selectors", "make testable", or invokes /hal-ouia. Adds missing OUIA IDs to halOP, creates PRs on hal/foundation, and syncs generated constants back to dave.
 metadata:
   version: "0.1.0"
 ---
@@ -57,9 +57,10 @@ Uses the same resolution logic as all other skills:
 5. Save valid path to `.claude/hal-config.json`
 
 ```bash
+# Duplicated across skills — each skill is loaded independently by the plugin runtime
 CONFIG_FILE=".claude/hal-config.json"
 if [ -f "$CONFIG_FILE" ]; then
-  FOUNDATION_DIR=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('foundationDir', ''))" 2>/dev/null)
+  FOUNDATION_DIR=$(node -e "const c=require('./$CONFIG_FILE');process.stdout.write(c.foundationDir||'')" 2>/dev/null)
 fi
 
 if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
@@ -89,58 +90,7 @@ fi
 
 ## OUIA ID Conventions
 
-### Naming
-
-All OUIA IDs in halOP follow these conventions:
-
-- **Java constant name:** `SCREAMING_SNAKE_CASE` (e.g., `RUNTIME_SERVER_STATUS`)
-- **OUIA ID value:** `"hal-op-kebab-case"` (e.g., `"hal-op-runtime-server-status"`)
-- **Prefix:** always `hal-op-`
-- **Structure:** `hal-op-<feature>-<element>[-<purpose>]`
-
-### Common Suffixes
-
-Use existing suffix constants from `Ids.java` when applicable:
-
-| Suffix     | Constant   | Used for              |
-| ---------- | ---------- | --------------------- |
-| `-add`     | `_ADD`     | Add/create buttons    |
-| `-delete`  | `_DELETE`  | Delete/remove buttons |
-| `-save`    | `_SAVE`    | Save buttons          |
-| `-refresh` | `_REFRESH` | Refresh buttons       |
-| `-modal`   | `_MODAL`   | Modal dialogs         |
-| `-form`    | `_FORM`    | Forms                 |
-| `-table`   | `_TABLE`   | Data tables           |
-| `-tab`     | `_TAB`     | Tab elements          |
-
-### Applying to Elements
-
-In halOP Java source, OUIA IDs are applied by chaining `.ouiaId(Ids.CONSTANT)` on PatternFly element builders:
-
-```java
-// Button example
-button("Save").primary().ouiaId(Ids.CONFIGURATION_SAVE_BTN)
-
-// Card example
-card().ouiaId(Ids.RUNTIME_STATUS_CARD)
-  .addHeader(cardHeader().addTitle(...))
-  .addBody(...)
-```
-
-### Section Organization in Ids.java
-
-Constants are grouped by feature with comment headers:
-
-```java
-// ------------------------------------------------------ configuration
-public static final String CONFIGURATION_PAGE = "hal-op-configuration-page";
-public static final String CONFIGURATION_SAVE_BTN = "hal-op-configuration-save-btn";
-
-// ------------------------------------------------------ runtime
-public static final String RUNTIME_PAGE = "hal-op-runtime-page";
-```
-
-Insert new constants in **alphabetical order** within the appropriate section. Create a new section if the feature doesn't have one yet.
+For detailed OUIA ID naming rules, common suffixes, Java application patterns, and `Ids.java` section organization, consult **`references/conventions.md`**. Read it before adding any new IDs.
 
 ## Phase 1: Identify Missing IDs
 
@@ -286,11 +236,13 @@ If compilation fails, analyze the error and fix. Do not proceed with a broken bu
 
 ```bash
 cd "$FOUNDATION_DIR"
-git add -A
+# Stage only the files modified in this skill run — never use git add -A
+git add resources/src/main/java/org/jboss/hal/resources/Ids.java
+git add op/console/src/main/java/org/jboss/hal/op/<feature>/<modified-files>.java
 git commit -m "feat: add OUIA IDs for <feature> testability
 
 Added constants:
-$(for id in "${NEW_IDS[@]}"; do echo "- $id"; done)
+- <LIST_EACH_CONSTANT_NAME>
 
 These IDs enable dave (halOP test suite) to target
 <feature> elements with stable OUIA selectors."
@@ -377,11 +329,12 @@ Regenerate `src/selectors/ids.ts` from upstream and pull the latest container im
 
 ### Step 5: Verify Constants
 
+For each constant added in Phase 3, verify it appears in the regenerated file:
+
 ```bash
 cd "<dave-root>"
-for id in "${NEW_IDS[@]}"; do
-  grep -q "$id" src/selectors/ids.ts && echo "OK: $id" || echo "MISSING: $id"
-done
+grep -q "CONSTANT_NAME" src/selectors/ids.ts && echo "OK: CONSTANT_NAME" || echo "MISSING: CONSTANT_NAME"
+# Repeat for each constant added in Phase 3
 ```
 
 ### Step 6: Report

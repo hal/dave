@@ -1,6 +1,6 @@
 ---
 name: hal-dev-env
-description: Start and manage a local WildFly + halOP dev environment. Trigger with /hal-dev-env, "start dev environment", "start halop", "start wildfly for dev", "stop dev environment", or "dev env status".
+description: This skill should be used when the user asks to "start dev environment", "start halop", "start wildfly for dev", "stop dev environment", "dev env status", or invokes /hal-dev-env. Starts and manages a containerized local WildFly + halOP development environment.
 metadata:
   version: "0.1.0"
 ---
@@ -129,6 +129,7 @@ $RUNTIME rm -f dave_dev_wildfly dave_dev_halop 2>/dev/null || true
 
 ```bash
 echo "Starting WildFly container..."
+# standalone-no-auth.xml disables management authentication so halOP can connect without credentials
 $RUNTIME run -d \
   --name dave_dev_wildfly \
   -p 19990:9990 \

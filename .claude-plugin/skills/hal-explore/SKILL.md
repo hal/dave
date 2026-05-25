@@ -1,6 +1,6 @@
 ---
 name: hal-explore
-description: Analyze halOP test coverage gaps and explore the UI to propose new test scenarios. Trigger with /hal-explore, "explore halop", "find untested features", "coverage gaps", or "what should we test next".
+description: This skill should be used when the user asks to "explore halop", "find untested features", "coverage gaps", "what should we test next", or invokes /hal-explore. Analyzes halOP test coverage gaps and explores the UI to propose new test scenarios.
 metadata:
   version: "0.1.0"
 ---
@@ -55,9 +55,10 @@ The skill requires the path to the `hal/foundation` repository. Uses the same re
 5. Save valid path to `.claude/hal-config.json`
 
 ```bash
+# Duplicated across skills — each skill is loaded independently by the plugin runtime
 CONFIG_FILE=".claude/hal-config.json"
 if [ -f "$CONFIG_FILE" ]; then
-  FOUNDATION_DIR=$(python3 -c "import json; print(json.load(open('$CONFIG_FILE')).get('foundationDir', ''))" 2>/dev/null)
+  FOUNDATION_DIR=$(node -e "const c=require('./$CONFIG_FILE');process.stdout.write(c.foundationDir||'')" 2>/dev/null)
 fi
 
 if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
@@ -176,8 +177,11 @@ FEATURE_ROOT="$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op"
 for dir in "$FEATURE_ROOT"/*/; do
   feature=$(basename "$dir")
 
-  # Check for spec files
+  # Check for spec files (filename match or specPath reference)
   spec_match=$(find src/tests -name "*${feature}*" -o -name "*$(echo $feature | sed 's/./\U&/')*.spec.ts" 2>/dev/null | head -1)
+  if [ -z "$spec_match" ]; then
+    spec_match=$(grep -rl "specPath:.*${feature}" src/tests/ 2>/dev/null | head -1)
+  fi
   spec_status="${spec_match:+YES}"
   spec_status="${spec_status:-NO}"
 
@@ -316,71 +320,7 @@ For each element found in snapshots:
 
 ## Test Scenario Proposals
 
-After completing Phase 1 (and optionally Phase 2), propose concrete test scenarios for each gap. Each proposal includes:
-
-### Proposal Format
-
-````markdown
-## Proposed Test: <feature> / <scenario>
-
-**Priority:** HIGH | MEDIUM | LOW
-**Gap Type:** FULL GAP | NEEDS TESTS | NEEDS PAGE | DEPTH GAP
-**halOP Feature:** <feature directory name>
-
-### Page Object
-
-**File:** `src/pages/<feature>.page.ts`
-**Extends:** `BasePage`
-
-Key locators needed:
-
-- `<element>` → `ouiaSelector(ids.<CONSTANT>)` or `page.getByRole(...)`
-
-### Test File
-
-**File:** `src/tests/<category>/<feature>.spec.ts`
-**Tags:** `[Tag.<TAG>]`
-**Spec path:** `<category>/<feature>`
-
-### DMR Setup/Teardown
-
-Operations needed before/after tests:
-
-```typescript
-// Setup — add test resources
-await addResource(managementUrl, ["subsystem", "example"], { attr: "value" });
-
-// Teardown — clean up
-await removeResource(managementUrl, ["subsystem", "example"]);
-```
-````
-
-### Test Cases
-
-1. **<test name>** — <what it verifies>
-   - Navigate to <page>
-   - Assert <element> is visible
-   - Perform <action>
-   - Verify <result>
-
-2. **<test name>** — <what it verifies>
-   - ...
-
-```
-
-### Prioritization Criteria
-
-Order proposals by:
-
-1. **User impact** — features used most frequently (dashboard, configuration, runtime)
-2. **Testability** — features with OUIA IDs already available
-3. **Complexity** — simpler scenarios first, building toward complex flows
-4. **DMR dependency** — tests needing minimal setup preferred
-
-### Output
-
-Present all proposals in a single report. If the output is large, save to `docs/explore-report-<date>.md` for reference.
-```
+For the proposal template, prioritization criteria, and output format, consult **`references/proposal-format.md`**. Each proposal covers page object structure, spec file layout, DMR setup/teardown, and test cases — ready to hand to `/hal-implement`.
 
 ## Error Handling
 
