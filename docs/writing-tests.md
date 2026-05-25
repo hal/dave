@@ -530,3 +530,12 @@ Before submitting a PR:
 - [ ] Assertions use `await expect(locator)` (not plain `expect(value)`) for auto-waiting
 - [ ] Tests pass in all three browsers: `pnpm test -- --project=chromium`, `firefox`, `webkit`
 - [ ] Code passes linting: `pnpm lint` and `pnpm format:check`
+
+## Claude Code Skills
+
+If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), dave includes skills that automate parts of this workflow:
+
+- **`/hal-explore`** — identifies untested halOP features by cross-referencing the halOP source tree with existing tests and page objects. Use it to find out _what_ to test next.
+- **`/hal-implement`** — generates tests and page objects following the conventions described in this guide, via an interactive propose-approve-implement loop.
+
+See [Skills](skills.md) for full documentation.
