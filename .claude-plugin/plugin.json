@@ -22,6 +22,11 @@
       "name": "hal-ouia",
       "path": "skills/hal-ouia/SKILL.md",
       "description": "Add missing OUIA IDs to halOP for testability, create PRs, and sync back to dave"
+    },
+    {
+      "name": "hal-record",
+      "path": "skills/hal-record/SKILL.md",
+      "description": "Record browser interactions via Playwright codegen and scaffold test proposals"
     }
   ]
 }
