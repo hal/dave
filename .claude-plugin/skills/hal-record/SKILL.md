@@ -1,6 +1,6 @@
 ---
 name: hal-record
-description: This skill should be used when the user asks to "record test", "record interaction", "capture test", "codegen", or invokes /hal-record. Records browser interactions via Playwright codegen and scaffolds test proposals for /hal-implement.
+description: This skill should be used when the user asks to "record test", "record interaction", "capture test", "codegen", "playwright recorder", "record browser", "scaffold from recording", or invokes /hal-record. Records browser interactions via Playwright codegen against a running halOP dev environment and scaffolds test proposals for /hal-implement.
 metadata:
   version: "0.1.0"
 ---
@@ -63,7 +63,7 @@ fi
 ### Step 3: Check Playwright
 
 ```bash
-if ! npx playwright --version >/dev/null 2>&1; then
+if ! pnpm exec playwright --version >/dev/null 2>&1; then
   echo "ERROR: Playwright not available. Run 'pnpm install' first."
   exit 1
 fi
@@ -97,7 +97,7 @@ Waiting for recording to complete...
 ### Step 3: Launch Codegen
 
 ```bash
-npx playwright codegen \
+pnpm exec playwright codegen \
   --target playwright-test \
   --test-id-attribute data-ouia-component-id \
   -o "$RECORDING_FILE" \
@@ -221,7 +221,7 @@ If the recording contains multiple distinct action-verification cycles, propose 
 
 ## Dave Convention Reference
 
-The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult **`.claude-plugin/skills/hal-implement/references/conventions.md`** for page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions.
+The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult **`.claude-plugin/skills/hal-implement/references/conventions.md`** for page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions. If that file is unavailable, fall back to the patterns documented in `CLAUDE.md` under "Adding New Pages and Tests".
 
 ## Phase 4: Generate Proposal
 
@@ -362,7 +362,7 @@ When the user approves handoff, invoke the `hal-implement` skill. The approved p
 | Empty recording | Output file < 5 lines | "No actions recorded. Try again?" |
 | Recording file missing | File not created at expected path | "Recording was not saved. Try again?" |
 | No OUIA selectors | No `getByTestId` calls in recording | Warn: "No OUIA selectors found. Consider `pnpm sync:ouia` or `/hal-ouia`." |
-| Codegen unavailable | `npx playwright codegen` fails | "Playwright codegen not available. Run `pnpm install` first." |
+| Codegen unavailable | `pnpm exec playwright codegen` fails | "Playwright codegen not available. Run `pnpm install` first." |
 
 ## Scope Boundaries
 
