@@ -1,3 +1,10 @@
+# i18next (transitive via Allure) declares peerDependencies typescript ^5,
+# but the project uses TypeScript 6. The mismatch is cosmetic — i18next
+# doesn't use the TypeScript API at runtime.
+peerDependencyRules:
+  allowedVersions:
+    i18next>typescript: ">=5"
+
 allowBuilds:
   cpu-features: true
   esbuild: true

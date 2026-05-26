@@ -525,6 +525,90 @@ test("opens and closes find modal", async ({ modelBrowserPage }) => {
 });
 ```
 
+## Preparing the Management Model
+
+Some tests need specific management model resources to exist before they run — for example, testing a subsystem configuration form that requires a remote cache container or an outbound socket binding to be in place. Use `test.beforeAll()` to set up these resources after the WildFly container is ready but before any test in the file executes.
+
+### Basic Setup
+
+```typescript
+import { test, expect } from "../../fixtures/pages.fixture.js";
+import { addResource, removeResource } from "../../utils/dmr.js";
+
+test.use({ specPath: "configuration/distributable-web" });
+
+test.beforeAll(async ({ wildfly }) => {
+  await addResource(wildfly.managementUrl, ["system-property", "my-prop"], { value: "test-value" });
+});
+
+test.afterAll(async ({ wildfly }) => {
+  await removeResource(wildfly.managementUrl, ["system-property", "my-prop"]);
+});
+
+test.describe("Distributable Web Configuration", () => {
+  test("uses the pre-configured resource", async ({ configurationPage }) => {
+    // The resource already exists — test the UI
+  });
+});
+```
+
+The `wildfly` fixture is worker-scoped, so it's available in `beforeAll` and `afterAll` hooks. The container is started before `beforeAll` runs and stopped after `afterAll` completes.
+
+### Multi-Step Setup
+
+When resources depend on each other, add them in order:
+
+```typescript
+const outboundSocket = { name: "custom-obs", host: "localhost", port: "15099" };
+const cacheContainer = { name: "rcc-test", defaultCluster: "rc-test" };
+
+test.beforeAll(async ({ wildfly }) => {
+  const url = wildfly.managementUrl;
+
+  // 1. Create the outbound socket binding
+  await addResource(
+    url,
+    ["socket-binding-group", "standard-sockets", "remote-destination-outbound-socket-binding", outboundSocket.name],
+    { host: outboundSocket.host, port: outboundSocket.port },
+  );
+
+  // 2. Create the remote cache container (depends on the socket binding)
+  await addResource(url, ["subsystem", "infinispan", "remote-cache-container", cacheContainer.name], {
+    "default-remote-cluster": cacheContainer.defaultCluster,
+  });
+
+  // 3. Create the remote cluster (depends on the cache container)
+  await addResource(
+    url,
+    [
+      "subsystem",
+      "infinispan",
+      "remote-cache-container",
+      cacheContainer.name,
+      "remote-cluster",
+      cacheContainer.defaultCluster,
+    ],
+    { "socket-bindings": [outboundSocket.name] },
+  );
+});
+```
+
+### When to Use `beforeAll` vs. In-Test Setup
+
+| Approach                           | When to use                                                   |
+| ---------------------------------- | ------------------------------------------------------------- |
+| `test.beforeAll()`                 | Resources are **prerequisites** — the test assumes they exist |
+| In-test setup (like the CRUD test) | Creating the resource **is** the test                         |
+
+The CRUD test in `src/tests/model-browser/crud.spec.ts` is an example of in-test setup: creating, reading, updating, and deleting a system property is the test itself. In contrast, a distributable-web configuration test needs remote cache containers to already exist so it can test the configuration UI.
+
+### Cleanup
+
+Since each spec file gets its own WildFly container that is destroyed after all tests complete, `afterAll` cleanup is technically optional. However, it's good practice for two reasons:
+
+1. **Serial tests** — if tests within a `test.describe.serial()` block depend on a clean state, earlier test side effects can cause failures.
+2. **Readability** — `afterAll` documents what the test created, making the test's footprint explicit.
+
 ## Checklist for New Tests
 
 Before submitting a PR:
