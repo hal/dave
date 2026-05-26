@@ -2,43 +2,18 @@
 
 dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-code/plugins) that bundles skills for developing and testing halOP. Skills are invoked as slash commands in Claude Code (e.g., `/hal-dev-env`) or triggered by natural language (e.g., "start the dev environment").
 
-## Plugin Structure
-
-```text
-.claude-plugin/
-├── plugin.json                  # Plugin manifest
-└── skills/
-    ├── hal-dev-env/
-    │   └── SKILL.md             # Dev environment management
-    ├── hal-explore/
-    │   ├── SKILL.md             # Coverage gap analysis
-    │   └── references/
-    │       └── proposal-format.md   # Test scenario proposal template
-    ├── hal-record/
-    │   └── SKILL.md             # Record browser interactions & scaffold test proposals
-    ├── hal-ouia/
-    │   ├── SKILL.md             # OUIA ID management & upstream sync
-    │   └── references/
-    │       └── conventions.md       # OUIA ID naming rules and OuiaIds.java organization
-    └── hal-implement/
-        ├── SKILL.md             # Interactive test implementation
-        └── references/
-            └── conventions.md       # Dave conventions (page objects, fixtures, specs, DMR, tags)
-```
-
 ## Skill Pipeline
 
 The five skills form a pipeline with two parallel discovery paths that converge on implementation:
 
-```text
-                         ┌─── hal-explore (find gaps) ───┐
-                         │                               │
-hal-dev-env (start) ─────┤                               ├──→ hal-implement (write tests)
-                         │                               │
-                         └─── hal-record (capture) ──────┘
-                                                 ▲
-                              hal-ouia ──────────┘
-                         (add missing IDs, sync)
+```mermaid
+graph LR
+    A[hal-dev-env<br/>start] --> B[hal-explore<br/>find gaps]
+    A --> C[hal-record<br/>capture]
+    B --> D[hal-implement<br/>write tests]
+    C --> D
+    E[hal-ouia<br/>add missing IDs] --> C
+    E --> D
 ```
 
 ### Quick Reference
