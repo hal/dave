@@ -30,6 +30,7 @@ export default withMermaid({
           text: "Getting Started",
           items: [
             { text: "Introduction", link: "/getting-started" },
+            { text: "Why Playwright?", link: "/why-playwright" },
             { text: "Running Tests", link: "/running-tests" },
             { text: "Configuration", link: "/configuration" },
           ],
