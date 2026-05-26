@@ -25,6 +25,16 @@ This skill uses the following pre-allowed tools:
 - **`stop`** — Stop and remove both containers
 - **`status`** — Check running state and report URLs
 
+## Input / Output
+
+**Input:** Subcommand (`start`, `stop`, `status`)
+
+**Output:** Running WildFly + halOP containers on ports 19990 and 19090
+
+**Feeds into:** All other skills — hal-explore (Phase 2), hal-record, hal-implement, and hal-ouia (interactive mode) require the dev environment
+
+**Depends on:** Nothing — this is the first skill to run
+
 ## Constants
 
 ```

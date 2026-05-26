@@ -33,6 +33,17 @@ Browser exploration uses Chrome DevTools MCP tools:
 - **Feature name** (e.g., `deployment`, `runtime`, `configuration/subsystems`) — Start the loop for a specific feature area.
 - **halOP source path** (e.g., `op/console/.../runtime/`) — Start from a specific halOP source directory.
 - **hal-explore gap** (e.g., `deployment FULL GAP`) — Start from a specific gap identified by `/hal-explore`.
+- **hal-record proposal** — An approved proposal from `/hal-record` with page object, test cases, and OUIA coverage already defined.
+
+## Input / Output
+
+**Input:** One of: feature name, halOP source path, `/hal-explore` gap report, or `/hal-record` approved proposal. When receiving a proposal from `/hal-explore` or `/hal-record`, Phase 1 (reconnaissance) is skipped — see Phase 1 below.
+
+**Output:** Page objects, spec files, fixture registrations, and tags committed to dave
+
+**Feeds into:** Nothing — this is the terminal skill that produces test code. Its OUIA Coverage section may feed back into `/hal-ouia` if missing IDs are discovered during implementation.
+
+**Depends on:** `/hal-dev-env` (for browser exploration and test execution)
 
 ## Constants
 
@@ -102,6 +113,10 @@ fi
 For detailed dave conventions (page objects, fixtures, specs, DMR, tags, selectors), consult **`references/conventions.md`**. Read it before writing any code — every file created or modified MUST follow those patterns exactly.
 
 ## Phase 1: Reconnaissance
+
+> **Skip condition:** When hal-implement receives an approved proposal from `/hal-explore` or `/hal-record`, skip Phase 1 entirely — the proposal already contains the reconnaissance results (page object structure, locators, test cases, OUIA coverage). Go directly to Phase 2 (if the proposal needs user re-approval) or Phase 3 (if already approved).
+>
+> **Scope:** Phase 1 is **single-feature focused** reconnaissance. For broad, multi-feature discovery across the entire codebase, use `/hal-explore` instead — it produces proposals in the same format that hal-implement consumes.
 
 Before proposing any test, gather information about the target feature.
 

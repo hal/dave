@@ -23,6 +23,16 @@ This skill uses the following pre-allowed tools:
 - **(none)** — Launches codegen immediately. After the recording is parsed, the skill infers the feature area from navigation paths in the recording (e.g., clicking the "Configuration" nav item → feature is `configuration`). If the feature area cannot be inferred, asks via `AskUserQuestion`.
 - **Feature name** (e.g., `deployment`) — Pre-tags the proposal with the feature area, skipping inference.
 
+## Input / Output
+
+**Input:** Optional feature name to pre-tag the proposal
+
+**Output:** Test proposal in `/hal-implement` format (same format as `/hal-explore` proposals — see `hal-explore/references/proposal-format.md`)
+
+**Feeds into:** `/hal-implement` — the approved proposal is handed off directly, skipping hal-implement's own reconnaissance
+
+**Depends on:** `/hal-dev-env` — requires running containers for the codegen browser session
+
 ## Constants
 
 ```text
@@ -221,7 +231,12 @@ If the recording contains multiple distinct action-verification cycles, propose 
 
 ## Dave Convention Reference
 
-The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult **`.claude-plugin/skills/hal-implement/references/conventions.md`** for page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions. If that file is unavailable, fall back to the patterns documented in `CLAUDE.md` under "Adding New Pages and Tests".
+The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult:
+
+- **`.claude-plugin/skills/hal-implement/references/conventions.md`** — page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions
+- **`.claude-plugin/skills/hal-explore/references/proposal-format.md`** — the shared proposal template used by both `/hal-explore` and `/hal-record` (ensures proposals are directly consumable by `/hal-implement`)
+
+If those files are unavailable, fall back to the patterns documented in `CLAUDE.md` under "Adding New Pages and Tests".
 
 ## Phase 4: Generate Proposal
 

@@ -31,6 +31,19 @@ Browser exploration (Phase 2) uses Chrome DevTools MCP tools:
 - **`explore`** — Run Phase 1 + Phase 2: gap analysis followed by browser exploration
 - **`explore-only`** — Run Phase 2 only: browser exploration (requires dev environment running)
 
+## Input / Output
+
+**Input:** Argument selecting analysis scope (code-only or code + browser)
+
+**Output:** Prioritized gap report + test scenario proposals in `/hal-implement` format (see `references/proposal-format.md`)
+
+**Feeds into:**
+
+- `/hal-implement` — proposals are directly consumable as implementation input (skips hal-implement's own reconnaissance)
+- `/hal-ouia` — the OUIA Coverage section identifies missing IDs that need to be added upstream
+
+**Depends on:** `/hal-dev-env` (Phase 2 browser exploration only)
+
 ## Constants
 
 ```

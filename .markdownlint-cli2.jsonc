@@ -12,5 +12,5 @@
     "MD024": false,
   },
   "globs": ["docs/**/*.md", "*.md"],
-  "ignores": ["node_modules", "allure-report", "allure-results"],
+  "ignores": ["node_modules", "allure-report", "allure-results", ".claude-plugin"],
 }

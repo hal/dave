@@ -36,6 +36,16 @@ Browser exploration (Phase 1, interactive mode) uses Chrome DevTools MCP tools:
 - **`sync`** — Skip to Phase 4: wait for CI and sync dave (use after a PR has been merged)
 - **`status`** — Check CI pipeline and container image status without making changes
 
+## Input / Output
+
+**Input:** One of: interactive mode (no args), spec file path (audit selectors), element list (from `/hal-explore` or `/hal-implement` OUIA Coverage section), `sync`, or `status`
+
+**Output:** PR on `hal/foundation` adding OUIA IDs + synced `src/selectors/ids.ts` constants in dave
+
+**Feeds into:** `/hal-implement` — after sync, new OUIA constants are available for test selectors
+
+**Depends on:** `/hal-dev-env` (interactive mode only); fed by `/hal-explore` or `/hal-implement` (OUIA Coverage sections listing missing IDs)
+
 ## Constants
 
 ```
