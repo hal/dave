@@ -298,3 +298,54 @@ Changes needed in `src/fixtures/pages.fixture.ts`:
 5. **DMR section** — always include the "not detected" note. Recording captures UI actions, not server state requirements. The user or `/hal-implement` will fill this in.
 
 6. **OUIA Coverage** — summarize from the mapping work in Phase 3
+
+## Phase 5: Approval & Handoff
+
+### Step 1: Present Proposal for Approval
+
+After presenting the proposal, ask the user:
+
+> "Does this test proposal look good? You can:
+>
+> - **Approve** — I'll offer to run /hal-implement
+> - **Adjust** — tell me what to change (especially DMR setup/teardown)
+> - **Discard** — drop this recording"
+
+Use `AskUserQuestion` with three options: Approve, Adjust, Discard.
+
+### Step 2: Handle Response
+
+**If Adjust:**
+
+- Ask what to change
+- Update the proposal accordingly
+- Re-present and ask for approval again
+
+**If Discard:**
+
+- Print: "Recording discarded. Run /hal-record again to start a new recording."
+- Exit
+
+**If Approve:**
+
+- Proceed to Step 3
+
+### Step 3: Offer hal-implement Handoff
+
+Ask the user:
+
+> "Shall I run /hal-implement to write the code now?"
+
+Use `AskUserQuestion` with two options:
+
+1. **Yes** — invoke `/hal-implement` with the approved proposal as context
+2. **No** — print the `/hal-implement` invocation command for later use:
+
+   ```text
+   You can implement this later by running:
+   /hal-implement <feature>
+   ```
+
+### Handoff to hal-implement
+
+When the user approves handoff, invoke the `hal-implement` skill. The approved proposal serves as the input — `/hal-implement` will use it to skip its own reconnaissance phase and go directly to implementation.
