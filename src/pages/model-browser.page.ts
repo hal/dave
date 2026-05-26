@@ -166,7 +166,7 @@ export class ModelBrowserPage extends BasePage {
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(ouiaSelector(MODEL_BROWSER_BREADCRUMB)).getByRole("list");
+    return this.page.locator(ouiaSelector(MODEL_BROWSER_BREADCRUMB)).getByRole("list").last();
   }
 
   async breadcrumbText(): Promise<string | null> {
