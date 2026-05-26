@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { MAIN_ID, NAV_TASKS, PAGE_TASKS_HEADER } from "../selectors/ids.js";
+import { MAIN, NAV_TASKS, PAGE_TASKS_HEADER } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
@@ -19,7 +19,7 @@ export class TasksPage extends BasePage {
 
   async navigate(): Promise<void> {
     await this.page.locator(ouiaSelector(NAV_TASKS)).click();
-    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
+    await this.page.locator(ouiaSelector(MAIN)).waitFor({ state: "visible" });
   }
 
   taskCard(name: string): Locator {

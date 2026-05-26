@@ -10,7 +10,7 @@ import { dim, green, red } from "./lib/format.js";
 // ------------------------------------------------------ main
 
 async function main(): Promise<void> {
-  console.log("Fetching Ids.java from GitHub...");
+  console.log("Fetching OuiaIds.java from GitHub...");
   const source = await fetchIdsJava();
   const parsed = parseIdsJava(source);
 

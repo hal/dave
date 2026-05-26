@@ -7,7 +7,7 @@ GitHub Actions workflows in [`.github/workflows/`](https://github.com/hal/dave/t
 | Workflow  | Trigger                                                    | What it does                                                                                           |
 | --------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **Lint**  | Push / PR to `main`                                        | Checks formatting (Prettier) and linting (ESLint)                                                      |
-| **Sync**  | Push / PR to `main`                                        | Detects OUIA ID drift — fails if `ids.ts` doesn't match upstream `Ids.java`                            |
+| **Sync**  | Push / PR to `main`                                        | Detects OUIA ID drift — fails if `ids.ts` doesn't match upstream `OuiaIds.java`                        |
 | **Smoke** | Push / PR to `main`                                        | Runs `@smoke` tests in Chromium only — fast pass/fail gate, no reports                                 |
 | **Test**  | Push to `main` (path-filtered), daily at 05:00 UTC, manual | Full suite across Chromium, Firefox, and WebKit; uploads artifacts and deploys reports to GitHub Pages |
 | **Docs**  | Push to `main` (docs changed), manual                      | Builds VitePress docs and deploys to GitHub Pages                                                      |

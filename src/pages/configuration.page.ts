@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { MAIN_ID, NAV_CONFIGURATION } from "../selectors/ids.js";
+import { MAIN, NAV_CONFIGURATION } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
@@ -15,7 +15,7 @@ export class ConfigurationPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.heading = page.locator(`#${MAIN_ID}`).getByRole("heading", { name: "Configuration", level: 1 });
+    this.heading = page.locator(ouiaSelector(MAIN)).getByRole("heading", { name: "Configuration", level: 1 });
     this.tree = page.getByRole("tree");
   }
 

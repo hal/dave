@@ -40,7 +40,7 @@ Browser exploration (Phase 1, interactive mode) uses Chrome DevTools MCP tools:
 
 ```
 HALOP_FEATURE_ROOT  = op/console/src/main/java/org/jboss/hal/op
-IDS_JAVA_FILE       = resources/src/main/java/org/jboss/hal/resources/Ids.java
+IDS_JAVA_FILE       = resources/src/main/java/org/jboss/hal/resources/OuiaIds.java
 DAVE_SELECTOR_FILE  = src/selectors/ids.ts
 DAVE_OUIA_UTIL      = src/utils/ouia.ts
 CONFIG_FILE         = .claude/hal-config.json
@@ -90,7 +90,7 @@ fi
 
 ## OUIA ID Conventions
 
-For detailed OUIA ID naming rules, common suffixes, Java application patterns, and `Ids.java` section organization, consult **`references/conventions.md`**. Read it before adding any new IDs.
+For detailed OUIA ID naming rules, common suffixes, Java application patterns, and `OuiaIds.java` section organization, consult **`references/conventions.md`**. Read it before adding any new IDs.
 
 ## Phase 1: Identify Missing IDs
 
@@ -108,7 +108,7 @@ When given a spec file path, trace its imports to find page objects and audit al
 4. For each candidate, trace the UI element back to halOP Java source:
    - Search `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/` for the element creation
    - Identify the exact Java file and approximate line where `.ouiaId()` should be added
-   - Check if the constant already exists in `Ids.java` but isn't applied
+   - Check if the constant already exists in `OuiaIds.java` but isn't applied
 
 5. Present the audit as a table:
 
@@ -145,7 +145,7 @@ wait_for → ["Dashboard"]
 3. Take an accessibility snapshot
 4. Identify elements **without** `data-ouia-component-id` attributes
 5. Cross-reference against `src/selectors/ids.ts` — which IDs exist but aren't applied?
-6. Cross-reference against `Ids.java` — which constants exist but aren't used in the UI code?
+6. Cross-reference against `OuiaIds.java` — which constants exist but aren't used in the UI code?
 7. Present candidates for new OUIA IDs
 
 ### Input Mode C: From hal-explore or hal-implement
@@ -161,7 +161,7 @@ Present a proposal for user approval before writing any code. The proposal must 
 
 ### Feature: <feature-name>
 
-### Constants to add to Ids.java
+### Constants to add to OuiaIds.java
 | Constant | Value | Purpose |
 |----------|-------|---------|
 | RUNTIME_SERVER_STATUS | "hal-op-runtime-server-status" | Server status card |
@@ -169,8 +169,8 @@ Present a proposal for user approval before writing any code. The proposal must 
 
 ### Java files to modify
 - `op/console/.../runtime/RuntimePage.java`
-  - Line ~45: add `.ouiaId(Ids.RUNTIME_SERVER_STATUS)` to status card builder
-  - Line ~72: add `.ouiaId(Ids.RUNTIME_REFRESH_BTN)` to refresh button
+  - Line ~45: add `.ouiaId(OuiaIds.RUNTIME_SERVER_STATUS)` to status card builder
+  - Line ~72: add `.ouiaId(OuiaIds.RUNTIME_REFRESH_BTN)` to refresh button
 
 ### Dave selectors that will become available after sync
 | New Constant in ids.ts | Replaces Selector |
@@ -207,9 +207,9 @@ git pull origin main
 git checkout -b ouia/<feature>-ids
 ```
 
-### Step 3: Add Constants to Ids.java
+### Step 3: Add Constants to OuiaIds.java
 
-Edit `$FOUNDATION_DIR/resources/src/main/java/org/jboss/hal/resources/Ids.java`:
+Edit `$FOUNDATION_DIR/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java`:
 
 - Find the appropriate feature section (or create one)
 - Insert new constants in alphabetical order within the section
@@ -220,8 +220,8 @@ Edit `$FOUNDATION_DIR/resources/src/main/java/org/jboss/hal/resources/Ids.java`:
 For each Java file listed in the proposal:
 
 - Find the element creation code
-- Chain `.ouiaId(Ids.CONSTANT)` at the appropriate position
-- Ensure the import for `Ids` exists
+- Chain `.ouiaId(OuiaIds.CONSTANT)` at the appropriate position
+- Ensure the import for `OuiaIds` exists
 
 ### Step 5: Verify Compilation
 
@@ -237,7 +237,7 @@ If compilation fails, analyze the error and fix. Do not proceed with a broken bu
 ```bash
 cd "$FOUNDATION_DIR"
 # Stage only the files modified in this skill run — never use git add -A
-git add resources/src/main/java/org/jboss/hal/resources/Ids.java
+git add resources/src/main/java/org/jboss/hal/resources/OuiaIds.java
 git add op/console/src/main/java/org/jboss/hal/op/<feature>/<modified-files>.java
 git commit -m "feat: add OUIA IDs for <feature> testability
 
@@ -260,7 +260,7 @@ gh pr create \
 
 Adds OUIA IDs to <feature> elements so they can be targeted by dave tests.
 
-### New Constants in Ids.java
+### New Constants in OuiaIds.java
 <list each constant and its value>
 
 ### Modified Files

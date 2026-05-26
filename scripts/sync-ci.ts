@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   const outputPath = resolve(GENERATED_IDS_PATH);
 
   console.log("Checking OUIA ID sync…");
-  console.log(`  ${dim("Fetching Ids.java from GitHub…")}`);
+  console.log(`  ${dim("Fetching OuiaIds.java from GitHub…")}`);
   const source = await fetchIdsJava();
   const parsed = parseIdsJava(source);
   const output = emitTypeScript(parsed);
@@ -27,7 +27,7 @@ async function main(): Promise<void> {
     console.error("");
     execFileSync("git", ["diff", outputPath], { stdio: "inherit" });
     console.error("");
-    console.error(red("  ✗ OUIA IDs are out of sync with upstream Ids.java"));
+    console.error(red("  ✗ OUIA IDs are out of sync with upstream OuiaIds.java"));
     console.error(`    ${dim("↳")} ${dim("Run")} pnpm sync:ouia ${dim("locally and commit the result")}`);
     process.exit(1);
   }

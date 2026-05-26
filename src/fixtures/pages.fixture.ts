@@ -1,6 +1,7 @@
 import type { Page } from "@playwright/test";
 import { testWithWildFly } from "./wildfly.fixture.js";
-import { MAIN_ID } from "../selectors/ids.js";
+import { MAIN } from "../selectors/ids.js";
+import { ouiaSelector } from "../utils/ouia.js";
 import { BasePage } from "../pages/base.page.js";
 import { ConfigurationPage } from "../pages/configuration.page.js";
 import { DashboardPage } from "../pages/dashboard.page.js";
@@ -17,7 +18,7 @@ async function enableOuia(page: Page): Promise<void> {
 /** Navigates to halOP with the WildFly connect parameter and waits for the main content. */
 async function openHalOp(page: Page, managementUrl: string): Promise<void> {
   await page.goto(`/?connect=${managementUrl}`);
-  await page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
+  await page.locator(ouiaSelector(MAIN)).waitFor({ state: "visible" });
 }
 
 /** Test-scoped page object fixtures. */

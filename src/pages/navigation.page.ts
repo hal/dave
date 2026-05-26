@@ -1,6 +1,6 @@
 import type { Locator } from "@playwright/test";
 import {
-  MAIN_ID,
+  MAIN,
   NAV_CONFIGURATION,
   NAV_DASHBOARD,
   NAV_DEPLOYMENTS,
@@ -32,6 +32,6 @@ export class NavigationPage extends BasePage {
 
   async navigateTo(item: NavItem): Promise<void> {
     await this.link(item).click();
-    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
+    await this.page.locator(ouiaSelector(MAIN)).waitFor({ state: "visible" });
   }
 }

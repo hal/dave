@@ -1,5 +1,5 @@
 import type { Locator, Page } from "@playwright/test";
-import { LOG_SHOW_BTN, MAIN_ID, PAGE_DASHBOARD_HEADER } from "../selectors/ids.js";
+import { LOG_SHOW_BTN, MAIN, PAGE_DASHBOARD_HEADER } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
 
@@ -16,7 +16,7 @@ export class DashboardPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    const main = page.locator(`#${MAIN_ID}`);
+    const main = page.locator(ouiaSelector(MAIN));
     this.heading = page.locator(ouiaSelector(PAGE_DASHBOARD_HEADER)).getByRole("heading", { level: 1 });
     this.overviewSection = main.getByRole("heading", { name: "Overview", level: 2 });
     this.hostSection = main.getByRole("heading", { name: "Host", level: 2 });

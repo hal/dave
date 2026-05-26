@@ -1,4 +1,4 @@
-// Generated from Ids.java — do not edit. Run pnpm sync:ouia to regenerate.
+// Generated from OuiaIds.java — do not edit. Run pnpm sync:ouia to regenerate.
 
 // ------------------------------------------------------ ID builder
 
@@ -42,8 +42,11 @@ export function buildId(id: string, ...additionalIds: string[]): string {
 
 // ------------------------------------------------------ static IDs
 
+export const ADD_BTN = "hal-op-add-btn";
+export const ADD_MODAL = "hal-op-add-modal";
 export const BOOTSTRAP_SELECT_BTN = "hal-op-bootstrap-select-btn";
-export const COOKIE = "hal-cookie";
+export const CANCEL_BTN = "hal-op-cancel-btn";
+export const CLOSE_BTN = "hal-op-close-btn";
 export const DASHBOARD_DEPLOYMENT_CARD = "hal-op-dashboard-deployment-card";
 export const DASHBOARD_DOCUMENTATION_CARD = "hal-op-dashboard-documentation-card";
 export const DASHBOARD_HEALTH_CARD = "hal-op-dashboard-health-card";
@@ -51,6 +54,9 @@ export const DASHBOARD_LOG_CARD = "hal-op-dashboard-log-card";
 export const DASHBOARD_OVERVIEW_CARD = "hal-op-dashboard-overview-card";
 export const DASHBOARD_RUNTIME_CARD = "hal-op-dashboard-runtime-card";
 export const DASHBOARD_STATUS_CARD = "hal-op-dashboard-status-card";
+export const DELETE_BTN = "hal-op-delete-btn";
+export const DELETE_MODAL = "hal-op-delete-modal";
+export const EDIT_BTN = "hal-op-edit-btn";
 export const ENDPOINT_ADD_BTN = "hal-op-endpoint-add-btn";
 export const ENDPOINT_CANCEL_BTN = "hal-op-endpoint-cancel-btn";
 export const ENDPOINT_CONNECT_BTN = "hal-op-endpoint-connect-btn";
@@ -58,6 +64,8 @@ export const ENDPOINT_MODAL = "hal-op-endpoint-modal";
 export const ENDPOINT_PING_BTN = "hal-op-endpoint-ping-btn";
 export const ENDPOINT_SELECT_BTN = "hal-op-endpoint-select-btn";
 export const ENDPOINT_TABLE_ADD_BTN = "hal-op-endpoint-table-add-btn";
+export const EXECUTE_BTN = "hal-op-execute-btn";
+export const EXECUTE_MODAL = "hal-op-execute-modal";
 export const EXPRESSION_CANCEL_BTN = "hal-op-expression-cancel-btn";
 export const EXPRESSION_MODAL = "hal-op-expression-modal";
 export const EXPRESSION_OK_BTN = "hal-op-expression-ok-btn";
@@ -66,7 +74,7 @@ export const FIND_RESOURCE_MODAL = "hal-op-find-resource-modal";
 export const FIND_RESOURCE_SEARCH_BTN = "hal-op-find-resource-search-btn";
 export const LOG_CHOOSE_BTN = "hal-op-log-choose-btn";
 export const LOG_SHOW_BTN = "hal-op-log-show-btn";
-export const MAIN_ID = "hal-main-id";
+export const MAIN = "hal-op-main";
 export const MASTHEAD = "hal-op-masthead";
 export const MASTHEAD_LOGO = "hal-op-masthead-logo";
 export const MASTHEAD_TOOLBAR = "hal-op-masthead-toolbar";
@@ -108,15 +116,12 @@ export const PAGE_NOT_FOUND = "hal-op-page-not-found";
 export const PAGE_RUNTIME = "hal-op-page-runtime";
 export const PAGE_TASKS = "hal-op-page-tasks";
 export const PAGE_TASKS_HEADER = "hal-op-page-tasks-header";
+export const REFRESH_BTN = "hal-op-refresh-btn";
+export const RESET_BTN = "hal-op-reset-btn";
+export const SAVE_BTN = "hal-op-save-btn";
 export const STABILITY_DISMISS_BTN = "hal-op-stability-dismiss-btn";
-export const STANDALONE_HOST = "hal-standalone-host";
-export const STANDALONE_SERVER = "hal-standalone-server";
 
 // ------------------------------------------------------ dynamic IDs
-
-export function hostServer(host: string, server: string): string {
-  return buildId(host, server);
-}
 
 export function ouia(first: string, ...rest: string[]): string {
   return buildId("hal-op", first, ...rest);

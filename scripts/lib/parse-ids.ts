@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 export const IDS_JAVA_URL =
-  "https://raw.githubusercontent.com/hal/foundation/main/resources/src/main/java/org/jboss/hal/resources/Ids.java";
+  "https://raw.githubusercontent.com/hal/foundation/main/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java";
 
 export const GENERATED_IDS_PATH = "src/selectors/ids.ts";
 
@@ -34,7 +34,7 @@ export interface ParsedIds {
 export async function fetchIdsJava(): Promise<string> {
   const response = await fetch(IDS_JAVA_URL);
   if (!response.ok) {
-    throw new Error(`Failed to fetch Ids.java: ${response.status} ${response.statusText}`);
+    throw new Error(`Failed to fetch OuiaIds.java: ${response.status} ${response.statusText}`);
   }
   return response.text();
 }

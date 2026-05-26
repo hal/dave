@@ -11,7 +11,7 @@ All OUIA IDs in halOP follow these conventions:
 
 ## Common Suffixes
 
-Use existing suffix constants from `Ids.java` when applicable:
+Use existing suffix constants from `OuiaIds.java` when applicable:
 
 | Suffix     | Constant   | Used for              |
 | ---------- | ---------- | --------------------- |
@@ -26,19 +26,19 @@ Use existing suffix constants from `Ids.java` when applicable:
 
 ## Applying to Elements
 
-In halOP Java source, OUIA IDs are applied by chaining `.ouiaId(Ids.CONSTANT)` on PatternFly element builders:
+In halOP Java source, OUIA IDs are applied by chaining `.ouiaId(OuiaIds.CONSTANT)` on PatternFly element builders:
 
 ```java
 // Button example
-button("Save").primary().ouiaId(Ids.CONFIGURATION_SAVE_BTN)
+button("Save").primary().ouiaId(OuiaIds.CONFIGURATION_SAVE_BTN)
 
 // Card example
-card().ouiaId(Ids.RUNTIME_STATUS_CARD)
+card().ouiaId(OuiaIds.RUNTIME_STATUS_CARD)
   .addHeader(cardHeader().addTitle(...))
   .addBody(...)
 ```
 
-## Section Organization in Ids.java
+## Section Organization in OuiaIds.java
 
 Constants are grouped by feature with comment headers:
 

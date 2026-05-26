@@ -2,13 +2,17 @@ import type { Locator, Page } from "@playwright/test";
 import {
   FIND_RESOURCE_CANCEL_BTN,
   FIND_RESOURCE_MODAL,
-  MAIN_ID,
+  MAIN,
   MODEL_BROWSER_BACK_BTN,
+  MODEL_BROWSER_BREADCRUMB,
   MODEL_BROWSER_COLLAPSE_BTN,
   MODEL_BROWSER_FIND_BTN,
   MODEL_BROWSER_FORWARD_BTN,
+  MODEL_BROWSER_GLOBAL_OPS_SWITCH,
   MODEL_BROWSER_HOME_BTN,
   MODEL_BROWSER_REFRESH_BTN,
+  MODEL_BROWSER_RESOURCE_HEADING,
+  MODEL_BROWSER_TREE,
   NAV_MODEL_BROWSER,
 } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
@@ -48,9 +52,9 @@ export class ModelBrowserPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.main = page.locator(`#${MAIN_ID}`);
-    this.tree = page.getByRole("tree");
-    this.resourceHeading = this.main.getByRole("heading", { level: 1 });
+    this.main = page.locator(ouiaSelector(MAIN));
+    this.tree = page.locator(ouiaSelector(MODEL_BROWSER_TREE));
+    this.resourceHeading = page.locator(ouiaSelector(MODEL_BROWSER_RESOURCE_HEADING));
     this.backButton = page.locator(ouiaSelector(MODEL_BROWSER_BACK_BTN));
     this.forwardButton = page.locator(ouiaSelector(MODEL_BROWSER_FORWARD_BTN));
     this.homeButton = page.locator(ouiaSelector(MODEL_BROWSER_HOME_BTN));
@@ -141,7 +145,7 @@ export class ModelBrowserPage extends BasePage {
 
   async selectTreeItem(name: string): Promise<void> {
     await this.treeItem(name).click();
-    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
+    await this.page.locator(ouiaSelector(MAIN)).waitFor({ state: "visible" });
   }
 
   async expandTreeItem(name: string): Promise<void> {
@@ -162,7 +166,7 @@ export class ModelBrowserPage extends BasePage {
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(`#${MAIN_ID}`).locator("nav").last().getByRole("list");
+    return this.page.locator(ouiaSelector(MODEL_BROWSER_BREADCRUMB)).getByRole("list");
   }
 
   async breadcrumbText(): Promise<string | null> {
@@ -187,6 +191,6 @@ export class ModelBrowserPage extends BasePage {
   }
 
   globalOperationsSwitch(): Locator {
-    return this.page.getByRole("switch", { name: "Show global operations" });
+    return this.page.locator(ouiaSelector(MODEL_BROWSER_GLOBAL_OPS_SWITCH));
   }
 }

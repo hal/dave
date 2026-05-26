@@ -28,7 +28,7 @@ function emitMethod(lines: string[], { name, params, buildArgs }: ParsedMethod):
 
 export function emitTypeScript({ constants, methods }: ParsedIds): string {
   const lines: string[] = [
-    "// Generated from Ids.java — do not edit. Run pnpm sync:ouia to regenerate.",
+    "// Generated from OuiaIds.java — do not edit. Run pnpm sync:ouia to regenerate.",
     "",
     "// ------------------------------------------------------ ID builder",
     "",

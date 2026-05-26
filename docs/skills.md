@@ -21,7 +21,7 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
     └── hal-ouia/
         ├── SKILL.md             # OUIA ID management & upstream sync
         └── references/
-            └── conventions.md       # OUIA ID naming rules and Ids.java organization
+            └── conventions.md       # OUIA ID naming rules and OuiaIds.java organization
 ```
 
 ## hal-dev-env
@@ -168,9 +168,9 @@ flowchart TD
 
 **Phase 1 — Identify Missing IDs:** Accepts input from three modes: audit an existing spec file's selectors, interactively browse the live UI, or parse a gap report from `/hal-explore` or `/hal-implement`.
 
-**Phase 2 — Propose Changes:** Presents the list of `Ids.java` constants to add and Java files to modify. Waits for user approval before writing any code.
+**Phase 2 — Propose Changes:** Presents the list of `OuiaIds.java` constants to add and Java files to modify. Waits for user approval before writing any code.
 
-**Phase 3 — Implement & PR:** Adds constants to `Ids.java`, chains `.ouiaId()` calls in Java source, verifies compilation (`./mvnw compile -P op`), commits, and creates a PR on `hal/foundation`.
+**Phase 3 — Implement & PR:** Adds constants to `OuiaIds.java`, chains `.ouiaId(OuiaIds.CONSTANT)` calls in Java source, verifies compilation (`./mvnw compile -P op`), commits, and creates a PR on `hal/foundation`.
 
 **Phase 4 — Wait & Sync:** After the user merges the PR, monitors CI pipelines, waits for the new container image, then runs `pnpm sync:ouia` and `pnpm sync:image` to bring the new IDs into dave.
 

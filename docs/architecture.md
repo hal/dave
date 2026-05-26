@@ -120,7 +120,7 @@ Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@p
 ## Element Identification
 
 Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs are generated locally from halOP's [
-`Ids.java`](https://github.com/hal/foundation/blob/main/ui/src/main/java/org/jboss/hal/ui/Ids.java) source file into [
+`OuiaIds.java`](https://github.com/hal/foundation/blob/main/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java) source file into [
 `src/selectors/ids.ts`](https://github.com/hal/dave/blob/main/src/selectors/ids.ts). Run
 `pnpm sync:ouia` to regenerate after upstream changes — no npm release required.
 
