@@ -219,6 +219,10 @@ Organize the extracted actions into test steps:
 
 If the recording contains multiple distinct action-verification cycles, propose multiple test cases within the same spec.
 
+## Dave Convention Reference
+
+The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult **`.claude-plugin/skills/hal-implement/references/conventions.md`** for page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions.
+
 ## Phase 4: Generate Proposal
 
 Build a test proposal in the exact `/hal-implement` format. This proposal is the skill's primary output.
