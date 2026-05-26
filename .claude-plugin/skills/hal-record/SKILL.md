@@ -68,3 +68,68 @@ if ! npx playwright --version >/dev/null 2>&1; then
   exit 1
 fi
 ```
+
+## Phase 2: Launch Codegen
+
+### Step 1: Generate Recording Filename
+
+```bash
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+RECORDING_FILE="/tmp/dave-recording-${TIMESTAMP}.ts"
+```
+
+### Step 2: Print Instructions
+
+Before launching codegen, print:
+
+```text
+Starting Playwright recorder...
+
+Record your test scenario in the browser that opens.
+Tips:
+  - Click elements to record actions
+  - Use the "Assert" toolbar button to add visibility/text checks
+  - Close the browser when you're done recording
+
+Waiting for recording to complete...
+```
+
+### Step 3: Launch Codegen
+
+```bash
+npx playwright codegen \
+  --target playwright-test \
+  --test-id-attribute data-ouia-component-id \
+  -o "$RECORDING_FILE" \
+  "http://localhost:19090/?connect=http://localhost:19990"
+```
+
+This command blocks until the user closes the codegen browser. When it exits:
+
+- The recording is saved to `$RECORDING_FILE`
+- Control returns to the skill
+
+### Step 4: Validate Recording
+
+```bash
+if [ ! -f "$RECORDING_FILE" ]; then
+  echo "ERROR: Recording was not saved to $RECORDING_FILE. Try again?"
+  exit 1
+fi
+
+LINE_COUNT=$(wc -l < "$RECORDING_FILE")
+if [ "$LINE_COUNT" -lt 5 ]; then
+  echo "WARNING: Recording appears empty or boilerplate-only ($LINE_COUNT lines)."
+  echo "No actions recorded. Try again?"
+  exit 1
+fi
+
+echo "Recording saved to $RECORDING_FILE ($LINE_COUNT lines)"
+```
+
+### Codegen Configuration Rationale
+
+- `--target playwright-test` — generates `test()` / `expect()` syntax matching dave's test format
+- `--test-id-attribute data-ouia-component-id` — makes codegen prefer OUIA selectors, producing `getByTestId('ouia-id')` calls
+- `-o` with timestamp — avoids overwriting previous recordings
+- URL includes `?connect=...` — halOP needs the WildFly management URL as a query parameter
