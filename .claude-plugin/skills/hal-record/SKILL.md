@@ -30,7 +30,7 @@ HALOP_PORT          = 19090
 WILDFLY_MGMT_PORT   = 19990
 HALOP_URL           = http://localhost:19090
 WILDFLY_MGMT_URL    = http://localhost:19990
-CODEGEN_URL         = http://localhost:19090/?connect=http://localhost:19090
+CODEGEN_URL         = http://localhost:19090/?connect=http://localhost:19990
 DAVE_SELECTOR_FILE  = src/selectors/ids.ts
 RECORDING_DIR       = /tmp
 RECORDING_PREFIX    = dave-recording
