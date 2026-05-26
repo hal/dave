@@ -133,3 +133,88 @@ echo "Recording saved to $RECORDING_FILE ($LINE_COUNT lines)"
 - `--test-id-attribute data-ouia-component-id` — makes codegen prefer OUIA selectors, producing `getByTestId('ouia-id')` calls
 - `-o` with timestamp — avoids overwriting previous recordings
 - URL includes `?connect=...` — halOP needs the WildFly management URL as a query parameter
+
+## Phase 3: Parse Recording
+
+After codegen exits, read and analyze the recording file.
+
+### Step 1: Read the Recording
+
+Read the recording file with the **Read** tool. A typical recording looks like:
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('test', async ({ page }) => {
+  await page.goto('http://localhost:19090/?connect=http://localhost:19990');
+  await page.getByTestId('nav-configuration').click();
+  await page.getByTestId('cfg-subsystems-item').click();
+  await page.getByRole('heading', { name: 'Logging' }).click();
+  await page.getByRole('button', { name: 'Edit' }).click();
+  await page.getByRole('textbox', { name: 'Level' }).fill('DEBUG');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByText('Success')).toBeVisible();
+});
+```
+
+### Step 2: Extract Actions
+
+For each non-blank, non-import, non-boilerplate line inside the `test()` body, classify it:
+
+| Pattern | Classification |
+| ------- | -------------- |
+| `page.goto(...)` | navigation |
+| `.click()` | click action |
+| `.fill(...)` | fill action |
+| `.check()` / `.uncheck()` | toggle action |
+| `.selectOption(...)` | select action |
+| `expect(...).toBeVisible()` | visibility assertion |
+| `expect(...).toHaveText(...)` | text assertion |
+| `expect(...).toContainText(...)` | text assertion |
+
+### Step 3: Map getByTestId Selectors to OUIA Constants
+
+Read `src/selectors/ids.ts` and build a lookup from OUIA ID values to constant names.
+
+The file contains lines like:
+
+```typescript
+export const NAV_CONFIGURATION = "hal-op-nav-configuration";
+export const CFG_SUBSYSTEMS_ITEM = "hal-op-cfg-subsystems-item";
+```
+
+For each `getByTestId('some-id')` in the recording:
+
+1. Search `ids.ts` for a constant whose **value** matches `"hal-op-some-id"` (note: codegen may strip the `hal-op-` prefix depending on the OUIA attribute value)
+2. Also try matching the raw value `"some-id"` directly
+3. If a match is found, record the mapping: `getByTestId('some-id')` → `ids.CONSTANT_NAME`
+4. If no match is found, flag it as **unmatched** — the OUIA ID exists in the DOM but not in `ids.ts`
+
+Use **Grep** to verify matches:
+
+```bash
+grep -n "some-id" src/selectors/ids.ts
+```
+
+### Step 4: Identify Non-OUIA Selectors
+
+Any line using `getByRole(...)`, `getByText(...)`, `getByLabel(...)`, or `locator(...)` instead of `getByTestId(...)` is a non-OUIA selector. Collect these for the proposal's OUIA Coverage section.
+
+### Step 5: Infer Feature Area
+
+If no feature name was provided as an argument, infer it from the recording:
+
+1. Look for navigation clicks on OUIA nav items (e.g., `getByTestId('nav-configuration')` → feature is `configuration`)
+2. Look for `page.goto()` URLs containing feature paths
+3. If neither works, ask the user via `AskUserQuestion`:
+   > "What feature area does this recording cover? (e.g., configuration, runtime, deployment)"
+
+### Step 6: Group Actions into Logical Steps
+
+Organize the extracted actions into test steps:
+
+1. **Setup** — initial navigation (`goto`, nav clicks) before the main action
+2. **Action** — the core interaction (fill, click, select)
+3. **Verification** — assertions (`expect` calls)
+
+If the recording contains multiple distinct action-verification cycles, propose multiple test cases within the same spec.
