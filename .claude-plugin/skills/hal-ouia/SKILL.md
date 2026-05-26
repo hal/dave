@@ -1,6 +1,6 @@
 ---
 name: hal-ouia
-description: This skill should be used when the user asks to "add ouia id", "add ouia ids", "missing ouia", "fix selectors", "make testable", or invokes /hal-ouia. Adds missing OUIA IDs to halOP, creates PRs on hal/foundation, and syncs generated constants back to dave.
+description: This skill should be used when the user asks to "add ouia id", "add ouia ids", "missing ouia", "fix selectors", "make testable", "audit selectors", "sync ouia", "ouia status", "check ouia status", or invokes /hal-ouia. Adds missing OUIA IDs to halOP Java source, creates PRs on hal/foundation, and syncs generated constants back to dave.
 metadata:
   version: "0.1.0"
 ---
@@ -11,7 +11,7 @@ Adds missing OUIA IDs to halOP Java source, creates PRs on `hal/foundation`, mon
 
 ## Tools
 
-This skill uses the following pre-allowed tools:
+This skill uses the following tools:
 
 - **Bash** — Execute shell commands for git operations, compilation, CI checks, sync
 - **Read** — Read Java source files, configuration, spec files
@@ -66,25 +66,7 @@ Uses the same resolution logic as all other skills:
 4. Validate that `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/` exists
 5. Save valid path to `.claude/hal-config.json`
 
-```bash
-# Duplicated across skills — each skill is loaded independently by the plugin runtime
-CONFIG_FILE=".claude/hal-config.json"
-if [ -f "$CONFIG_FILE" ]; then
-  FOUNDATION_DIR=$(node -e "const c=require('./$CONFIG_FILE');process.stdout.write(c.foundationDir||'')" 2>/dev/null)
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
-  if [ -d "../foundation" ]; then
-    FOUNDATION_DIR="../foundation"
-  fi
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/" ]; then
-  echo "ERROR: Cannot locate hal/foundation repository."
-  echo "Run /hal-dev-env first, or set foundationDir in .claude/hal-config.json"
-  exit 1
-fi
-```
+Implement the resolution steps above using Bash: read the JSON config with `node -e`, check directory existence, and validate the halOP source root. Exit with a clear error message if the path cannot be resolved.
 
 ## Dev Environment Check
 

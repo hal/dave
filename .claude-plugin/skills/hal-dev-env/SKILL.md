@@ -1,6 +1,6 @@
 ---
 name: hal-dev-env
-description: This skill should be used when the user asks to "start dev environment", "start halop", "start wildfly for dev", "stop dev environment", "dev env status", or invokes /hal-dev-env. Starts and manages a containerized local WildFly + halOP development environment.
+description: This skill should be used when the user asks to "start dev environment", "start halop", "start wildfly for dev", "launch dev env", "bring up containers", "stop dev environment", "tear down containers", "dev env status", "are containers running", or invokes /hal-dev-env. Starts, stops, and checks the status of a containerized local WildFly + halOP development environment.
 metadata:
   version: "0.1.0"
 ---
@@ -11,7 +11,7 @@ Manages a containerized local development environment for halOP (WildFly managem
 
 ## Tools
 
-This skill uses the following pre-allowed tools:
+This skill uses the following tools:
 
 - **Bash** — Execute shell commands for container management, health checks, and browser launch
 - **Read** — Read configuration file `.claude/hal-config.json`

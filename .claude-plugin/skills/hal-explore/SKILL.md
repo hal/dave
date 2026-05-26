@@ -1,6 +1,6 @@
 ---
 name: hal-explore
-description: This skill should be used when the user asks to "explore halop", "find untested features", "coverage gaps", "what should we test next", or invokes /hal-explore. Analyzes halOP test coverage gaps and explores the UI to propose new test scenarios.
+description: This skill should be used when the user asks to "explore halop", "find untested features", "coverage gaps", "what should we test next", "test coverage analysis", "what's not tested", "which features need tests", or invokes /hal-explore. Analyzes halOP test coverage gaps by cross-referencing halOP source with existing dave tests and page objects, and optionally explores the live UI to propose new test scenarios.
 metadata:
   version: "0.1.0"
 ---
@@ -11,7 +11,7 @@ Identifies untested halOP features by cross-referencing the halOP source tree wi
 
 ## Tools
 
-This skill uses the following pre-allowed tools:
+This skill uses the following tools:
 
 - **Bash** — Execute shell commands for directory listing, file analysis, grep operations
 - **Read** — Read source files (Java, TypeScript) for feature and test inventory
@@ -67,25 +67,7 @@ The skill requires the path to the `hal/foundation` repository. Uses the same re
 4. Validate that `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/` exists
 5. Save valid path to `.claude/hal-config.json`
 
-```bash
-# Duplicated across skills — each skill is loaded independently by the plugin runtime
-CONFIG_FILE=".claude/hal-config.json"
-if [ -f "$CONFIG_FILE" ]; then
-  FOUNDATION_DIR=$(node -e "const c=require('./$CONFIG_FILE');process.stdout.write(c.foundationDir||'')" 2>/dev/null)
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
-  if [ -d "../foundation" ]; then
-    FOUNDATION_DIR="../foundation"
-  fi
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/" ]; then
-  echo "ERROR: Cannot locate hal/foundation repository."
-  echo "Run /hal-dev-env first, or set foundationDir in .claude/hal-config.json"
-  exit 1
-fi
-```
+Implement the resolution steps above using Bash: read the JSON config with `node -e`, check directory existence, and validate the halOP source root. Exit with a clear error message if the path cannot be resolved.
 
 ## Dev Environment Check (Phase 2 only)
 
@@ -152,7 +134,7 @@ echo "=== Dave Test Inventory ==="
 for spec in src/tests/**/*.spec.ts; do
   rel_path=${spec#src/tests/}
   test_count=$(grep -c "test(" "$spec" 2>/dev/null || echo 0)
-  tags=$(grep -oP "tag:\s*\[([^\]]+)\]" "$spec" | head -1)
+  tags=$(grep -oE "tag:\s*\[[^]]+\]" "$spec" | head -1)
   echo "| $rel_path | $test_count tests | $tags |"
 done
 
@@ -160,17 +142,17 @@ echo ""
 echo "=== Dave Page Object Inventory ==="
 for page in src/pages/*.page.ts; do
   page_name=$(basename "$page" .page.ts)
-  methods=$(grep -cP "^\s+(async\s+)?\w+\(" "$page" 2>/dev/null || echo 0)
+  methods=$(grep -cE "^\s+(async\s+)?[a-zA-Z_]+\(" "$page" 2>/dev/null || echo 0)
   echo "| $page_name | $methods methods |"
 done
 
 echo ""
 echo "=== Registered Fixtures ==="
-grep -P "^\s+\w+:" src/fixtures/pages.fixture.ts | grep -v "//" | head -20
+grep -E "^\s+[a-zA-Z_]+:" src/fixtures/pages.fixture.ts | grep -v "//" | head -20
 
 echo ""
 echo "=== Available Tags ==="
-grep -P "^export const" src/tags.ts
+grep -E "^export const" src/tags.ts
 ```
 
 ### Step 3: Cross-Reference and Identify Gaps
@@ -191,7 +173,7 @@ for dir in "$FEATURE_ROOT"/*/; do
   feature=$(basename "$dir")
 
   # Check for spec files (filename match or specPath reference)
-  spec_match=$(find src/tests -name "*${feature}*" -o -name "*$(echo $feature | sed 's/./\U&/')*.spec.ts" 2>/dev/null | head -1)
+  spec_match=$(find src/tests -name "*${feature}*" 2>/dev/null | head -1)
   if [ -z "$spec_match" ]; then
     spec_match=$(grep -rl "specPath:.*${feature}" src/tests/ 2>/dev/null | head -1)
   fi

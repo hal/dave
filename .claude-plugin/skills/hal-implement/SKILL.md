@@ -1,6 +1,6 @@
 ---
 name: hal-implement
-description: This skill should be used when the user asks to "implement test", "write test for", "add test coverage for", "test this feature", or invokes /hal-implement. Writes new halOP test cases and page objects interactively via a propose-approve-implement loop.
+description: This skill should be used when the user asks to "implement test", "write test for", "add test coverage for", "test this feature", "create spec file", "scaffold test", "add page object", "generate e2e test", or invokes /hal-implement. Writes new halOP test cases and page objects interactively via a propose-approve-implement loop. Not for discovering test gaps (use /hal-explore) or recording browser interactions (use /hal-record).
 metadata:
   version: "0.1.0"
 ---
@@ -11,7 +11,7 @@ Writes new test cases and page objects in dave, guided by the halOP source and t
 
 ## Tools
 
-This skill uses the following pre-allowed tools:
+This skill uses the following tools:
 
 - **Bash** — Execute shell commands for running tests, linting, formatting
 - **Read** — Read source files (Java, TypeScript) for reconnaissance and convention reference
@@ -70,25 +70,7 @@ The skill requires the path to the `hal/foundation` repository. Uses the same re
 4. Validate that `$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/` exists
 5. Save valid path to `.claude/hal-config.json`
 
-```bash
-# Duplicated across skills — each skill is loaded independently by the plugin runtime
-CONFIG_FILE=".claude/hal-config.json"
-if [ -f "$CONFIG_FILE" ]; then
-  FOUNDATION_DIR=$(node -e "const c=require('./$CONFIG_FILE');process.stdout.write(c.foundationDir||'')" 2>/dev/null)
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR" ]; then
-  if [ -d "../foundation" ]; then
-    FOUNDATION_DIR="../foundation"
-  fi
-fi
-
-if [ -z "$FOUNDATION_DIR" ] || [ ! -d "$FOUNDATION_DIR/op/console/src/main/java/org/jboss/hal/op/" ]; then
-  echo "ERROR: Cannot locate hal/foundation repository."
-  echo "Run /hal-dev-env first, or set foundationDir in .claude/hal-config.json"
-  exit 1
-fi
-```
+Implement the resolution steps above using Bash: read the JSON config with `node -e`, check directory existence, and validate the halOP source root. Exit with a clear error message if the path cannot be resolved.
 
 ## Dev Environment Check
 
@@ -145,7 +127,7 @@ grep -l "Page\|Column\|Form\|Table\|Modal" "$FEATURE_DIR"/*.java 2>/dev/null
 
 echo ""
 echo "=== OUIA IDs Used ==="
-grep -rh "Ids\." "$FEATURE_DIR"/ | grep -oP 'Ids\.\w+' | sort -u
+grep -rh "Ids\." "$FEATURE_DIR"/ | grep -oE 'Ids\.[A-Za-z_]+' | sort -u
 ```
 
 Read the key Java files to understand:
@@ -396,7 +378,7 @@ If the user approves:
 pnpm format
 pnpm lint:fix
 git add src/pages/<name>.page.ts src/tests/<category>/<name>.spec.ts src/fixtures/pages.fixture.ts src/tags.ts
-git commit -m "test: add <feature> <scenario> test"
+git commit -m "test(<feature>): add <scenario> test"
 ```
 
 Only stage files that were actually created or modified.

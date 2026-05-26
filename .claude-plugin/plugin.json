@@ -21,7 +21,7 @@
     {
       "name": "hal-ouia",
       "path": "skills/hal-ouia/SKILL.md",
-      "description": "Add missing OUIA IDs to halOP for testability, create PRs, and sync back to dave"
+      "description": "Add missing OUIA IDs to halOP via spec audit, browser exploration, or element list — creates PRs and syncs back to dave"
     },
     {
       "name": "hal-record",

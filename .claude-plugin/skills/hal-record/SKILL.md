@@ -1,6 +1,6 @@
 ---
 name: hal-record
-description: This skill should be used when the user asks to "record test", "record interaction", "capture test", "codegen", "playwright recorder", "record browser", "scaffold from recording", or invokes /hal-record. Records browser interactions via Playwright codegen against a running halOP dev environment and scaffolds test proposals for /hal-implement.
+description: This skill should be used when the user asks to "record test", "record interaction", "record a test scenario", "capture interactions", "codegen", "use codegen", "playwright recorder", "record browser", "scaffold from recording", or invokes /hal-record. Records browser interactions via Playwright codegen against a running halOP dev environment and scaffolds test proposals for /hal-implement.
 metadata:
   version: "0.1.0"
 ---
@@ -11,7 +11,7 @@ Records user interactions in a live halOP browser session via Playwright codegen
 
 ## Tools
 
-This skill uses the following pre-allowed tools:
+This skill uses the following tools:
 
 - **Bash** — Launch codegen, check dev env health, read recording file
 - **Read** — Read `src/selectors/ids.ts` for OUIA constant mapping, read existing page objects
@@ -111,7 +111,7 @@ pnpm exec playwright codegen \
   --target playwright-test \
   --test-id-attribute data-ouia-component-id \
   -o "$RECORDING_FILE" \
-  "http://localhost:19090/?connect=http://localhost:19990"
+  "$CODEGEN_URL"
 ```
 
 This command blocks until the user closes the codegen browser. When it exits:
@@ -244,53 +244,11 @@ Build a test proposal in the exact `/hal-implement` format. This proposal is the
 
 ### Proposal Format
 
-Present the proposal using this template:
+Use the shared proposal template from `.claude-plugin/skills/hal-explore/references/proposal-format.md` with these recording-specific additions:
 
-````markdown
-## Proposed Test: <feature> / <scenario>
-
-**Source:** Recorded via /hal-record
-**Category:** <inferred from navigation path>
-**Tags:** [Tag.<TAG>.value]
-**Spec path:** <category>/<name>
-
-### Page Object
-
-**Status:** NEW — `src/pages/<name>.page.ts` | EXTEND — `src/pages/<existing>.page.ts`
-
-Locators:
-
-- `<element>` → `ouiaSelector(ids.<CONSTANT>)` or `page.getByRole(...)`
-
-Methods:
-
-- `navigate()` → clicks nav link, waits for heading
-- `<action>()` → describes what the method does
-
-### Fixture Registration
-
-Changes needed in `src/fixtures/pages.fixture.ts`:
-
-- Import: `import { ExamplePage } from "../pages/example.page.js";`
-- Interface: `examplePage: ExamplePage;`
-- Fixture: `examplePage: async ({ page, wildfly }, use) => { ... }`
-
-### Test Cases
-
-1. **<derived from recorded actions>** — <description>
-   - <step-by-step from recording>
-
-### DMR Setup/Teardown
-
-> Not detected from recording — review and add WildFly resource
-> setup/teardown if the test requires specific server state.
-
-### OUIA Coverage
-
-- Matched: <OUIA IDs found in ids.ts with their constant names>
-- Unmatched: <OUIA IDs in recording but not in ids.ts>
-- Non-OUIA selectors: <role/text selectors used>
-````
+- Add `**Source:** Recorded via /hal-record` after the proposal heading
+- **DMR Setup/Teardown** — always include: "Not detected from recording — review and add WildFly resource setup/teardown if the test requires specific server state."
+- **OUIA Coverage** — include three sub-items: Matched (OUIA IDs found in ids.ts), Unmatched (OUIA IDs in recording but not in ids.ts), Non-OUIA selectors (role/text selectors used)
 
 ### Proposal Construction Rules
 
