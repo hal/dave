@@ -35,3 +35,36 @@ DAVE_SELECTOR_FILE  = src/selectors/ids.ts
 RECORDING_DIR       = /tmp
 RECORDING_PREFIX    = dave-recording
 ```
+
+## Phase 1: Prerequisites Check
+
+Verify the dev environment is running before launching codegen. Do NOT start containers — that is `/hal-dev-env`'s job.
+
+### Step 1: Check halOP
+
+```bash
+if ! curl -sf http://localhost:19090 >/dev/null 2>&1; then
+  echo "ERROR: halOP is not running on port 19090."
+  echo "Run /hal-dev-env start first."
+  exit 1
+fi
+```
+
+### Step 2: Check WildFly
+
+```bash
+if ! curl -sf http://localhost:19990/management >/dev/null 2>&1; then
+  echo "ERROR: WildFly is not running on port 19990."
+  echo "Run /hal-dev-env start first."
+  exit 1
+fi
+```
+
+### Step 3: Check Playwright
+
+```bash
+if ! npx playwright --version >/dev/null 2>&1; then
+  echo "ERROR: Playwright not available. Run 'pnpm install' first."
+  exit 1
+fi
+```
