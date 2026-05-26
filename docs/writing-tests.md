@@ -1,6 +1,6 @@
 # Writing Tests
 
-This guide walks you through writing tests for dave — from your first test to adding new page objects. It's written for contributors who may be new to Playwright. For Playwright-specific terminology, see the [Glossary](glossary.md). For a deep dive into how fixtures work, see [Fixtures and Dependency Injection](fixtures.md).
+This guide walks you through writing tests for dave — from your first test to preparing the management model. It's written for contributors who may be new to Playwright. For Playwright-specific terminology, see the [Glossary](glossary.md). For a deep dive into how fixtures work, see [Fixtures and Dependency Injection](fixtures.md).
 
 ## Before You Start
 
@@ -83,9 +83,9 @@ test.describe("My Feature", () => {
 - **`{ dashboardPage }`** — by listing `dashboardPage` in the parameters, you're asking the fixture system to create it. Before your test runs, the fixture will: start WildFly (if not already running), open halOP, connect to WildFly, and create the page object.
 - **`expect(...).toBeVisible()`** — Playwright's assertion. It automatically waits and retries until the element is visible or the timeout expires.
 
-### What You Can Request
+## Requesting Fixtures
 
-List any combination of these in your test function parameters:
+List any combination of fixtures in your test function parameters:
 
 ```typescript
 test("example", async ({ page, wildfly, dashboardPage, navigationPage }) => {
@@ -93,24 +93,22 @@ test("example", async ({ page, wildfly, dashboardPage, navigationPage }) => {
 });
 ```
 
-| Parameter           | What you get                                                  |
-| ------------------- | ------------------------------------------------------------- |
-| `page`              | Playwright's `Page` — the browser tab (OUIA already enabled)  |
-| `wildfly`           | The WildFly container — `httpUrl` and `managementUrl`         |
-| `basePage`          | Minimal page object, halOP loaded at root                     |
-| `dashboardPage`     | Dashboard page object, halOP loaded at root                   |
-| `navigationPage`    | Navigation page object, halOP loaded at root                  |
-| `configurationPage` | Configuration page object, navigated to Configuration section |
-| `modelBrowserPage`  | Model Browser page object, navigated to Model Browser section |
-| `tasksPage`         | Tasks page object, navigated to Tasks section                 |
+The `page` and `wildfly` fixtures are always available:
 
-Fixtures are **lazy** — only the ones you list in the parameters are created. If you only need `navigationPage`, the dashboard and model browser fixtures never run.
+| Fixture   | What you get                                                 |
+| --------- | ------------------------------------------------------------ |
+| `page`    | Playwright's `Page` — the browser tab (OUIA already enabled) |
+| `wildfly` | The WildFly container — `httpUrl` and `managementUrl`        |
+
+Page objects (like `dashboardPage`, `navigationPage`, `configurationPage`, etc.) are registered in [`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts). Check that file for the current list. Each fixture opens halOP, optionally navigates to a section, and hands you a ready-to-use page object.
+
+Fixtures are **lazy** — only the ones you list in the parameters are created. If you only need `navigationPage`, the other page fixtures never run.
 
 ## Writing Assertions
 
 Playwright provides two main assertion styles:
 
-### Element Assertions (most common)
+### Element Assertions (Most Common)
 
 ```typescript
 // Visibility
@@ -141,389 +139,6 @@ await expect(page).toHaveTitle(/hal/i);
 ```
 
 **Key difference:** assertions on locators (like `await expect(locator).toBeVisible()`) automatically **wait and retry** until the condition is met or the timeout expires. Assertions on plain values (`expect(text).toContain(...)`) do **not** retry — they pass or fail immediately.
-
-## Finding Elements
-
-### Using Page Objects (preferred)
-
-Page objects expose locators as properties and methods:
-
-```typescript
-// Properties — defined in the constructor
-await expect(dashboardPage.heading).toBeVisible();
-await expect(modelBrowserPage.tree).toBeVisible();
-
-// Methods — for dynamic elements
-await expect(modelBrowserPage.treeItem("subsystem")).toBeVisible();
-await expect(navigationPage.link("Dashboard")).toBeVisible();
-```
-
-### Using OUIA IDs
-
-halOP uses [OUIA](https://ouia.readthedocs.io/) attributes (`data-ouia-component-id`) for stable element identification. The IDs are defined in `src/selectors/ids.ts` (generated from halOP's Java source).
-
-```typescript
-import { MAIN_ID, NAV_DASHBOARD } from "../selectors/ids.js";
-import { ouiaSelector } from "../utils/ouia.js";
-
-// ouiaSelector("nav-dashboard") → '[data-ouia-component-id="nav-dashboard"]'
-const navLink = page.locator(ouiaSelector(NAV_DASHBOARD));
-```
-
-### When OUIA IDs Are Missing
-
-If the element you need to target doesn't have a `data-ouia-component-id` attribute and no constant exists in `src/selectors/ids.ts`, the ID needs to be added upstream in the `hal/foundation` repository. If you use Claude Code, the `/hal-ouia` skill automates this — it adds constants to `OuiaIds.java`, chains `.ouiaId()` calls in the Java source, creates a PR, and syncs the new IDs back to dave. See [Skills](skills.md) for details.
-
-In the meantime, use Playwright's built-in locators (see below) as a temporary measure.
-
-### Using Playwright's Built-in Locators
-
-When OUIA IDs aren't available, use Playwright's semantic locators (in order of preference):
-
-```typescript
-// By role (best — matches how users perceive the page)
-page.getByRole("button", { name: "Submit" });
-page.getByRole("heading", { name: "Dashboard", level: 1 });
-page.getByRole("tab", { name: "Attributes" });
-page.getByRole("treeitem", { name: "subsystem", exact: true });
-
-// By text
-page.getByText("WildFly", { exact: true });
-page.getByText(/running/i); // regex for case-insensitive
-
-// By label (form elements)
-page.getByLabel("Filter by name");
-
-// By test ID (if available)
-page.getByTestId("my-element");
-
-// By CSS selector (last resort)
-page.locator("#hal-root-container");
-page.locator('[data-ouia-component-type="PF6/Component/Card"]');
-```
-
-### Scoping Locators
-
-Narrow your search to a specific section to avoid matching elements elsewhere on the page:
-
-```typescript
-// Scope to the main content area
-const main = page.locator(`#${MAIN_ID}`);
-const heading = main.getByRole("heading", { name: "Overview", level: 2 });
-
-// Scope to a specific tab panel
-const panel = modelBrowserPage.tabPanel("Operations");
-await expect(panel.getByText("add", { exact: true })).toBeVisible();
-
-// Chain .filter() for card-like elements
-const card = page
-  .locator('[data-ouia-component-type="PF6/Component/Card"]')
-  .filter({ has: page.getByRole("heading", { name: "Data source", level: 2 }) });
-```
-
-## Performing Actions
-
-### Clicking
-
-```typescript
-await navigationPage.link("Dashboard").click();
-await modelBrowserPage.findButton.click();
-```
-
-### Waiting After Actions
-
-Some actions cause navigation or content changes. Wait for the result:
-
-```typescript
-// Wait for an element to appear
-await navigationPage.navigateTo("Dashboard");
-// navigateTo() already waits internally — see the page object source
-
-// Explicit wait when needed
-await modelBrowserPage.findButton.click();
-await expect(modelBrowserPage.findResourceModal).toBeVisible();
-```
-
-### Running CLI Commands
-
-For tests that need to modify WildFly configuration:
-
-```typescript
-import { executeCliCommand } from "../../utils/wildfly-container.js";
-
-test("reads a system property", async ({ wildfly, basePage }) => {
-  await executeCliCommand(wildfly, '/system-property=foo:add(value="bar")');
-  // Now test that the UI reflects the change
-});
-```
-
-## Test Structure Patterns
-
-### Basic Test
-
-```typescript
-import { test, expect } from "../../fixtures/pages.fixture.js";
-import { Tag } from "../../tags.js";
-
-test.use({ specPath: "category/feature" });
-
-test.describe("Feature Name", { tag: [Tag.SMOKE] }, () => {
-  test("does something specific", async ({ somePage }) => {
-    await expect(somePage.someElement).toBeVisible();
-  });
-});
-```
-
-### Multiple Tests Sharing State
-
-Tests within a `describe` block share the same WildFly container but get fresh page objects:
-
-```typescript
-test.describe("Dashboard", { tag: [Tag.SMOKE, Tag.DASHBOARD] }, () => {
-  test("shows heading", async ({ dashboardPage }) => {
-    await expect(dashboardPage.heading).toBeVisible();
-  });
-
-  test("shows overview section", async ({ dashboardPage }) => {
-    // Fresh dashboardPage — independent from the test above
-    await expect(dashboardPage.overviewSection).toBeVisible();
-  });
-});
-```
-
-### Data-Driven Tests
-
-Loop over test data to generate multiple tests:
-
-```typescript
-import { NAV_ITEM_NAMES } from "../../pages/navigation.page.js";
-
-for (const item of NAV_ITEM_NAMES) {
-  test(`navigates to ${item}`, async ({ navigationPage }) => {
-    await navigationPage.navigateTo(item);
-    await expect(navigationPage.page.locator(`#${MAIN_ID}`)).toBeVisible();
-  });
-}
-```
-
-### Test Without Page Objects
-
-For simple checks that don't need the full page object machinery:
-
-```typescript
-import { test, expect } from "../../fixtures/wildfly.fixture.js";
-
-test("halOP serves the SPA", async ({ page }) => {
-  await page.goto("/");
-  await expect(page).toHaveTitle(/hal/i);
-});
-```
-
-Note the import from `wildfly.fixture.js` instead of `pages.fixture.js`.
-
-## Creating a New Page Object
-
-When testing a new section of halOP, create a page object to encapsulate its locators and actions.
-
-### Step 1: Create the Page Object Class
-
-Create `src/pages/runtime.page.ts`:
-
-```typescript
-import type { Locator, Page } from "@playwright/test";
-import { MAIN_ID, NAV_RUNTIME } from "../selectors/ids.js";
-import { BasePage } from "./base.page.js";
-import { ouiaSelector } from "../utils/ouia.js";
-
-export class RuntimePage extends BasePage {
-  readonly heading: Locator;
-  readonly serverStatus: Locator;
-
-  constructor(page: Page) {
-    super(page);
-    this.heading = page.locator(`#${MAIN_ID}`).getByRole("heading", { name: "Runtime", level: 1 });
-    this.serverStatus = page.getByText("RUNNING", { exact: true });
-  }
-
-  async navigate(): Promise<void> {
-    await this.page.locator(ouiaSelector(NAV_RUNTIME)).click();
-    await this.page.locator(`#${MAIN_ID}`).waitFor({ state: "visible" });
-  }
-}
-```
-
-**Guidelines:**
-
-- Extend `BasePage` — it gives you the `page` property
-- Define locators as `readonly` properties in the constructor
-- Use OUIA selectors (`ouiaSelector()`) for halOP-specific elements
-- Use Playwright's semantic locators (`getByRole`, `getByText`) for standard HTML elements
-- Keep navigation in a `navigate()` method — the fixture calls it for you
-- Don't store URLs or infrastructure details — that's the fixture's job
-
-### Step 2: Register the Fixture
-
-Edit `src/fixtures/pages.fixture.ts`:
-
-```typescript
-// Add the import
-import { RuntimePage } from "../pages/runtime.page.js";
-
-// Add to the interface
-interface PageFixtures {
-  // ...existing entries...
-  runtimePage: RuntimePage;
-}
-
-// Add the fixture
-export const test = testWithWildFly.extend<PageFixtures>({
-  // ...existing entries...
-
-  runtimePage: async ({ page, wildfly }, use) => {
-    await openHalOp(page, wildfly.managementUrl);
-    const runtimePage = new RuntimePage(page);
-    await runtimePage.navigate();
-    await use(runtimePage);
-  },
-});
-```
-
-The fixture pattern is always the same:
-
-1. `openHalOp(page, wildfly.managementUrl)` — load halOP and connect to WildFly
-2. Create the page object
-3. Optionally call `navigate()` — if the page object has a specific section to navigate to
-4. `await use(pageObject)` — hand it to the test
-
-### Step 3: Write Tests
-
-Create `src/tests/runtime/runtime.spec.ts`:
-
-```typescript
-import { test, expect } from "../../fixtures/pages.fixture.js";
-import { Tag } from "../../tags.js";
-
-test.use({ specPath: "runtime/runtime" });
-
-test.describe("Runtime", { tag: [Tag.SMOKE] }, () => {
-  test("shows runtime heading", async ({ runtimePage }) => {
-    await expect(runtimePage.heading).toBeVisible();
-  });
-
-  test("shows server status", async ({ runtimePage }) => {
-    await expect(runtimePage.serverStatus).toBeVisible();
-  });
-});
-```
-
-### Step 4: Add a Tag (Optional)
-
-If this is a new test group, add an entry to `src/tags.ts`:
-
-```typescript
-export const Tag = {
-  // ...existing tags...
-  RUNTIME: { value: "@runtime", description: "Runtime feature" },
-} as const satisfies Record<string, TagDefinition>;
-```
-
-That's it — `pnpm test:tag runtime` works automatically. No other files need changes.
-
-## Debugging Tests
-
-### Run a Single Test
-
-```bash
-# By file
-pnpm test -- src/tests/smoke/dashboard.spec.ts
-
-# By name pattern
-pnpm test -- --grep "shows dashboard heading"
-
-# In a single browser
-pnpm test -- --project=chromium src/tests/smoke/dashboard.spec.ts
-```
-
-### Headed Mode (See the Browser)
-
-```bash
-pnpm test:headed -- src/tests/smoke/dashboard.spec.ts
-```
-
-### Debug Mode (Step Through)
-
-```bash
-pnpm test:debug -- src/tests/smoke/dashboard.spec.ts
-```
-
-This opens the Playwright Inspector where you can step through actions, inspect the DOM, and see what locators match.
-
-### UI Mode (Interactive)
-
-```bash
-pnpm test:ui
-```
-
-Opens Playwright's interactive UI with a file browser, test runner, and time-travel debugging. Great for developing new tests.
-
-### View the Report
-
-After a test run:
-
-```bash
-pnpm report
-```
-
-Opens the HTML report showing all passed/failed tests with traces, screenshots, and error details.
-
-## Common Patterns in This Project
-
-### Checking Multiple Sections Exist
-
-```typescript
-test("shows host and JVM info", async ({ dashboardPage }) => {
-  await expect(dashboardPage.hostSection).toBeVisible();
-  await expect(dashboardPage.jvmSection).toBeVisible();
-});
-```
-
-### Verifying Navigation Works
-
-```typescript
-test("navigates to Configuration", async ({ navigationPage }) => {
-  await navigationPage.navigateTo("Configuration");
-  await expect(navigationPage.page.locator(`#${MAIN_ID}`)).toBeVisible();
-});
-```
-
-### Tree Navigation
-
-```typescript
-test("navigates to a specific subsystem", async ({ modelBrowserPage }) => {
-  await modelBrowserPage.navigateToChild("subsystem", "datasources");
-  await expect(modelBrowserPage.resourceHeading).toContainText("datasources");
-});
-```
-
-### Tab Switching
-
-```typescript
-test("switches tabs", async ({ modelBrowserPage }) => {
-  await modelBrowserPage.selectTab("Operations");
-  await expect(modelBrowserPage.tabPanel("Operations")).toBeVisible();
-});
-```
-
-### Checking a Modal Opens and Closes
-
-```typescript
-test("opens and closes find modal", async ({ modelBrowserPage }) => {
-  await modelBrowserPage.findButton.click();
-  await expect(modelBrowserPage.findResourceModal).toBeVisible();
-  await modelBrowserPage.findResourceCancelButton.click();
-  await expect(modelBrowserPage.findResourceModal).toBeHidden();
-});
-```
 
 ## Preparing the Management Model
 
@@ -609,6 +224,53 @@ Since each spec file gets its own WildFly container that is destroyed after all 
 1. **Serial tests** — if tests within a `test.describe.serial()` block depend on a clean state, earlier test side effects can cause failures.
 2. **Readability** — `afterAll` documents what the test created, making the test's footprint explicit.
 
+## Debugging Tests
+
+### Run a Single Test
+
+```bash
+# By file
+pnpm test -- src/tests/smoke/dashboard.spec.ts
+
+# By name pattern
+pnpm test -- --grep "shows dashboard heading"
+
+# In a single browser
+pnpm test -- --project=chromium src/tests/smoke/dashboard.spec.ts
+```
+
+### Headed Mode (See the Browser)
+
+```bash
+pnpm test:headed -- src/tests/smoke/dashboard.spec.ts
+```
+
+### Debug Mode (Step Through)
+
+```bash
+pnpm test:debug -- src/tests/smoke/dashboard.spec.ts
+```
+
+This opens the Playwright Inspector where you can step through actions, inspect the DOM, and see what locators match.
+
+### UI Mode (Interactive)
+
+```bash
+pnpm test:ui
+```
+
+Opens Playwright's interactive UI with a file browser, test runner, and time-travel debugging. Great for developing new tests.
+
+### View the Report
+
+After a test run:
+
+```bash
+pnpm report
+```
+
+Opens the HTML report showing all passed/failed tests with traces, screenshots, and error details.
+
 ## Checklist for New Tests
 
 Before submitting a PR:
@@ -620,6 +282,13 @@ Before submitting a PR:
 - [ ] Assertions use `await expect(locator)` (not plain `expect(value)`) for auto-waiting
 - [ ] Tests pass in all three browsers: `pnpm test -- --project=chromium`, `firefox`, `webkit`
 - [ ] Code passes linting: `pnpm lint` and `pnpm format:check`
+
+## Related Guides
+
+- **[Finding Elements](finding-elements.md)** — OUIA IDs, Playwright locators, and scoping strategies
+- **[Test Patterns](test-patterns.md)** — common test structures, actions, and copy-paste recipes
+- **[Page Objects](page-objects.md)** — creating new page objects and registering fixtures
+- **[Fixtures](fixtures.md)** — deep dive into the four-layer fixture system
 
 ## Claude Code Skills
 

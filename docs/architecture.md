@@ -104,18 +104,9 @@ Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and
 
 Custom Playwright fixtures in
 [`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via
-`openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
+`openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages. Check [`pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) for the current list of available fixtures.
 
-| Fixture             | Purpose                                                                   |
-| ------------------- | ------------------------------------------------------------------------- |
-| `basePage`          | Base page with shared `page` accessor                                     |
-| `configurationPage` | Configuration finder tree (Subsystems, Interfaces, Socket Bindings, etc.) |
-| `dashboardPage`     | Dashboard sections (overview, host, JVM, memory, log, links)              |
-| `modelBrowserPage`  | Model browser tree, toolbar, tabs, and resource assertions                |
-| `navigationPage`    | Sidebar navigation (Dashboard, Deployments, Configuration, Runtime, etc.) |
-| `tasksPage`         | Task cards (Data source, Logging, Management SSL, etc.)                   |
-
-Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`.
+Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`. For guidance on creating new page objects, see [Page Objects](./page-objects.md).
 
 ## Element Identification
 

@@ -87,18 +87,7 @@ interface WildFlyContainer {
 
 ### Layer 4: Page Fixtures (`src/fixtures/pages.fixture.ts`)
 
-Extends the WildFly fixture with **test-scoped** page objects:
-
-```typescript
-interface PageFixtures {
-  basePage: BasePage;
-  configurationPage: ConfigurationPage;
-  dashboardPage: DashboardPage;
-  modelBrowserPage: ModelBrowserPage;
-  navigationPage: NavigationPage;
-  tasksPage: TasksPage;
-}
-```
+Extends the WildFly fixture with **test-scoped** page objects. The full list of available page fixtures is defined in [`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) — check that file for the current set.
 
 **What each fixture does before handing you the page object:**
 
@@ -128,20 +117,16 @@ test("example", async ({ page, wildfly, dashboardPage }) => {
 });
 ```
 
-Available fixtures:
+The infrastructure fixtures are always available:
 
-| Fixture             | Type                | Scope  | Pre-navigated to      |
-| ------------------- | ------------------- | ------ | --------------------- |
-| `page`              | Playwright `Page`   | test   | (OUIA enabled)        |
-| `wildfly`           | `WildFlyContainer`  | worker | n/a                   |
-| `basePage`          | `BasePage`          | test   | halOP root            |
-| `dashboardPage`     | `DashboardPage`     | test   | halOP root            |
-| `navigationPage`    | `NavigationPage`    | test   | halOP root            |
-| `configurationPage` | `ConfigurationPage` | test   | Configuration section |
-| `modelBrowserPage`  | `ModelBrowserPage`  | test   | Model Browser section |
-| `tasksPage`         | `TasksPage`         | test   | Tasks section         |
+| Fixture   | Type               | Scope  | Description                                              |
+| --------- | ------------------ | ------ | -------------------------------------------------------- |
+| `page`    | Playwright `Page`  | test   | The browser tab (OUIA already enabled)                   |
+| `wildfly` | `WildFlyContainer` | worker | The WildFly container — `httpUrl` and `managementUrl`    |
 
-In addition to these, Playwright's [built-in fixtures](https://playwright.dev/docs/api/class-fixtures) are always available: `context` (the `BrowserContext`), `browser` (the `Browser` instance), `browserName` (`"chromium"`, `"firefox"`, or `"webkit"`), and `request` (an `APIRequestContext` for direct HTTP calls). These are rarely needed since `page` covers most cases.
+Page object fixtures (like `dashboardPage`, `configurationPage`, etc.) are test-scoped and registered in [`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts). Check that file for the current list. Each one opens halOP, optionally navigates to a section, and hands you a ready-to-use page object.
+
+In addition, Playwright's [built-in fixtures](https://playwright.dev/docs/api/class-fixtures) are always available: `context` (the `BrowserContext`), `browser` (the `Browser` instance), `browserName` (`"chromium"`, `"firefox"`, or `"webkit"`), and `request` (an `APIRequestContext` for direct HTTP calls). These are rarely needed since `page` covers most cases.
 
 ### Importing from `wildfly.fixture.ts` (simple tests)
 

@@ -89,14 +89,7 @@ Tests that need to verify or modify WildFly configuration use the DMR utilities 
 
 ### Page Object Model
 
-Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
-
-- **`basePage`** — base page with shared `page` accessor
-- **`configurationPage`** — configuration finder tree (Subsystems, Interfaces, Socket Bindings, Paths, System Properties)
-- **`dashboardPage`** — dashboard sections (overview, host, JVM, memory, log, links)
-- **`modelBrowserPage`** — model browser tree, toolbar, tabs, and resource assertions
-- **`navigationPage`** — sidebar nav links (Dashboard, Deployments, Tasks, Configuration, Runtime, Management model)
-- **`tasksPage`** — task cards (Data source, Logging, Management SSL, Reverse proxy, SSL, Statistics)
+Tests use POM via custom Playwright fixtures defined in `src/fixtures/pages.fixture.ts`. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages. Check `src/fixtures/pages.fixture.ts` for the current list of available page fixtures.
 
 Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`.
 
