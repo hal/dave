@@ -1,0 +1,16 @@
+{
+  "config": {
+    // Allow long lines — docs often have URLs, code refs, and tables
+    "MD013": false,
+    // Allow multiple top-level headings (VitePress frontmatter + content)
+    "MD025": false,
+    // Allow inline HTML (VitePress components, badges, etc.)
+    "MD033": false,
+    // Allow bare URLs
+    "MD034": false,
+    // Allow duplicate headings (e.g., repeated "Arguments" in reference docs)
+    "MD024": false,
+  },
+  "globs": ["docs/**/*.md", "*.md"],
+  "ignores": ["node_modules", "allure-report", "allure-results"],
+}

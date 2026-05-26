@@ -4,7 +4,7 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
 
 ## Plugin Structure
 
-```
+```text
 .claude-plugin/
 ├── plugin.json                  # Plugin manifest
 └── skills/
@@ -188,7 +188,7 @@ For each replacement candidate, the skill locates the corresponding Java file wh
 
 The four skills form a pipeline for test development:
 
-```
+```text
 hal-dev-env (start) → hal-explore (find gaps) → hal-ouia (add missing IDs) → hal-implement (write tests)
                                                        ↓
                                                   PR + CI + sync

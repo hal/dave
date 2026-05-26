@@ -35,6 +35,8 @@ pnpm sync:help                         # Show sync command help
 
 pnpm lint                              # Run ESLint
 pnpm lint:fix                          # Run ESLint with auto-fix
+pnpm lint:md                           # Lint markdown files
+pnpm lint:md:fix                       # Lint markdown with auto-fix
 pnpm format                            # Format all files with Prettier
 pnpm format:check                      # Check formatting without changing
 ```
@@ -51,7 +53,7 @@ pnpm format:check                      # Check formatting without changing
 
 ### Test Lifecycle
 
-```
+```text
 global-setup.ts              →  removes stale dave_* containers
                                  starts halOP container (via testcontainers)
                                  writes state to /tmp/dave-state.json

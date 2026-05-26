@@ -85,8 +85,8 @@ The container lifecycle: started before the first test in a worker, shared by al
 
 ## WildFly Container Fixture
 
-WildFly containers are managed by a **worker-scoped Playwright fixture** defined in [
-`src/fixtures/wildfly.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/wildfly.fixture.ts). Spec files that need WildFly and page objects import
+WildFly containers are managed by a **worker-scoped Playwright fixture** defined in
+[`src/fixtures/wildfly.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/wildfly.fixture.ts). Spec files that need WildFly and page objects import
 `test` from `pages.fixture.ts` and declare their spec path:
 
 ```typescript
@@ -102,8 +102,8 @@ Spec files that don't need WildFly (e.g., `app-loads.spec.ts`) import `test` and
 
 ## Page Object Model
 
-Custom Playwright fixtures in [
-`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via
+Custom Playwright fixtures in
+[`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via
 `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages:
 
 | Fixture             | Purpose                                                                   |
@@ -119,16 +119,16 @@ Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@p
 
 ## Element Identification
 
-Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs are generated locally from halOP's [
-`OuiaIds.java`](https://github.com/hal/foundation/blob/main/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java) source file into [
-`src/selectors/ids.ts`](https://github.com/hal/dave/blob/main/src/selectors/ids.ts). Run
+Tests use [OUIA](https://ouia.readthedocs.io/) attributes for element selection, following [PatternFly's](https://www.patternfly.org/developer-resources/open-ui-automation) testing conventions. The OUIA component IDs are generated locally from halOP's
+[`OuiaIds.java`](https://github.com/hal/foundation/blob/main/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java) source file into
+[`src/selectors/ids.ts`](https://github.com/hal/dave/blob/main/src/selectors/ids.ts). Run
 `pnpm sync:ouia` to regenerate after upstream changes — no npm release required.
 
 See [Sync](./sync.md) for details on keeping OUIA IDs up to date.
 
 ## Project Structure
 
-```
+```text
 dave/
   global-setup.ts                    # Start halOP before tests
   global-teardown.ts                 # Stop halOP after tests

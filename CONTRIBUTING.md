@@ -1,3 +1,5 @@
+# Contributing
+
 First off, thank you for considering contributing to dave. It's people like you that make dave such a great tool. dave is an open source project, and we love to receive contributions from our community — you! There are many ways to contribute, from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests or writing code which can be incorporated into dave itself.
 
 We expect all contributors and users to follow our [Code of Conduct](CODE_OF_CONDUCT.md) when communicating through project channels. These include, but are not limited to: chat, issues, code.
@@ -130,4 +132,4 @@ Here are some tips on increasing the chance that your pull request is accepted:
 
 # Issues
 
-dave uses GitHub to manage issues. All issues can be found [here](https://github.com/hal/dave/issues).
+dave uses GitHub to manage issues. All issues can be found [on GitHub](https://github.com/hal/dave/issues).

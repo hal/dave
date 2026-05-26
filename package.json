@@ -18,6 +18,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "lint:md": "markdownlint-cli2",
+    "lint:md:fix": "markdownlint-cli2 --fix",
     "sync": "tsx scripts/sync-help.ts",
     "sync:ouia": "tsx scripts/sync-ouia.ts",
     "sync:image": "tsx scripts/sync-image.ts",
@@ -40,6 +42,7 @@
     "eslint-plugin-playwright": "^2.10.4",
     "globals": "^17.6.0",
     "lint-staged": "^17.0.5",
+    "markdownlint-cli2": "^0.22.1",
     "mermaid": "^11.15.0",
     "prettier": "^3.8.3",
     "simple-git-hooks": "^2.13.1",
@@ -58,7 +61,8 @@
       "eslint",
       "prettier --check"
     ],
-    "*.{json,md,yml,yaml,css}": "prettier --check",
+    "*.{json,yml,yaml,css}": "prettier --check",
+    "*.md": "markdownlint-cli2",
     ".prettierrc": "prettier --check"
   },
   "packageManager": "pnpm@11.3.0"
