@@ -218,3 +218,83 @@ Organize the extracted actions into test steps:
 3. **Verification** — assertions (`expect` calls)
 
 If the recording contains multiple distinct action-verification cycles, propose multiple test cases within the same spec.
+
+## Phase 4: Generate Proposal
+
+Build a test proposal in the exact `/hal-implement` format. This proposal is the skill's primary output.
+
+### Proposal Format
+
+Present the proposal using this template:
+
+````markdown
+## Proposed Test: <feature> / <scenario>
+
+**Source:** Recorded via /hal-record
+**Category:** <inferred from navigation path>
+**Tags:** [Tag.<TAG>.value]
+**Spec path:** <category>/<name>
+
+### Page Object
+
+**Status:** NEW — `src/pages/<name>.page.ts` | EXTEND — `src/pages/<existing>.page.ts`
+
+Locators:
+
+- `<element>` → `ouiaSelector(ids.<CONSTANT>)` or `page.getByRole(...)`
+
+Methods:
+
+- `navigate()` → clicks nav link, waits for heading
+- `<action>()` → describes what the method does
+
+### Fixture Registration
+
+Changes needed in `src/fixtures/pages.fixture.ts`:
+
+- Import: `import { ExamplePage } from "../pages/example.page.js";`
+- Interface: `examplePage: ExamplePage;`
+- Fixture: `examplePage: async ({ page, wildfly }, use) => { ... }`
+
+### Test Cases
+
+1. **<derived from recorded actions>** — <description>
+   - <step-by-step from recording>
+
+### DMR Setup/Teardown
+
+> Not detected from recording — review and add WildFly resource
+> setup/teardown if the test requires specific server state.
+
+### OUIA Coverage
+
+- Matched: <OUIA IDs found in ids.ts with their constant names>
+- Unmatched: <OUIA IDs in recording but not in ids.ts>
+- Non-OUIA selectors: <role/text selectors used>
+````
+
+### Proposal Construction Rules
+
+1. **Page Object Status** — check if a page object already exists for the feature:
+
+   ```bash
+   ls src/pages/*<feature>* 2>/dev/null
+   ```
+
+   If found → `EXTEND`. If not → `NEW`.
+
+2. **Locators** — for each unique element interacted with in the recording:
+   - If it has a matched OUIA constant → `ouiaSelector(ids.CONSTANT_NAME)`
+   - If it uses `getByRole()` or `getByText()` → keep the codegen selector as-is
+   - If it uses `getByTestId()` but is unmatched → note it as unmatched OUIA
+
+3. **Methods** — derive from the action groups identified in Phase 3:
+   - Navigation sequence → `navigate()` method
+   - Form fill + save sequence → named action method (e.g., `editLevel()`)
+   - Table row interaction → named method (e.g., `selectRow()`)
+
+4. **Test Cases** — one per distinct action-verification cycle in the recording
+
+5. **DMR section** — always include the "not detected" note. Recording captures UI actions, not server state requirements. The user or `/hal-implement` will fill this in.
+
+6. **OUIA Coverage** — summarize from the mapping work in Phase 3
