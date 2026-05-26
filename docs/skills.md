@@ -18,10 +18,12 @@ dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-c
     │   ├── SKILL.md             # Interactive test implementation
     │   └── references/
     │       └── conventions.md       # Dave conventions (page objects, fixtures, specs, DMR, tags)
-    └── hal-ouia/
-        ├── SKILL.md             # OUIA ID management & upstream sync
-        └── references/
-            └── conventions.md       # OUIA ID naming rules and OuiaIds.java organization
+    ├── hal-ouia/
+    │   ├── SKILL.md             # OUIA ID management & upstream sync
+    │   └── references/
+    │       └── conventions.md       # OUIA ID naming rules and OuiaIds.java organization
+    └── hal-record/
+        └── SKILL.md             # Record browser interactions & scaffold test proposals
 ```
 
 ## hal-dev-env
@@ -184,12 +186,48 @@ When given a spec file path, the skill traces imports to find page objects and c
 
 For each replacement candidate, the skill locates the corresponding Java file where `.ouiaId()` should be added.
 
+## hal-record
+
+**Trigger:** `/hal-record`, "record test", "record interaction", "capture test", "codegen"
+
+Records user interactions in a live halOP browser session via Playwright codegen and produces a test proposal that feeds into `/hal-implement`. Bridges the gap between manual exploration and test scaffolding by capturing real user actions and transforming them into dave-convention proposals.
+
+### Arguments
+
+| Argument     | Description                                                        |
+| ------------ | ------------------------------------------------------------------ |
+| (none)       | Launch codegen immediately, infer feature area from the recording  |
+| Feature name | Pre-tag the proposal with the feature area, skipping inference     |
+
+### Workflow
+
+```mermaid
+flowchart TD
+    A[Phase 1: Prerequisites Check] --> B[Phase 2: Launch Codegen]
+    B --> C[Phase 3: Parse Recording]
+    C --> D[Phase 4: Generate Proposal]
+    D --> E{User approves?}
+    E -->|Approve| F[Offer /hal-implement handoff]
+    E -->|Adjust| D
+    E -->|Discard| G[Exit]
+```
+
+**Phase 1 — Prerequisites:** Verifies halOP (port 19090), WildFly (port 19990), and Playwright are available. Does not start containers — that is `/hal-dev-env`'s job.
+
+**Phase 2 — Launch Codegen:** Runs `npx playwright codegen` with OUIA-aware configuration (`--test-id-attribute data-ouia-component-id`). The user interacts with halOP in the codegen browser and closes it when done.
+
+**Phase 3 — Parse Recording:** Reads the recording, classifies actions (navigation, click, fill, assertion), maps `getByTestId` selectors to OUIA constants from `src/selectors/ids.ts`, and infers the feature area from navigation paths.
+
+**Phase 4 — Generate Proposal:** Produces a test proposal in the exact `/hal-implement` format, including page object structure, fixture registration, test cases, and OUIA coverage summary.
+
+**Phase 5 — Approval & Handoff:** Presents the proposal for approval. On approval, offers to invoke `/hal-implement` to write the code.
+
 ## Skill Workflow
 
-The four skills form a pipeline for test development:
+The five skills form a pipeline for test development:
 
 ```text
-hal-dev-env (start) → hal-explore (find gaps) → hal-ouia (add missing IDs) → hal-implement (write tests)
+hal-dev-env (start) → hal-explore (find gaps) → hal-ouia (add missing IDs) → hal-record (capture) → hal-implement (write tests)
                                                        ↓
                                                   PR + CI + sync
 ```
@@ -201,7 +239,7 @@ All skills require:
 - **Podman** or **Docker** — for running containers
 - **hal/foundation repository** — path configured in `.claude/hal-config.json` or at `../foundation`
 
-Browser exploration (hal-explore Phase 2, hal-implement Phase 1, hal-ouia interactive mode) additionally requires:
+Browser exploration (hal-explore Phase 2, hal-implement Phase 1, hal-ouia interactive mode) and recording (hal-record) additionally requires:
 
 - **Chrome DevTools MCP** — for browser interaction
 - **Running dev environment** — start with `/hal-dev-env start`
