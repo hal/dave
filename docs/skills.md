@@ -349,6 +349,18 @@ The skill follows dave's established patterns exactly:
 
 ---
 
+## Agents
+
+The plugin also includes a **playwright-reviewer** agent. Unlike skills (which are user-invoked slash commands), agents are specialized reviewers that Claude Code can delegate to behind the scenes.
+
+| Agent               | Purpose                                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| playwright-reviewer | Reviews test specs for dave convention violations: missing `await`, wrong imports, missing `specPath`, non-OUIA selectors, missing DMR verification, and more |
+
+The agent is defined in `.claude-plugin/agents/playwright-reviewer.md` and is used automatically when skills like `/hal-spec` need to review generated test code. You can also invoke it explicitly by asking Claude Code to review a test file.
+
+---
+
 ## Prerequisites
 
 All skills require:
