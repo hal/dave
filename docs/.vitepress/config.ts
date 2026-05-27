@@ -32,6 +32,7 @@ export default withMermaid({
             { text: "Introduction", link: "/getting-started" },
             { text: "Why Playwright?", link: "/why-playwright" },
             { text: "Running Tests", link: "/running-tests" },
+            { text: "Code Quality", link: "/code-quality" },
             { text: "Configuration", link: "/configuration" },
           ],
         },

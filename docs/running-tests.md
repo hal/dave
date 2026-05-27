@@ -46,14 +46,7 @@ To add a new group, add a constant to `src/tags.ts` and apply it to test files v
 
 ## Code Quality
 
-| Command             | Description                       |
-| ------------------- | --------------------------------- |
-| `pnpm lint`         | Run ESLint                        |
-| `pnpm lint:fix`     | Run ESLint with auto-fix          |
-| `pnpm format`       | Format all files with Prettier    |
-| `pnpm format:check` | Check formatting without changing |
-
-ESLint is configured with TypeScript and [Playwright-specific](https://github.com/playwright-community/eslint-plugin-playwright) rules. Prettier handles all formatting. See `eslint.config.js` and `.prettierrc` for details.
+Linting, formatting, and git hooks are covered in [Code Quality](./code-quality.md).
 
 ## Reports
 
