@@ -1,6 +1,6 @@
 # Writing Tests
 
-This guide walks you through writing tests for dave — from your first test to preparing the management model. It's written for contributors who may be new to Playwright. For Playwright-specific terminology, see the [Glossary](glossary.md). For a deep dive into how fixtures work, see [Fixtures and Dependency Injection](fixtures.md).
+This guide walks you through writing tests for dave — from your first test to preparing the management model. It's written for contributors who may be new to Playwright. For Playwright-specific terminology, see the [Glossary](../glossary.md). For a deep dive into how fixtures work, see [Fixtures and Dependency Injection](../fixtures.md).
 
 ## Before You Start
 
@@ -288,7 +288,7 @@ Before submitting a PR:
 - **[Finding Elements](finding-elements.md)** — OUIA IDs, Playwright locators, and scoping strategies
 - **[Test Patterns](test-patterns.md)** — common test structures, actions, and copy-paste recipes
 - **[Page Objects](page-objects.md)** — creating new page objects and registering fixtures
-- **[Fixtures](fixtures.md)** — deep dive into the four-layer fixture system
+- **[Fixtures](../fixtures.md)** — deep dive into the four-layer fixture system
 
 ## Claude Code Skills
 
@@ -297,4 +297,4 @@ If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), dave i
 - **`/hal-explore`** — identifies untested halOP features by cross-referencing the halOP source tree with existing tests and page objects. Use it to find out _what_ to test next.
 - **`/hal-spec`** — generates tests and page objects following the conventions described in this guide, via an interactive propose-approve-implement loop.
 
-See [Skills](skills.md) for full documentation.
+See [Skills](../skills.md) for full documentation.

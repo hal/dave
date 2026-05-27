@@ -106,7 +106,7 @@ Custom Playwright fixtures in
 [`src/fixtures/pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) provide page objects to each test. Page objects are pure UI concerns (locators and actions) — they don't know about WildFly URLs or infrastructure. The fixture layer handles navigation via
 `openHalOp(page, managementUrl)` before handing each page object to the test, so tests receive ready-to-use pages. Check [`pages.fixture.ts`](https://github.com/hal/dave/blob/main/src/fixtures/pages.fixture.ts) for the current list of available fixtures.
 
-Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`. For guidance on creating new page objects, see [Page Objects](./page-objects.md).
+Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@playwright/test`. For guidance on creating new page objects, see [Page Objects](./writing-tests/page-objects.md).
 
 ## Element Identification
 

@@ -32,7 +32,7 @@ const navLink = page.locator(ouiaSelector(NAV_DASHBOARD));
 
 ## When OUIA IDs Are Missing
 
-If the element you need to target doesn't have a `data-ouia-component-id` attribute and no constant exists in `src/selectors/ids.ts`, the ID needs to be added upstream in the `hal/foundation` repository. If you use Claude Code, the `/hal-ouia` skill automates this — it adds constants to `OuiaIds.java`, chains `.ouiaId()` calls in the Java source, creates a PR, and syncs the new IDs back to dave. See [Skills](skills.md) for details.
+If the element you need to target doesn't have a `data-ouia-component-id` attribute and no constant exists in `src/selectors/ids.ts`, the ID needs to be added upstream in the `hal/foundation` repository. If you use Claude Code, the `/hal-ouia` skill automates this — it adds constants to `OuiaIds.java`, chains `.ouiaId()` calls in the Java source, creates a PR, and syncs the new IDs back to dave. See [Skills](../skills.md) for details.
 
 In the meantime, use Playwright's built-in locators (see below) as a temporary measure.
 

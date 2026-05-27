@@ -47,10 +47,15 @@ export default withMermaid({
         {
           text: "Contributing",
           items: [
-            { text: "Writing Tests", link: "/writing-tests" },
-            { text: "Finding Elements", link: "/finding-elements" },
-            { text: "Test Patterns", link: "/test-patterns" },
-            { text: "Page Objects", link: "/page-objects" },
+            {
+              text: "Writing Tests",
+              link: "/writing-tests/",
+              items: [
+                { text: "Finding Elements", link: "/writing-tests/finding-elements" },
+                { text: "Test Patterns", link: "/writing-tests/test-patterns" },
+                { text: "Page Objects", link: "/writing-tests/page-objects" },
+              ],
+            },
             { text: "Skills", link: "/skills" },
             { text: "Sync", link: "/sync" },
             { text: "CI/CD", link: "/ci-cd" },

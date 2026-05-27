@@ -11,7 +11,7 @@ hero:
       link: /getting-started
     - theme: alt
       text: Writing Tests
-      link: /writing-tests
+      link: /writing-tests/
     - theme: alt
       text: GitHub
       link: https://github.com/hal/dave

@@ -23,4 +23,4 @@ pnpm exec playwright install chromium firefox webkit
 pnpm test
 ```
 
-If that works, you're ready. Head to [Running Tests](./running-tests.md) for all available commands, or jump straight to [Writing Tests](./writing-tests.md) to start contributing.
+If that works, you're ready. Head to [Running Tests](./running-tests.md) for all available commands, or jump straight to [Writing Tests](./writing-tests/) to start contributing.
