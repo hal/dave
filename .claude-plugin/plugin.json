@@ -2,6 +2,13 @@
   "name": "hal",
   "version": "0.1.0",
   "description": "Skills for developing and testing halOP — the WildFly management console",
+  "agents": [
+    {
+      "name": "playwright-reviewer",
+      "path": "agents/playwright-reviewer.md",
+      "description": "Review Playwright test specs for dave convention violations, missing awaits, wrong imports, and other issues"
+    }
+  ],
   "skills": [
     {
       "name": "hal-dev-env",
