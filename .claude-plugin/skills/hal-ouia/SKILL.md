@@ -7,7 +7,7 @@ metadata:
 
 # /hal-ouia — OUIA ID Management & Upstream Sync
 
-Adds missing OUIA IDs to halOP Java source, creates PRs on `hal/foundation`, monitors CI, and syncs the generated constants back to dave. Closes the loop between discovering missing IDs (via `/hal-explore` or `/hal-implement`) and making elements testable.
+Adds missing OUIA IDs to halOP Java source, creates PRs on `hal/foundation`, monitors CI, and syncs the generated constants back to dave. Closes the loop between discovering missing IDs (via `/hal-explore` or `/hal-spec`) and making elements testable.
 
 ## Tools
 
@@ -32,19 +32,19 @@ Browser exploration (Phase 1, interactive mode) uses Chrome DevTools MCP tools:
 
 - **(none)** — Interactive mode: browse the live UI (requires `/hal-dev-env`) to find elements missing OUIA IDs
 - **Spec file path** (e.g., `src/tests/configuration/configuration.spec.ts`) — Audit an existing test's selectors to find non-OUIA selectors that could be replaced with OUIA IDs
-- **Element list** (from `/hal-explore` or `/hal-implement` output) — Targeted mode: add specific missing IDs listed in a gap report
+- **Element list** (from `/hal-explore` or `/hal-spec` output) — Targeted mode: add specific missing IDs listed in a gap report
 - **`sync`** — Skip to Phase 4: wait for CI and sync dave (use after a PR has been merged)
 - **`status`** — Check CI pipeline and container image status without making changes
 
 ## Input / Output
 
-**Input:** One of: interactive mode (no args), spec file path (audit selectors), element list (from `/hal-explore` or `/hal-implement` OUIA Coverage section), `sync`, or `status`
+**Input:** One of: interactive mode (no args), spec file path (audit selectors), element list (from `/hal-explore` or `/hal-spec` OUIA Coverage section), `sync`, or `status`
 
 **Output:** PR on `hal/foundation` adding OUIA IDs + synced `src/selectors/ids.ts` constants in dave
 
-**Feeds into:** `/hal-implement` — after sync, new OUIA constants are available for test selectors
+**Feeds into:** `/hal-spec` — after sync, new OUIA constants are available for test selectors
 
-**Depends on:** `/hal-dev-env` (interactive mode only); fed by `/hal-explore` or `/hal-implement` (OUIA Coverage sections listing missing IDs)
+**Depends on:** `/hal-dev-env` (interactive mode only); fed by `/hal-explore` or `/hal-spec` (OUIA Coverage sections listing missing IDs)
 
 ## Constants
 
@@ -140,9 +140,9 @@ wait_for → ["Dashboard"]
 6. Cross-reference against `OuiaIds.java` — which constants exist but aren't used in the UI code?
 7. Present candidates for new OUIA IDs
 
-### Input Mode C: From hal-explore or hal-implement
+### Input Mode C: From hal-explore or hal-spec
 
-Accept the "Missing OUIA IDs" or "OUIA Coverage" section from a `/hal-explore` gap report or `/hal-implement` proposal. Parse the listed elements and their feature areas, then proceed directly to Phase 2.
+Accept the "Missing OUIA IDs" or "OUIA Coverage" section from a `/hal-explore` gap report or `/hal-spec` proposal. Parse the listed elements and their feature areas, then proceed directly to Phase 2.
 
 ## Phase 2: Propose Changes
 
@@ -380,7 +380,7 @@ Handle these error cases:
 - Skip compilation verification after edits
 - Modify dave's `ids.ts` directly (always use `pnpm sync:ouia` to regenerate)
 - Start or stop the dev environment (that is `/hal-dev-env`'s responsibility)
-- Write or modify dave test files or page objects (that is `/hal-implement`'s responsibility)
+- Write or modify dave test files or page objects (that is `/hal-spec`'s responsibility)
 - Use non-standard OUIA ID naming (always follow `hal-op-<feature>-<element>` convention)
 - Create constants without applying `.ouiaId()` calls (constants without usage are dead code)
 - Cache or persist analysis results between invocations (always scan fresh)

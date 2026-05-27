@@ -1,13 +1,13 @@
 ---
 name: hal-record
-description: This skill should be used when the user asks to "record test", "record interaction", "record a test scenario", "capture interactions", "codegen", "use codegen", "playwright recorder", "record browser", "scaffold from recording", or invokes /hal-record. Records browser interactions via Playwright codegen against a running halOP dev environment and scaffolds test proposals for /hal-implement.
+description: This skill should be used when the user asks to "record test", "record interaction", "record a test scenario", "capture interactions", "codegen", "use codegen", "playwright recorder", "record browser", "scaffold from recording", or invokes /hal-record. Records browser interactions via Playwright codegen against a running halOP dev environment and scaffolds test proposals for /hal-spec.
 metadata:
   version: "0.1.0"
 ---
 
 # /hal-record — Record & Scaffold Tests
 
-Records user interactions in a live halOP browser session via Playwright codegen and produces a test proposal that feeds into `/hal-implement`. Bridges the gap between manual exploration and test scaffolding by capturing real user actions and transforming them into dave-convention proposals.
+Records user interactions in a live halOP browser session via Playwright codegen and produces a test proposal that feeds into `/hal-spec`. Bridges the gap between manual exploration and test scaffolding by capturing real user actions and transforming them into dave-convention proposals.
 
 ## Tools
 
@@ -27,9 +27,9 @@ This skill uses the following tools:
 
 **Input:** Optional feature name to pre-tag the proposal
 
-**Output:** Test proposal in `/hal-implement` format (same format as `/hal-explore` proposals — see `hal-explore/references/proposal-format.md`)
+**Output:** Test proposal in `/hal-spec` format (same format as `/hal-explore` proposals — see `hal-explore/references/proposal-format.md`)
 
-**Feeds into:** `/hal-implement` — the approved proposal is handed off directly, skipping hal-implement's own reconnaissance
+**Feeds into:** `/hal-spec` — the approved proposal is handed off directly, skipping hal-spec's own reconnaissance
 
 **Depends on:** `/hal-dev-env` — requires running containers for the codegen browser session
 
@@ -231,16 +231,16 @@ If the recording contains multiple distinct action-verification cycles, propose 
 
 ## Dave Convention Reference
 
-The proposal output must match the `/hal-implement` format exactly. Before generating a proposal, consult:
+The proposal output must match the `/hal-spec` format exactly. Before generating a proposal, consult:
 
-- **`.claude-plugin/skills/hal-implement/references/conventions.md`** — page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions
-- **`.claude-plugin/skills/hal-explore/references/proposal-format.md`** — the shared proposal template used by both `/hal-explore` and `/hal-record` (ensures proposals are directly consumable by `/hal-implement`)
+- **`.claude-plugin/skills/hal-spec/references/conventions.md`** — page object patterns, fixture registration, spec file structure, DMR utilities, and tag conventions
+- **`.claude-plugin/skills/hal-explore/references/proposal-format.md`** — the shared proposal template used by both `/hal-explore` and `/hal-record` (ensures proposals are directly consumable by `/hal-spec`)
 
 If those files are unavailable, fall back to the patterns documented in `CLAUDE.md` under "Adding New Pages and Tests".
 
 ## Phase 4: Generate Proposal
 
-Build a test proposal in the exact `/hal-implement` format. This proposal is the skill's primary output.
+Build a test proposal in the exact `/hal-spec` format. This proposal is the skill's primary output.
 
 ### Proposal Format
 
@@ -272,7 +272,7 @@ Use the shared proposal template from `.claude-plugin/skills/hal-explore/referen
 
 4. **Test Cases** — one per distinct action-verification cycle in the recording
 
-5. **DMR section** — always include the "not detected" note. Recording captures UI actions, not server state requirements. The user or `/hal-implement` will fill this in.
+5. **DMR section** — always include the "not detected" note. Recording captures UI actions, not server state requirements. The user or `/hal-spec` will fill this in.
 
 6. **OUIA Coverage** — summarize from the mapping work in Phase 3
 
@@ -284,7 +284,7 @@ After presenting the proposal, ask the user:
 
 > "Does this test proposal look good? You can:
 >
-> - **Approve** — I'll offer to run /hal-implement
+> - **Approve** — I'll offer to run /hal-spec
 > - **Adjust** — tell me what to change (especially DMR setup/teardown)
 > - **Discard** — drop this recording"
 
@@ -307,25 +307,25 @@ Use `AskUserQuestion` with three options: Approve, Adjust, Discard.
 
 - Proceed to Step 3
 
-### Step 3: Offer hal-implement Handoff
+### Step 3: Offer hal-spec Handoff
 
 Ask the user:
 
-> "Shall I run /hal-implement to write the code now?"
+> "Shall I run /hal-spec to write the code now?"
 
 Use `AskUserQuestion` with two options:
 
-1. **Yes** — invoke `/hal-implement` with the approved proposal as context
-2. **No** — print the `/hal-implement` invocation command for later use:
+1. **Yes** — invoke `/hal-spec` with the approved proposal as context
+2. **No** — print the `/hal-spec` invocation command for later use:
 
    ```text
    You can implement this later by running:
-   /hal-implement <feature>
+   /hal-spec <feature>
    ```
 
-### Handoff to hal-implement
+### Handoff to hal-spec
 
-When the user approves handoff, invoke the `hal-implement` skill. The approved proposal serves as the input — `/hal-implement` will use it to skip its own reconnaissance phase and go directly to implementation.
+When the user approves handoff, invoke the `hal-spec` skill. The approved proposal serves as the input — `/hal-spec` will use it to skip its own reconnaissance phase and go directly to implementation.
 
 ## Error Handling
 
@@ -341,11 +341,11 @@ When the user approves handoff, invoke the `hal-implement` skill. The approved p
 
 The skill does NOT:
 
-- Write or modify source files (that is `/hal-implement`)
-- Create or register page objects (that is `/hal-implement`)
+- Write or modify source files (that is `/hal-spec`)
+- Create or register page objects (that is `/hal-spec`)
 - Start or stop containers (that is `/hal-dev-env`)
 - Add OUIA IDs to halOP (that is `/hal-ouia`)
-- Run tests (that is `/hal-implement` or manual)
+- Run tests (that is `/hal-spec` or manual)
 
 ## Anti-Patterns
 
@@ -354,7 +354,7 @@ The skill does NOT:
 - Write any source files (page objects, specs, fixtures) — only produce proposals
 - Start or stop the dev environment — always check, never act
 - Modify `src/selectors/ids.ts` — that file is generated by `pnpm sync:ouia`
-- Skip the approval step — always present a proposal before offering hal-implement handoff
+- Skip the approval step — always present a proposal before offering hal-spec handoff
 - Cache recordings or proposals between invocations — always start fresh
 - Guess OUIA constant names — always look them up in `src/selectors/ids.ts`
 - Launch codegen without checking prerequisites first

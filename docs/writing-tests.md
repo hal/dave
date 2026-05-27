@@ -295,6 +295,6 @@ Before submitting a PR:
 If you use [Claude Code](https://docs.anthropic.com/en/docs/claude-code), dave includes skills that automate parts of this workflow:
 
 - **`/hal-explore`** — identifies untested halOP features by cross-referencing the halOP source tree with existing tests and page objects. Use it to find out _what_ to test next.
-- **`/hal-implement`** — generates tests and page objects following the conventions described in this guide, via an interactive propose-approve-implement loop.
+- **`/hal-spec`** — generates tests and page objects following the conventions described in this guide, via an interactive propose-approve-implement loop.
 
 See [Skills](skills.md) for full documentation.

@@ -1,11 +1,11 @@
 ---
-name: hal-implement
-description: This skill should be used when the user asks to "implement test", "write test for", "add test coverage for", "test this feature", "create spec file", "scaffold test", "add page object", "generate e2e test", or invokes /hal-implement. Writes new halOP test cases and page objects interactively via a propose-approve-implement loop. Not for discovering test gaps (use /hal-explore) or recording browser interactions (use /hal-record).
+name: hal-spec
+description: This skill should be used when the user asks to "implement test", "write test for", "add test coverage for", "test this feature", "create spec file", "scaffold test", "add page object", "generate e2e test", or invokes /hal-spec. Writes new halOP test cases and page objects interactively via a propose-approve-implement loop. Not for discovering test gaps (use /hal-explore) or recording browser interactions (use /hal-record).
 metadata:
   version: "0.1.0"
 ---
 
-# /hal-implement — Interactive Test Implementation
+# /hal-spec — Interactive Test Implementation
 
 Writes new test cases and page objects in dave, guided by the halOP source and the running console. Works in an interactive propose-approve-implement loop: the skill reads halOP code, explores the live UI, proposes a test case for user approval, then writes page objects, fixtures, and spec files following dave conventions exactly.
 
@@ -96,9 +96,9 @@ For detailed dave conventions (page objects, fixtures, specs, DMR, tags, selecto
 
 ## Phase 1: Reconnaissance
 
-> **Skip condition:** When hal-implement receives an approved proposal from `/hal-explore` or `/hal-record`, skip Phase 1 entirely — the proposal already contains the reconnaissance results (page object structure, locators, test cases, OUIA coverage). Go directly to Phase 2 (if the proposal needs user re-approval) or Phase 3 (if already approved).
+> **Skip condition:** When hal-spec receives an approved proposal from `/hal-explore` or `/hal-record`, skip Phase 1 entirely — the proposal already contains the reconnaissance results (page object structure, locators, test cases, OUIA coverage). Go directly to Phase 2 (if the proposal needs user re-approval) or Phase 3 (if already approved).
 >
-> **Scope:** Phase 1 is **single-feature focused** reconnaissance. For broad, multi-feature discovery across the entire codebase, use `/hal-explore` instead — it produces proposals in the same format that hal-implement consumes.
+> **Scope:** Phase 1 is **single-feature focused** reconnaissance. For broad, multi-feature discovery across the entire codebase, use `/hal-explore` instead — it produces proposals in the same format that hal-spec consumes.
 
 Before proposing any test, gather information about the target feature.
 

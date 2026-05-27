@@ -146,8 +146,8 @@ A local plugin in `.claude-plugin/` provides five skills for AI-assisted test de
 
 - **`/hal-dev-env`** — starts and manages a local WildFly + halOP dev environment (containers on ports 19090/19990)
 - **`/hal-explore`** — analyzes test coverage gaps by cross-referencing halOP source with existing dave tests and page objects
-- **`/hal-implement`** — writes new tests interactively via a propose-approve-implement loop, following dave conventions
+- **`/hal-spec`** — writes new tests interactively via a propose-approve-implement loop, following dave conventions
 - **`/hal-ouia`** — adds missing OUIA IDs to halOP, creates PRs on `hal/foundation`, and syncs generated constants back to dave
-- **`/hal-record`** — records browser interactions via Playwright codegen and scaffolds test proposals for `/hal-implement`
+- **`/hal-record`** — records browser interactions via Playwright codegen and scaffolds test proposals for `/hal-spec`
 
 Skills require the `hal/foundation` repository path, configured in `.claude/hal-config.json` or auto-detected at `../foundation`. See `docs/skills.md` for full documentation.

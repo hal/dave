@@ -35,11 +35,11 @@ Browser exploration (Phase 2) uses Chrome DevTools MCP tools:
 
 **Input:** Argument selecting analysis scope (code-only or code + browser)
 
-**Output:** Prioritized gap report + test scenario proposals in `/hal-implement` format (see `references/proposal-format.md`)
+**Output:** Prioritized gap report + test scenario proposals in `/hal-spec` format (see `references/proposal-format.md`)
 
 **Feeds into:**
 
-- `/hal-implement` — proposals are directly consumable as implementation input (skips hal-implement's own reconnaissance)
+- `/hal-spec` — proposals are directly consumable as implementation input (skips hal-spec's own reconnaissance)
 - `/hal-ouia` — the OUIA Coverage section identifies missing IDs that need to be added upstream
 
 **Depends on:** `/hal-dev-env` (Phase 2 browser exploration only)
@@ -315,7 +315,7 @@ For each element found in snapshots:
 
 ## Test Scenario Proposals
 
-For the proposal template, prioritization criteria, and output format, consult **`references/proposal-format.md`**. Each proposal covers page object structure, spec file layout, DMR setup/teardown, and test cases — ready to hand to `/hal-implement`.
+For the proposal template, prioritization criteria, and output format, consult **`references/proposal-format.md`**. Each proposal covers page object structure, spec file layout, DMR setup/teardown, and test cases — ready to hand to `/hal-spec`.
 
 ## Error Handling
 
@@ -332,8 +332,8 @@ Handle these error cases:
 
 **Never:**
 
-- Write or modify test files (this skill only proposes — hal-implement writes code)
-- Write or modify page objects (same — hal-implement writes code)
+- Write or modify test files (this skill only proposes — hal-spec writes code)
+- Write or modify page objects (same — hal-spec writes code)
 - Start or stop containers (that is hal-dev-env's responsibility)
 - Modify halOP source code or OUIA IDs (use `/hal-ouia` to add missing IDs upstream in hal/foundation)
 - Cache or persist gap analysis results between invocations (always scan fresh)

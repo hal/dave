@@ -1,6 +1,6 @@
 # Test Scenario Proposal Format
 
-After completing Phase 1 (and optionally Phase 2), propose concrete test scenarios for each gap. Each proposal must follow the format below — it is the same format that `/hal-implement` and `/hal-record` use, so proposals can be handed directly to `/hal-implement` without reformatting.
+After completing Phase 1 (and optionally Phase 2), propose concrete test scenarios for each gap. Each proposal must follow the format below — it is the same format that `/hal-spec` and `/hal-record` use, so proposals can be handed directly to `/hal-spec` without reformatting.
 
 ## Proposal Template
 

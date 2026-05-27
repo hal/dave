@@ -10,7 +10,7 @@ The five skills form a pipeline with two parallel discovery paths that converge 
 graph LR
     A[hal-dev-env<br/>start] --> B[hal-explore<br/>find gaps]
     A --> C[hal-record<br/>capture]
-    B --> D[hal-implement<br/>write tests]
+    B --> D[hal-spec<br/>write tests]
     C --> D
     E[hal-ouia<br/>add missing IDs] --> C
     E --> D
@@ -24,7 +24,7 @@ graph LR
 | Find out what should be tested next            | hal-explore   |
 | Record a browser interaction as a test         | hal-record    |
 | Add missing OUIA IDs to make elements testable | hal-ouia      |
-| Write test code (page objects, specs)          | hal-implement |
+| Write test code (page objects, specs)          | hal-spec      |
 
 ### Entry Paths
 
@@ -33,32 +33,32 @@ graph LR
 1. `/hal-dev-env start` — start the containers
 2. `/hal-explore` — scan for coverage gaps, produce test proposals
 3. `/hal-ouia` — add missing OUIA IDs if the proposal flags them (optional)
-4. `/hal-implement` — write the tests from the approved proposal
+4. `/hal-spec` — write the tests from the approved proposal
 
 **Recording path** — use when you know the interaction to test:
 
 1. `/hal-dev-env start` — start the containers
 2. `/hal-record` — record the interaction, produce a test proposal
-3. `/hal-implement` — write the tests from the approved proposal
+3. `/hal-spec` — write the tests from the approved proposal
 
 **Direct path** — use when you already know exactly what to implement:
 
 1. `/hal-dev-env start` — start the containers
-2. `/hal-implement <feature>` — runs its own single-feature reconnaissance, then proposes and implements
+2. `/hal-spec <feature>` — runs its own single-feature reconnaissance, then proposes and implements
 
 ### Proposal Handoff
 
-`/hal-explore` and `/hal-record` both produce proposals in the same format (defined in `hal-explore/references/proposal-format.md`). When `/hal-implement` receives a proposal from either skill, it skips its own reconnaissance phase and goes directly to implementation.
+`/hal-explore` and `/hal-record` both produce proposals in the same format (defined in `hal-explore/references/proposal-format.md`). When `/hal-spec` receives a proposal from either skill, it skips its own reconnaissance phase and goes directly to implementation.
 
 ### I/O Summary
 
 | Skill         | Input                                              | Output                              | Feeds Into                                 |
 | ------------- | -------------------------------------------------- | ----------------------------------- | ------------------------------------------ |
 | hal-dev-env   | Subcommand (start/stop/status)                     | Running containers on 19090/19990   | All other skills                           |
-| hal-explore   | Argument (gaps/explore/explore-only)               | Gap report + test proposals         | hal-implement, hal-ouia                    |
-| hal-record    | Optional feature name                              | Test proposal                       | hal-implement                              |
-| hal-ouia      | Spec file, element list, interactive, sync, status | PR on foundation + synced ids.ts    | hal-implement                              |
-| hal-implement | Feature name, gap, proposal, or source path        | Page objects, specs, fixtures, tags | Terminal (OUIA gaps feed back to hal-ouia) |
+| hal-explore   | Argument (gaps/explore/explore-only)               | Gap report + test proposals         | hal-spec, hal-ouia                         |
+| hal-record    | Optional feature name                              | Test proposal                       | hal-spec                                   |
+| hal-ouia      | Spec file, element list, interactive, sync, status | PR on foundation + synced ids.ts    | hal-spec                                   |
+| hal-spec      | Feature name, gap, proposal, or source path        | Page objects, specs, fixtures, tags | Terminal (OUIA gaps feed back to hal-ouia) |
 
 ---
 
@@ -121,16 +121,16 @@ The skill stores the path to the `hal/foundation` repository in `.claude/hal-con
 | Invocation      | `/hal-explore`, "explore halop", "find untested features", "what should we test next" |
 | Automation      | **Mixed** — automatic analysis, user reviews and selects proposals                    |
 | Input           | Argument selecting scope: `gaps` (default), `explore`, or `explore-only`              |
-| Output          | Prioritized gap report + test proposals in `/hal-implement` format                    |
+| Output          | Prioritized gap report + test proposals in `/hal-spec` format                         |
 | Depends on      | hal-dev-env (Phase 2 browser exploration only)                                        |
-| Feeds into      | hal-implement (proposals), hal-ouia (missing OUIA IDs)                                |
+| Feeds into      | hal-spec (proposals), hal-ouia (missing OUIA IDs)                                     |
 | Dev environment | Required for Phase 2 (browser exploration); not needed for Phase 1 (code analysis)    |
 | Browser (MCP)   | Required for Phase 2; not needed for Phase 1                                          |
 | Other prereqs   | hal/foundation repository path                                                        |
 
 ### When to Use
 
-Use this skill when you don't know what to test next. It scans the halOP source tree and cross-references it with existing dave tests and page objects to find coverage gaps. Optionally, it explores the live UI to discover available OUIA IDs and interactive elements, then proposes concrete test scenarios ready for `/hal-implement`.
+Use this skill when you don't know what to test next. It scans the halOP source tree and cross-references it with existing dave tests and page objects to find coverage gaps. Optionally, it explores the live UI to discover available OUIA IDs and interactive elements, then proposes concrete test scenarios ready for `/hal-spec`.
 
 ### How It Works
 
@@ -166,9 +166,9 @@ After analysis, proposes concrete test scenarios including page object structure
 | Invocation      | `/hal-record`, "record test", "record interaction", "capture test", "codegen"        |
 | Automation      | **Mixed** — user records manually in browser, skill automatically generates proposal |
 | Input           | Optional feature name to pre-tag the proposal                                        |
-| Output          | Test proposal in `/hal-implement` format (same as `/hal-explore` proposals)          |
+| Output          | Test proposal in `/hal-spec` format (same as `/hal-explore` proposals)               |
 | Depends on      | hal-dev-env (requires running containers for the codegen browser session)            |
-| Feeds into      | hal-implement (approved proposal skips hal-implement's reconnaissance)               |
+| Feeds into      | hal-spec (approved proposal skips hal-spec's reconnaissance)                         |
 | Dev environment | Required                                                                             |
 | Browser (MCP)   | Not needed (uses Playwright codegen directly, not Chrome DevTools MCP)               |
 | Other prereqs   | Playwright installed (`pnpm install`)                                                |
@@ -185,7 +185,7 @@ flowchart TD
     B --> C[Phase 3: Parse Recording]
     C --> D[Phase 4: Generate Proposal]
     D --> E{User approves?}
-    E -->|Approve| F[Offer /hal-implement handoff]
+    E -->|Approve| F[Offer /hal-spec handoff]
     E -->|Adjust| D
     E -->|Discard| G[Exit]
 ```
@@ -196,9 +196,9 @@ flowchart TD
 
 **Phase 3 — Parse Recording:** Reads the recording, classifies actions (navigation, click, fill, assertion), maps `getByTestId` selectors to OUIA constants from `src/selectors/ids.ts`, and infers the feature area from navigation paths.
 
-**Phase 4 — Generate Proposal:** Produces a test proposal in the shared `/hal-implement` format, including page object structure, fixture registration, test cases, and OUIA coverage summary.
+**Phase 4 — Generate Proposal:** Produces a test proposal in the shared `/hal-spec` format, including page object structure, fixture registration, test cases, and OUIA coverage summary.
 
-**Phase 5 — Approval & Handoff:** Presents the proposal for approval. On approval, offers to invoke `/hal-implement` to write the code.
+**Phase 5 — Approval & Handoff:** Presents the proposal for approval. On approval, offers to invoke `/hal-spec` to write the code.
 
 ### Arguments
 
@@ -221,15 +221,15 @@ flowchart TD
 | Automation      | **Mixed** — proposes changes for user approval, automates PR creation and sync                    |
 | Input           | One of: interactive (no args), spec file path, element list from gap report, `sync`, `status`     |
 | Output          | PR on `hal/foundation` adding OUIA IDs + synced `src/selectors/ids.ts` constants in dave          |
-| Depends on      | hal-dev-env (interactive mode only); fed by hal-explore or hal-implement (OUIA Coverage sections) |
-| Feeds into      | hal-implement (new OUIA constants become available for test selectors after sync)                 |
+| Depends on      | hal-dev-env (interactive mode only); fed by hal-explore or hal-spec (OUIA Coverage sections)      |
+| Feeds into      | hal-spec (new OUIA constants become available for test selectors after sync)                      |
 | Dev environment | Required for interactive mode; not needed for spec-file audit or element-list modes               |
 | Browser (MCP)   | Required for interactive mode; not needed for other modes                                         |
 | Other prereqs   | hal/foundation repository path; GitHub CLI (`gh`) for PR creation and CI monitoring               |
 
 ### When to Use
 
-Use this skill when tests need to target UI elements that don't have OUIA IDs yet. This typically happens when `/hal-explore` or `/hal-implement` flags missing IDs in their OUIA Coverage section. The skill adds constants to `OuiaIds.java`, chains `.ouiaId()` calls in the Java source, creates a PR, and after merge syncs the new IDs back to dave.
+Use this skill when tests need to target UI elements that don't have OUIA IDs yet. This typically happens when `/hal-explore` or `/hal-spec` flags missing IDs in their OUIA Coverage section. The skill adds constants to `OuiaIds.java`, chains `.ouiaId()` calls in the Java source, creates a PR, and after merge syncs the new IDs back to dave.
 
 ### How It Works
 
@@ -242,11 +242,11 @@ flowchart TD
     D --> E[User merges PR]
     E --> F[Phase 4: Wait & Sync]
     F --> G{IDs available?}
-    G -->|Yes| H[Ready for /hal-implement]
+    G -->|Yes| H[Ready for /hal-spec]
     G -->|No| F
 ```
 
-**Phase 1 — Identify Missing IDs:** Three input modes: (a) audit an existing spec file's selectors for OUIA replacement opportunities, (b) interactively browse the live UI to find elements without OUIA IDs, or (c) parse a gap report from `/hal-explore` or `/hal-implement`.
+**Phase 1 — Identify Missing IDs:** Three input modes: (a) audit an existing spec file's selectors for OUIA replacement opportunities, (b) interactively browse the live UI to find elements without OUIA IDs, or (c) parse a gap report from `/hal-explore` or `/hal-spec`.
 
 **Phase 2 — Propose Changes:** Presents the list of `OuiaIds.java` constants to add and Java files to modify. Waits for user approval.
 
@@ -276,7 +276,7 @@ For each replacement candidate, the skill locates the corresponding Java file wh
 
 ---
 
-## hal-implement
+## hal-spec
 
 > Writes new test cases and page objects interactively via a propose-approve-implement loop.
 
@@ -284,7 +284,7 @@ For each replacement candidate, the skill locates the corresponding Java file wh
 
 | Attribute       | Value                                                                                                 |
 | --------------- | ----------------------------------------------------------------------------------------------------- |
-| Invocation      | `/hal-implement`, "implement test", "write test for", "add test coverage for", "test this feature"    |
+| Invocation      | `/hal-spec`, "implement test", "write test for", "add test coverage for", "test this feature"         |
 | Automation      | **Mixed** — proposes test cases for user approval, then implements and verifies automatically         |
 | Input           | One of: feature name, halOP source path, `/hal-explore` gap, `/hal-record` proposal, or no argument   |
 | Output          | Page objects, spec files, fixture registrations, and tags committed to dave                           |
@@ -315,7 +315,7 @@ flowchart TD
     G -->|Stop| H[Summary]
 ```
 
-> When hal-implement receives an approved proposal from `/hal-explore` or `/hal-record`, Phase 1 is skipped — the proposal already contains the reconnaissance results.
+> When hal-spec receives an approved proposal from `/hal-explore` or `/hal-record`, Phase 1 is skipped — the proposal already contains the reconnaissance results.
 
 **Phase 1 — Reconnaissance:** Single-feature focused analysis. Reads halOP Java source to understand the feature. If the dev environment is running, explores the live UI to discover available elements and OUIA IDs. For broad multi-feature discovery, use `/hal-explore` instead.
 
@@ -356,9 +356,9 @@ All skills require:
 - **Podman** or **Docker** — for running containers
 - **hal/foundation repository** — path configured in `.claude/hal-config.json` or at `../foundation`
 
-Browser exploration (hal-explore Phase 2, hal-implement Phase 1, hal-ouia interactive mode) and recording (hal-record) additionally require:
+Browser exploration (hal-explore Phase 2, hal-spec Phase 1, hal-ouia interactive mode) and recording (hal-record) additionally require:
 
-- **Chrome DevTools MCP** — for browser interaction (hal-explore, hal-implement, hal-ouia interactive mode)
+- **Chrome DevTools MCP** — for browser interaction (hal-explore, hal-spec, hal-ouia interactive mode)
 - **Playwright** — for recording (hal-record)
 - **Running dev environment** — start with `/hal-dev-env start`
 
