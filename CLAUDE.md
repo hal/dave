@@ -18,11 +18,11 @@ pnpm allure:generate                   # Generate Allure report from results
 pnpm allure:serve                      # Serve Allure report with live reload
 pnpm allure:open                       # Open a generated Allure report
 
-pnpm test -- --grep "pattern"          # Run tests matching pattern
-pnpm test -- src/tests/smoke/app-loads.spec.ts  # Run single spec file
-pnpm test -- --project=chromium        # Run only in Chromium
-pnpm test -- --project=firefox         # Run only in Firefox
-pnpm test -- --project=webkit          # Run only in WebKit
+pnpm test --grep "pattern"              # Run tests matching pattern
+pnpm test src/tests/smoke/app-loads.spec.ts  # Run single spec file
+pnpm test --project=chromium            # Run only in Chromium
+pnpm test --project=firefox             # Run only in Firefox
+pnpm test --project=webkit              # Run only in WebKit
 pnpm test:tag <name> [name...]          # Run tests for one or more tags (tags defined in src/tags.ts)
 pnpm test:tag smoke -- --project=chromium  # Run tag with extra Playwright options
 pnpm test:tag                          # List all available tags

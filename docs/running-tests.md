@@ -16,11 +16,11 @@
 Filter tests by pattern, file, or browser:
 
 ```bash
-pnpm test -- --grep "dashboard"
-pnpm test -- src/tests/smoke/app-loads.spec.ts
-pnpm test -- --project=chromium
-pnpm test -- --project=firefox
-pnpm test -- --project=webkit
+pnpm test --grep "dashboard"
+pnpm test src/tests/smoke/app-loads.spec.ts
+pnpm test --project=chromium
+pnpm test --project=firefox
+pnpm test --project=webkit
 ```
 
 ## Test Groups
@@ -31,13 +31,13 @@ Tests can belong to multiple groups. Combine groups with OR logic:
 
 ```bash
 pnpm test:tag smoke model-browser
-pnpm test -- --grep "@smoke|@model-browser"
+pnpm test --grep "@smoke|@model-browser"
 ```
 
 Exclude a group:
 
 ```bash
-pnpm test -- --grep-invert @smoke
+pnpm test --grep-invert @smoke
 ```
 
 Tags are displayed in the [Playwright](https://hal.github.io/dave/reports/playwright/) and [Allure](https://hal.github.io/dave/reports/allure/) reports and can be used to filter results.

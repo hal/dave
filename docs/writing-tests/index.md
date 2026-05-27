@@ -230,25 +230,25 @@ Since each spec file gets its own WildFly container that is destroyed after all 
 
 ```bash
 # By file
-pnpm test -- src/tests/smoke/dashboard.spec.ts
+pnpm test src/tests/smoke/dashboard.spec.ts
 
 # By name pattern
-pnpm test -- --grep "shows dashboard heading"
+pnpm test --grep "shows dashboard heading"
 
 # In a single browser
-pnpm test -- --project=chromium src/tests/smoke/dashboard.spec.ts
+pnpm test --project=chromium src/tests/smoke/dashboard.spec.ts
 ```
 
 ### Headed Mode (See the Browser)
 
 ```bash
-pnpm test:headed -- src/tests/smoke/dashboard.spec.ts
+pnpm test:headed src/tests/smoke/dashboard.spec.ts
 ```
 
 ### Debug Mode (Step Through)
 
 ```bash
-pnpm test:debug -- src/tests/smoke/dashboard.spec.ts
+pnpm test:debug src/tests/smoke/dashboard.spec.ts
 ```
 
 This opens the Playwright Inspector where you can step through actions, inspect the DOM, and see what locators match.
@@ -280,7 +280,7 @@ Before submitting a PR:
 - [ ] Tests are wrapped in `test.describe()` with appropriate tags
 - [ ] Page objects are used instead of raw selectors where possible
 - [ ] Assertions use `await expect(locator)` (not plain `expect(value)`) for auto-waiting
-- [ ] Tests pass in all three browsers: `pnpm test -- --project=chromium`, `firefox`, `webkit`
+- [ ] Tests pass in all three browsers: `pnpm test --project=chromium`, `firefox`, `webkit`
 - [ ] Code passes linting: `pnpm lint` and `pnpm format:check`
 
 ## Related Guides
