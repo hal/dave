@@ -1,6 +1,6 @@
 # Skills
 
-dave includes a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude-code/plugins) that bundles skills for developing and testing halOP. Skills are invoked as slash commands in Claude Code (e.g., `/hal-dev-env`) or triggered by natural language (e.g., "start the dev environment").
+dave includes project-level [skills](https://docs.anthropic.com/en/docs/claude-code/skills) and [agents](https://docs.anthropic.com/en/docs/claude-code/agents) in `.claude/` for developing and testing halOP. Skills are invoked as slash commands in Claude Code (e.g., `/hal-dev-env`) or triggered by natural language (e.g., "start the dev environment").
 
 ## Skill Pipeline
 
@@ -351,13 +351,13 @@ The skill follows dave's established patterns exactly:
 
 ## Agents
 
-The plugin also includes a **playwright-reviewer** agent. Unlike skills (which are user-invoked slash commands), agents are specialized reviewers that Claude Code can delegate to behind the scenes.
+The project also includes a **playwright-reviewer** agent. Unlike skills (which are user-invoked slash commands), agents are specialized reviewers that Claude Code can delegate to behind the scenes.
 
 | Agent               | Purpose                                                                                                                                                       |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | playwright-reviewer | Reviews test specs for dave convention violations: missing `await`, wrong imports, missing `specPath`, non-OUIA selectors, missing DMR verification, and more |
 
-The agent is defined in `.claude-plugin/agents/playwright-reviewer.md` and is used automatically when skills like `/hal-spec` need to review generated test code. You can also invoke it explicitly by asking Claude Code to review a test file.
+The agent is defined in `.claude/agents/playwright-reviewer.md` and is used automatically when skills like `/hal-spec` need to review generated test code. You can also invoke it explicitly by asking Claude Code to review a test file.
 
 ---
 

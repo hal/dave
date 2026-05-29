@@ -58,7 +58,7 @@ git commit
    | --------------------------------- | ---------------- |
    | `*.{ts,js,mjs,cjs}`               | ESLint, Prettier |
    | `*.{json,yml,yaml,css}`           | Prettier         |
-   | `*.md` (excl. `.claude-plugin/`)  | markdownlint     |
+   | `*.md` (excl. `.claude/`)         | markdownlint     |
    | `.prettierrc`                     | Prettier         |
 
 ### Regenerating Hooks

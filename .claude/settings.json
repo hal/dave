@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(npx *)",
+      "Bash(node *)",
+      "Bash(git *)",
+      "Bash(gh *)",
+      "Bash(podman *)",
+      "Bash(docker *)",
+      "Bash(curl *)",
+      "Bash(python3 *)",
+      "Bash(bash *)",
+      "Bash(wado *)",
+      "Bash(grep *)",
+      "Bash(awk *)",
+      "Bash(echo *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Bash(rm /tmp/dave-state.json)",
+      "Bash(wait)",
+      "Bash(kill *)",
+      "Bash(pkill *)",
+      "Bash(lsof *)",
+      "Bash(xargs *)",
+      "Bash(skopeo *)",
+      "Bash(unzip *)",
+      "Read(//tmp/**)",
+      "WebSearch",
+      "WebFetch(domain:www.patternfly.org)",
+      "WebFetch(domain:www.wildfly.org)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:hal.github.io)",
+      "WebFetch(domain:quay.io)",
+      "WebFetch(domain:allurereport.org)",
+      "WebFetch(domain:localhost)"
+    ]
+  }
+}

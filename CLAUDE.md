@@ -140,14 +140,16 @@ Dependabot is configured in `.github/dependabot.yml` for weekly npm and GitHub A
 - ESLint with TypeScript + Playwright rules, Prettier for formatting
 - Test grouping via Playwright tags — constants in `src/tags.ts`, applied via `tag` option on `test.describe()`. Tests can belong to multiple groups. Filter with `pnpm test:tag` or `--grep @tag`.
 
-## Claude Code Plugin
+## Skills and Agents
 
-A local plugin in `.claude-plugin/` provides five skills for AI-assisted test development:
+Project-level skills in `.claude/skills/` provide AI-assisted test development:
 
 - **`/hal-dev-env`** — starts and manages a local WildFly + halOP dev environment (containers on ports 19090/19990)
 - **`/hal-explore`** — analyzes test coverage gaps by cross-referencing halOP source with existing dave tests and page objects
 - **`/hal-spec`** — writes new tests interactively via a propose-approve-implement loop, following dave conventions
 - **`/hal-ouia`** — adds missing OUIA IDs to halOP, creates PRs on `hal/foundation`, and syncs generated constants back to dave
 - **`/hal-record`** — records browser interactions via Playwright codegen and scaffolds test proposals for `/hal-spec`
+
+A **playwright-reviewer** agent in `.claude/agents/` reviews test specs for dave convention violations.
 
 Skills require the `hal/foundation` repository path, configured in `.claude/hal-config.json` or auto-detected at `../foundation`. See `docs/skills.md` for full documentation.
