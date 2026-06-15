@@ -36,7 +36,7 @@
     "@types/node": "^25.9.1",
     "allure": "^3.8.2",
     "allure-js-commons": "^3.9.0",
-    "allure-playwright": "^3.9.0",
+    "allure-playwright": "^3.10.0",
     "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-playwright": "^2.10.4",
