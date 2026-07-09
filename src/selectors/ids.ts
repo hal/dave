@@ -120,6 +120,16 @@ export const REFRESH_BTN = "hal-op-refresh-btn";
 export const RESET_BTN = "hal-op-reset-btn";
 export const SAVE_BTN = "hal-op-save-btn";
 export const STABILITY_DISMISS_BTN = "hal-op-stability-dismiss-btn";
+export const TYPE_ENDPOINT_FORM = "halOP/EndpointForm";
+export const TYPE_ENDPOINT_SELECTOR = "halOP/EndpointSelector";
+export const TYPE_ENDPOINT_TABLE = "halOP/EndpointTable";
+export const TYPE_ERROR_SKELETON = "halOP/ErrorSkeleton";
+export const TYPE_MODEL_BROWSER_DETAIL = "halOP/ModelBrowserDetail";
+export const TYPE_MODEL_BROWSER_TREE = "halOP/ModelBrowserTree";
+export const TYPE_RESOURCE_DATA_TOOLBAR = "halOP/ResourceDataToolbar";
+export const TYPE_RESOURCE_LIST = "halOP/ResourceList";
+export const TYPE_SKELETON = "halOP/Skeleton";
+export const TYPE_STABILITY_BANNER = "halOP/StabilityBanner";
 
 // ------------------------------------------------------ dynamic IDs
 
