@@ -4,16 +4,16 @@ import {
   FIND_RESOURCE_MODAL,
   MAIN,
   MODEL_BROWSER_BACK_BTN,
-  MODEL_BROWSER_BREADCRUMB,
   MODEL_BROWSER_COLLAPSE_BTN,
   MODEL_BROWSER_FIND_BTN,
   MODEL_BROWSER_FORWARD_BTN,
   MODEL_BROWSER_GLOBAL_OPS_SWITCH,
   MODEL_BROWSER_HOME_BTN,
   MODEL_BROWSER_REFRESH_BTN,
-  MODEL_BROWSER_RESOURCE_HEADING,
   MODEL_BROWSER_TREE,
   NAV_MODEL_BROWSER,
+  RESOURCE_BREADCRUMB,
+  RESOURCE_HEADER,
 } from "../selectors/ids.js";
 import { BasePage } from "./base.page.js";
 import { ouiaSelector } from "../utils/ouia.js";
@@ -54,7 +54,7 @@ export class ModelBrowserPage extends BasePage {
     super(page);
     this.main = page.locator(ouiaSelector(MAIN));
     this.tree = page.locator(ouiaSelector(MODEL_BROWSER_TREE));
-    this.resourceHeading = page.locator(ouiaSelector(MODEL_BROWSER_RESOURCE_HEADING));
+    this.resourceHeading = page.locator(ouiaSelector(RESOURCE_HEADER));
     this.backButton = page.locator(ouiaSelector(MODEL_BROWSER_BACK_BTN));
     this.forwardButton = page.locator(ouiaSelector(MODEL_BROWSER_FORWARD_BTN));
     this.homeButton = page.locator(ouiaSelector(MODEL_BROWSER_HOME_BTN));
@@ -166,7 +166,7 @@ export class ModelBrowserPage extends BasePage {
   }
 
   breadcrumb(): Locator {
-    return this.page.locator(ouiaSelector(MODEL_BROWSER_BREADCRUMB)).getByRole("list").last();
+    return this.page.locator(ouiaSelector(RESOURCE_BREADCRUMB)).getByRole("list").last();
   }
 
   async breadcrumbText(): Promise<string | null> {
