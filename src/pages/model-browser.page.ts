@@ -137,6 +137,7 @@ export class ModelBrowserPage extends BasePage {
   async navigate(): Promise<void> {
     await this.page.locator(ouiaSelector(NAV_MODEL_BROWSER)).click();
     await this.tree.waitFor({ state: "visible" });
+    await this.resourceHeading.waitFor({ state: "visible" });
   }
 
   treeItem(name: string): Locator {
