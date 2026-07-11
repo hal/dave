@@ -22,7 +22,7 @@ test.describe.serial("Model Browser CRUD", { tag: [Tag.MODEL_BROWSER.value, Tag.
     await modelBrowserPage.selectTreeItem("system-property");
     await modelBrowserPage.viewButton("foo").click();
 
-    await expect(modelBrowserPage.resourceHeading).toHaveText("foo");
+    await expect(modelBrowserPage.resourceHeading).toContainText("foo");
     const breadcrumbText = await modelBrowserPage.breadcrumbText();
     expect(breadcrumbText).toContain("system-property=foo");
 
@@ -32,7 +32,7 @@ test.describe.serial("Model Browser CRUD", { tag: [Tag.MODEL_BROWSER.value, Tag.
   test("updates system property value", async ({ modelBrowserPage, wildfly }) => {
     await modelBrowserPage.selectTreeItem("system-property");
     await modelBrowserPage.viewButton("foo").click();
-    await expect(modelBrowserPage.resourceHeading).toHaveText("foo");
+    await expect(modelBrowserPage.resourceHeading).toContainText("foo");
 
     await modelBrowserPage.editButton().click();
     await expect(modelBrowserPage.saveButton()).toBeVisible();

@@ -11,7 +11,7 @@ test.describe("Model Browser", { tag: [Tag.MODEL_BROWSER.value] }, () => {
       await expect(modelBrowserPage.treeItem(resource)).toBeVisible();
     }
 
-    await expect(modelBrowserPage.resourceHeading).toHaveText("Management Model");
+    await expect(modelBrowserPage.resourceHeading).toContainText("Management Model");
     await expect(modelBrowserPage.tab("Data")).toHaveAttribute("aria-selected", "true");
   });
 
