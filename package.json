@@ -34,7 +34,7 @@
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.1",
-    "allure": "^3.14.1",
+    "allure": "^3.14.2",
     "allure-js-commons": "^3.10.2",
     "allure-playwright": "^3.10.2",
     "eslint": "^10.6.0",
@@ -44,7 +44,7 @@
     "lint-staged": "^17.0.8",
     "markdownlint-cli2": "^0.23.0",
     "mermaid": "^11.16.0",
-    "prettier": "^3.9.4",
+    "prettier": "^3.9.5",
     "simple-git-hooks": "^2.13.1",
     "testcontainers": "^12.0.4",
     "tsx": "^4.23.0",
@@ -56,5 +56,5 @@
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
   },
-  "packageManager": "pnpm@11.10.0"
+  "packageManager": "pnpm@11.11.0"
 }
