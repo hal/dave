@@ -36,8 +36,8 @@ importers:
         specifier: ^2.10.5
         version: 2.10.5(eslint@10.6.0)
       globals:
-        specifier: ^17.7.0
-        version: 17.7.0
+        specifier: ^17.8.0
+        version: 17.8.0
       lint-staged:
         specifier: ^17.0.8
         version: 17.0.8
@@ -2221,6 +2221,10 @@ packages:
 
   globals@17.7.0:
     resolution: {integrity: sha512-Czmyns5dUsq4seFBR/Kdydhmo8y9kC79hiSkPn0YcGtNnYWnrgt0vjrSjx9tspoDGWm2CMarffRuLjM4xUz8xg==}
+    engines: {node: '>=18'}
+
+  globals@17.8.0:
+    resolution: {integrity: sha512-Zz/LMDZScFmkakeL2cTHzf+PbWKdpU3uclqkZT7TjDG58j5WPt0PpA+n9uPI24fZtlw07q0OtEi84K+umsRzqQ==}
     engines: {node: '>=18'}
 
   globby@16.2.0:
@@ -5952,6 +5956,8 @@ snapshots:
       path-scurry: 2.0.2
 
   globals@17.7.0: {}
+
+  globals@17.8.0: {}
 
   globby@16.2.0:
     dependencies:

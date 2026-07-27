@@ -40,7 +40,7 @@
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-playwright": "^2.10.5",
-    "globals": "^17.7.0",
+    "globals": "^17.8.0",
     "lint-staged": "^17.0.8",
     "markdownlint-cli2": "^0.23.0",
     "mermaid": "^11.16.0",
