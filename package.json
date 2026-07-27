@@ -42,7 +42,7 @@
     "eslint-plugin-playwright": "^2.10.5",
     "globals": "^17.7.0",
     "lint-staged": "^17.0.8",
-    "markdownlint-cli2": "^0.23.0",
+    "markdownlint-cli2": "^0.23.2",
     "mermaid": "^11.16.0",
     "prettier": "^3.9.5",
     "simple-git-hooks": "^2.13.1",
