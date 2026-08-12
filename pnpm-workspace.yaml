@@ -26,3 +26,6 @@ auditConfig:
     - GHSA-fx2h-pf6j-xcff
     # vite <=6.4.2: launch-editor NTLMv2 hash disclosure via UNC path on Windows
     - GHSA-v6wh-96g9-6wx3
+
+minimumReleaseAgeExclude:
+  - adm-zip@0.6.0

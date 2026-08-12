@@ -32,29 +32,29 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.61.1",
-    "@types/node": "^26.1.1",
-    "allure": "^3.14.2",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.2.0",
+    "allure": "^3.14.3",
     "allure-js-commons": "^3.10.2",
     "allure-playwright": "^3.10.2",
-    "eslint": "^10.6.0",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-playwright": "^2.10.5",
-    "globals": "^17.7.0",
-    "lint-staged": "^17.0.8",
-    "markdownlint-cli2": "^0.23.0",
-    "mermaid": "^11.16.0",
-    "prettier": "^3.9.5",
+    "eslint-plugin-playwright": "^2.11.0",
+    "globals": "^17.9.0",
+    "lint-staged": "^17.3.0",
+    "markdownlint-cli2": "^0.23.2",
+    "mermaid": "^11.16.1",
+    "prettier": "^3.9.6",
     "simple-git-hooks": "^2.13.1",
-    "testcontainers": "^12.0.4",
-    "tsx": "^4.23.0",
+    "testcontainers": "^12.1.0",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.63.0",
+    "typescript-eslint": "^8.67.0",
     "vitepress": "^1.6.4",
     "vitepress-plugin-mermaid": "^2.0.17"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
   },
-  "packageManager": "pnpm@11.11.0"
+  "packageManager": "pnpm@11.21.0"
 }
