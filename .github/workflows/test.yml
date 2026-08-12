@@ -19,6 +19,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
   pages: write
   id-token: write
 
@@ -103,6 +104,38 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: pages-root/
+
+  notify-failure:
+    if: ${{ !cancelled() && needs.test.result == 'failure' }}
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for existing issue
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing=$(gh issue list --repo "${{ github.repository }}" \
+            --label "test-failure" --state open --limit 1 --json number --jq '.[0].number // empty')
+          echo "exists=${existing}" >> "$GITHUB_OUTPUT"
+
+      - name: Create failure issue
+        if: steps.check.outputs.exists == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create --repo "${{ github.repository }}" \
+            --title "Test workflow failure ($(date -u +%Y-%m-%d))" \
+            --label "test-failure" \
+            --body "$(cat <<'EOF'
+          The [Test workflow](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) failed.
+
+          **Trigger:** ${{ github.event_name }}
+          **Branch:** ${{ github.ref_name }}
+
+          Please investigate the failing tests.
+          EOF
+          )"
 
   deploy-report:
     if: ${{ !cancelled() && needs.test.result != 'skipped' }}
