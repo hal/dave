@@ -43,7 +43,7 @@
     "globals": "^17.9.0",
     "lint-staged": "^17.3.0",
     "markdownlint-cli2": "^0.23.2",
-    "mermaid": "^11.16.1",
+    "mermaid": "^11.17.0",
     "prettier": "^3.9.6",
     "simple-git-hooks": "^2.13.1",
     "testcontainers": "^12.1.0",
