@@ -47,7 +47,7 @@
     "prettier": "^3.9.6",
     "simple-git-hooks": "^2.13.1",
     "testcontainers": "^12.1.0",
-    "tsx": "^4.23.12",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0",
     "vitepress": "^1.6.4",
