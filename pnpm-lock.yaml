@@ -21,11 +21,11 @@ importers:
         specifier: ^3.14.3
         version: 3.14.3(debug@4.4.3)(preact@10.29.8)(typescript@6.0.3)
       allure-js-commons:
-        specifier: ^3.10.2
-        version: 3.10.2(allure-playwright@3.10.2(@playwright/test@1.62.1))
+        specifier: ^3.12.0
+        version: 3.12.0(allure-playwright@3.12.0(@playwright/test@1.62.1))
       allure-playwright:
-        specifier: ^3.10.2
-        version: 3.10.2(@playwright/test@1.62.1)
+        specifier: ^3.12.0
+        version: 3.12.0(@playwright/test@1.62.1)
       eslint:
         specifier: ^10.8.1
         version: 10.8.1
@@ -1420,18 +1420,18 @@ packages:
     resolution: {integrity: sha512-PrqppUmhT4ENdas2pH9caE7efUcxy6EcSFhWzosiVuQBzu2tQ5yLTI6jwomT/1cuBnivzGfxiJCqDNN9FRRh+Q==}
     engines: {node: '>= 14.0.0'}
 
-  allure-js-commons@3.10.2:
-    resolution: {integrity: sha512-5nAjUF1iNPSQMwKtEsadclSta8C3L705/k/pIzGb9M6P9krgfRaCyaEHt8pkLlCP9NFj5xk3grjtnAhiLeT+Kg==}
+  allure-js-commons@3.12.0:
+    resolution: {integrity: sha512-nMuW5x2fPyysHiZFDW/iOaQLVNgiiyJzvun6sxDZVL1FdpWBjmZl1SYuVEx84UnfwmX27wZ3MjqVYqckH7uX9w==}
     peerDependencies:
-      allure-playwright: 3.10.2
+      allure-playwright: 3.12.0
     peerDependenciesMeta:
       allure-playwright:
         optional: true
 
-  allure-playwright@3.10.2:
-    resolution: {integrity: sha512-CGyhxSvx2bIkojhBy0pbQZ12vkLbOE3FBh39WgzPs+katwnuGPUE0whJhryG8aD/dlDALxMehL9G0k8WYBx4tQ==}
+  allure-playwright@3.12.0:
+    resolution: {integrity: sha512-nAKusqO6YVisJbjSD3Ds5lfV3DsW3TZs1Hm07bntKNwDxrXRCmZMhYGfhmXBzM5G0IqLHkkZd/hR3baFvpQKOQ==}
     peerDependencies:
-      '@playwright/test': '>=1.53.0'
+      '@playwright/test': '>=1.62.0'
 
   allure@3.14.3:
     resolution: {integrity: sha512-wHoEDWWDpiqjd6UaNlbCc619pwKkx6J1aJsmB7lCnrrEbaSNyvbw6yd67VI931B0GEkP+dORHRy21Rsuc4l7IQ==}
@@ -4975,16 +4975,16 @@ snapshots:
       '@algolia/requester-fetch': 5.56.0
       '@algolia/requester-node-http': 5.56.0
 
-  allure-js-commons@3.10.2(allure-playwright@3.10.2(@playwright/test@1.62.1)):
+  allure-js-commons@3.12.0(allure-playwright@3.12.0(@playwright/test@1.62.1)):
     dependencies:
       md5: 2.3.0
     optionalDependencies:
-      allure-playwright: 3.10.2(@playwright/test@1.62.1)
+      allure-playwright: 3.12.0(@playwright/test@1.62.1)
 
-  allure-playwright@3.10.2(@playwright/test@1.62.1):
+  allure-playwright@3.12.0(@playwright/test@1.62.1):
     dependencies:
       '@playwright/test': 1.62.1
-      allure-js-commons: 3.10.2(allure-playwright@3.10.2(@playwright/test@1.62.1))
+      allure-js-commons: 3.12.0(allure-playwright@3.12.0(@playwright/test@1.62.1))
 
   allure@3.14.3(debug@4.4.3)(preact@10.29.8)(typescript@6.0.3):
     dependencies:
