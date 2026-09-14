@@ -54,7 +54,7 @@ export class ModelBrowserPage extends BasePage {
     super(page);
     this.main = page.locator(ouiaSelector(MAIN));
     this.tree = page.locator(ouiaSelector(MODEL_BROWSER_TREE));
-    this.resourceHeading = page.locator(ouiaSelector(RESOURCE_HEADER));
+    this.resourceHeading = page.locator(ouiaSelector(RESOURCE_HEADER)).first();
     this.backButton = page.locator(ouiaSelector(MODEL_BROWSER_BACK_BTN));
     this.forwardButton = page.locator(ouiaSelector(MODEL_BROWSER_FORWARD_BTN));
     this.homeButton = page.locator(ouiaSelector(MODEL_BROWSER_HOME_BTN));
