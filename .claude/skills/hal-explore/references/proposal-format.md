@@ -57,12 +57,13 @@ await addResource(managementUrl, ["subsystem", "example"], { attr: "value" });
 await removeResource(managementUrl, ["subsystem", "example"]);
 ```
 
-### OUIA Coverage
+### Selector Coverage
 
-- Matched: <OUIA IDs found in ids.ts with their constant names>
-- Unmatched: <OUIA IDs in the DOM but not in ids.ts>
-- Non-OUIA selectors: <role/text selectors used because no OUIA ID exists>
-- Missing: <elements that need OUIA IDs — requires /hal-ouia>
+- HasIdentifier: <components using `data-identifier` (FinderColumn, FinderItem, DataListItem, etc.) — no OUIA ID needed>
+- OUIA matched: <OUIA IDs found in ids.ts with their constant names>
+- OUIA unmatched: <OUIA IDs in the DOM but not in ids.ts>
+- Non-OUIA selectors: <role/text selectors used because no OUIA ID or data-identifier exists>
+- Missing: <elements that need OUIA IDs (only those without HasIdentifier) — requires /hal-ouia>
 ````
 
 ## Prioritization Criteria

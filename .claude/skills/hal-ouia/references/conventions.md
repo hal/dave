@@ -1,5 +1,13 @@
 # OUIA ID Conventions
 
+## When to Use OUIA IDs
+
+Components that implement `HasIdentifier` (e.g., `FinderColumn`, `FinderItem`, `DataListItem`) already carry a unique `data-identifier` attribute in the DOM. Dave can locate them with `[data-identifier="..."]` selectors. **Do NOT add OUIA IDs to these components** — it's redundant.
+
+OUIA IDs are for UI elements that **lack** a built-in identification mechanism: buttons, badges, modals, toolbars, form controls, cards, and other PatternFly components that don't implement `HasIdentifier`.
+
+**Rule of thumb:** Check if the component implements `HasIdentifier`. If yes → skip OUIA. If no → add OUIA ID.
+
 ## Naming
 
 All OUIA IDs in halOP follow these conventions:

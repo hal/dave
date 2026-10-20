@@ -161,7 +161,7 @@ Compare halOP features against dave coverage. For each halOP feature directory, 
 
 1. Does a corresponding spec file exist under `src/tests/`?
 2. Does a corresponding page object exist under `src/pages/`?
-3. Are OUIA IDs available in `src/selectors/ids.ts` for this feature?
+3. Are selectors available? Components implementing `HasIdentifier` (e.g., `FinderColumn`, `FinderItem`, `DataListItem`) are locatable via `[data-identifier="..."]` without OUIA IDs. Only check `src/selectors/ids.ts` for elements that lack a built-in identifier.
 
 ```bash
 echo "=== Coverage Gap Analysis ==="

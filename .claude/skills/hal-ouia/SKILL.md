@@ -84,6 +84,8 @@ fi
 
 For detailed OUIA ID naming rules, common suffixes, Java application patterns, and `OuiaIds.java` section organization, consult **`references/conventions.md`**. Read it before adding any new IDs.
 
+**Critical rule:** Components implementing `HasIdentifier` (e.g., `FinderColumn`, `FinderItem`, `DataListItem`) already carry a unique `data-identifier` attribute. Do NOT add OUIA IDs to these — dave locates them via `[data-identifier="..."]`. Only add OUIA IDs to elements without a built-in identification mechanism.
+
 ## Phase 1: Identify Missing IDs
 
 ### Input Mode A: Spec File Audit

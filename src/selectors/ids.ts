@@ -62,6 +62,7 @@ export const ENDPOINT_CONNECT_BTN = "hal-op-endpoint-connect-btn";
 export const ENDPOINT_MODAL = "hal-op-endpoint-modal";
 export const ENDPOINT_PING_BTN = "hal-op-endpoint-ping-btn";
 export const ENDPOINT_SELECT_BTN = "hal-op-endpoint-select-btn";
+export const ENDPOINT_SELECTOR = "hal-op-endpoint-selector";
 export const ENDPOINT_TABLE_ADD_BTN = "hal-op-endpoint-table-add-btn";
 export const EXECUTE_BTN = "hal-op-execute-btn";
 export const EXECUTE_MODAL = "hal-op-execute-modal";
@@ -87,6 +88,7 @@ export const MODEL_BROWSER_HOME_BTN = "hal-op-model-browser-home-btn";
 export const MODEL_BROWSER_OPERATIONS_FILTER = "hal-op-model-browser-operations-filter";
 export const MODEL_BROWSER_REFRESH_BTN = "hal-op-model-browser-refresh-btn";
 export const MODEL_BROWSER_TREE = "hal-op-model-browser-tree";
+export const MODEL_GRAPH_INDICATOR = "hal-op-model-graph-indicator";
 export const NAV = "hal-op-nav";
 export const NAV_CONFIGURATION = "hal-op-nav-configuration";
 export const NAV_DASHBOARD = "hal-op-nav-dashboard";
@@ -94,6 +96,7 @@ export const NAV_DEPLOYMENTS = "hal-op-nav-deployments";
 export const NAV_MODEL_BROWSER = "hal-op-nav-model-browser";
 export const NAV_RUNTIME = "hal-op-nav-runtime";
 export const NAV_TASKS = "hal-op-nav-tasks";
+export const NOTIFICATION_BADGE = "hal-op-notification-badge";
 export const NOTIFICATION_CLEAR_ALL = "hal-op-notification-clear-all";
 export const NOTIFICATION_MARK_ALL_READ = "hal-op-notification-mark-all-read";
 export const NOTIFICATION_UNCLEAR_LAST = "hal-op-notification-unclear-last";
@@ -114,7 +117,9 @@ export const RESOURCE_BREADCRUMB = "hal-op-resource-breadcrumb";
 export const RESOURCE_HEADER = "hal-op-resource-header";
 export const RESOURCE_TABS = "hal-op-resource-tabs";
 export const SAVE_BTN = "hal-op-save-btn";
+export const SEARCH_BTN = "hal-op-search-btn";
 export const STABILITY_DISMISS_BTN = "hal-op-stability-dismiss-btn";
+export const THEME_SELECTOR = "hal-op-theme-selector";
 
 // ------------------------------------------------------ dynamic IDs
 
