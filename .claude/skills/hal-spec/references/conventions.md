@@ -152,10 +152,9 @@ export const Tag = {
 
 Selector priority order:
 
-1. **Data-identifier selectors** — `page.locator('[data-identifier="..."]')` for components implementing `HasIdentifier` (e.g., `FinderColumn`, `FinderItem`, `DataListItem`). These carry a unique `data-identifier` attribute by design.
-2. **OUIA selectors** — `ouiaSelector(CONSTANT)` from `src/utils/ouia.ts` for elements with `data-ouia-component-id`. Used for UI elements that lack a built-in identification mechanism (buttons, badges, modals, toolbars, form controls, cards).
-3. **Role selectors** — `page.getByRole("button", { name: "Save" })` for standard accessible elements
-4. **Text selectors** — `page.getByText("some text")` for visible text
-5. **CSS selectors** — `page.locator(".css-class")` only as a last resort
+1. **OUIA selectors** — `ouiaSelector(CONSTANT)` from `src/utils/ouia.ts` for elements with `data-ouia-component-id`. OUIA IDs in `OuiaIds.java` are the contract between hal/foundation and dave — synced, versioned, and drift-checked by CI.
+2. **Role selectors** — `page.getByRole("button", { name: "Save" })` for standard accessible elements
+3. **Text selectors** — `page.getByText("some text")` for visible text
+4. **CSS selectors** — `page.locator(".css-class")` only as a last resort
 
-**Rule of thumb:** `HasIdentifier` components → `data-identifier`. Everything else → OUIA ID. Check `src/selectors/ids.ts` for available OUIA ID constants before writing selectors.
+Check `src/selectors/ids.ts` for available OUIA ID constants before writing selectors. If an element lacks an OUIA ID, use `/hal-ouia` to add one upstream rather than falling back to fragile selectors.

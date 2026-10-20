@@ -2,11 +2,11 @@
 
 ## When to Use OUIA IDs
 
-Components that implement `HasIdentifier` (e.g., `FinderColumn`, `FinderItem`, `DataListItem`) already carry a unique `data-identifier` attribute in the DOM. Dave can locate them with `[data-identifier="..."]` selectors. **Do NOT add OUIA IDs to these components** — it's redundant.
+OUIA IDs defined in `OuiaIds.java` are the **contract** between hal/foundation and dave. They are synced via `pnpm sync:ouia`, versioned in `ids.ts`, and drift-checked by CI. Any UI element that dave needs to target in tests **must** have an OUIA ID — this is the only identification mechanism dave can rely on.
 
-OUIA IDs are for UI elements that **lack** a built-in identification mechanism: buttons, badges, modals, toolbars, form controls, cards, and other PatternFly components that don't implement `HasIdentifier`.
+Internal Java mechanisms like `HasIdentifier` or `data-identifier` attributes are implementation details of the PatternFly Java framework. Dave has no sync pipeline for them and must not depend on them.
 
-**Rule of thumb:** Check if the component implements `HasIdentifier`. If yes → skip OUIA. If no → add OUIA ID.
+**Rule of thumb:** If dave needs to select it → add an OUIA ID in `OuiaIds.java`.
 
 ## Naming
 
