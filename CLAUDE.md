@@ -28,9 +28,10 @@ pnpm test:tag smoke -- --project=chromium  # Run tag with extra Playwright optio
 pnpm test:tag                          # List all available tags
 
 pnpm sync:ouia                         # Regenerate OUIA IDs from upstream OuiaIds.java
+pnpm sync:identifiers                  # Regenerate identifiers from upstream Identifiers.java
 pnpm sync:image                        # Pull latest halOP container image
-pnpm sync:status                       # Check sync status (IDs, CI build, image)
-pnpm sync:ci                           # Check OUIA ID drift (CI mode, fails if out of sync)
+pnpm sync:status                       # Check sync status (IDs, identifiers, CI build, image)
+pnpm sync:ci                           # Check OUIA ID and identifier drift (CI mode, fails if out of sync)
 pnpm sync:help                         # Show sync command help
 
 pnpm lint                              # Run ESLint
@@ -101,13 +102,14 @@ Tests import `test` and `expect` from `../fixtures/pages.fixture` instead of `@p
 
 **New test group**: Add a constant to `src/tags.ts`, optionally add a pnpm script.
 
-### OUIA ID Sync
+### Element Identification Sync
 
-OUIA ID constants in `src/selectors/ids.ts` are generated from [`OuiaIds.java`](https://github.com/hal/foundation/blob/main/resources/src/main/java/org/jboss/hal/resources/OuiaIds.java) in the hal/foundation repository. The generated file is committed to git so the project works without running sync first.
+halOP uses two identification mechanisms, both synced from hal/foundation and drift-checked by CI:
 
-- **`pnpm sync:ouia`** — fetches `OuiaIds.java` from GitHub `main`, parses Java constants and builder methods, regenerates `src/selectors/ids.ts`, and reports what changed
-- **`pnpm sync:image`** — pulls the latest `hal-op:test-suite` container image from quay.io
-- **`pnpm sync:status`** — checks if local IDs match upstream, whether the latest CI build succeeded, and whether the local container image matches the remote digest
+- **OUIA IDs** — synced from `OuiaIds.java` via `pnpm sync:ouia` into `src/selectors/ids.ts`. Use `ouiaSelector()` from `src/utils/ouia.ts`. Targets buttons, badges, modals, form items, toolbars.
+- **Identifiers** — synced from `Identifiers.java` via `pnpm sync:identifiers` into `src/selectors/identifiers.ts`. Use `identifierSelector()` from `src/utils/identifier.ts`. Targets finder columns/items, breadcrumbs, tabs, tree view items.
+
+OUIA IDs target elements without a built-in identity (buttons, badges, modals, form items, toolbars). Identifiers target PatternFly components that implement `HasIdentifier` (finder columns, finder items, breadcrumbs, tabs, tree view items). Both generated files are committed to git so the project works without running sync first.
 
 ### Utilities
 
@@ -115,7 +117,9 @@ OUIA ID constants in `src/selectors/ids.ts` are generated from [`OuiaIds.java`](
 - **`src/utils/dmr.ts`** — HTTP-based DMR operations against the WildFly management API (read/write attributes, add/remove resources, existence checks)
 - **`src/utils/container-runtime.ts`** — auto-detects Podman or Docker for halOP container
 - **`src/utils/ouia.ts`** — builds `[data-ouia-component-id="..."]` CSS selectors from OUIA IDs
+- **`src/utils/identifier.ts`** — builds `[data-identifier="..."]` CSS selectors from identifiers
 - **`src/selectors/ids.ts`** — generated OUIA ID constants (run `pnpm sync:ouia` to regenerate)
+- **`src/selectors/identifiers.ts`** — generated identifier constants (run `pnpm sync:identifiers` to regenerate)
 - **`src/utils/configure-testcontainers.ts`** — auto-configures testcontainers for Podman (socket detection, Ryuk disabled)
 
 ## CI/CD
@@ -123,7 +127,7 @@ OUIA ID constants in `src/selectors/ids.ts` are generated from [`OuiaIds.java`](
 GitHub Actions workflows in `.github/workflows/`:
 
 - **`lint.yml`** — runs `pnpm format:check` and `pnpm lint` on push/PR to `main`
-- **`sync.yml`** — detects OUIA ID drift on push/PR to `main`; regenerates `ids.ts` from upstream `OuiaIds.java` and fails if the result differs from the committed file
+- **`sync.yml`** — detects OUIA ID and identifier drift on push/PR to `main`; regenerates `ids.ts` and `identifiers.ts` from upstream and fails if either differs from the committed file
 - **`smoke.yml`** — fast pass/fail gate on push/PR to `main`; runs only `@smoke` tests in Chromium; no reports or artifacts
 - **`test.yml`** — full Playwright suite (all tests, all browsers); triggers automatically after Smoke succeeds on `main`, daily at 05:00 UTC, or manually via `workflow_dispatch`; uploads test results and JUnit report as artifacts; deploys Allure and Playwright reports to GitHub Pages
 

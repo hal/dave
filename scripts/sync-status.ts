@@ -3,6 +3,12 @@ import { resolve } from "node:path";
 
 import { execFileAsync } from "../src/utils/container-runtime.js";
 import { GENERATED_IDS_PATH, fetchIdsJava, parseIdsJava, readLocalConstants } from "./lib/parse-ids.js";
+import {
+  GENERATED_IDENTIFIERS_PATH,
+  fetchIdentifiersJava,
+  parseIdentifiersJava,
+  readLocalConstants as readLocalIdentifiers,
+} from "./lib/parse-identifiers.js";
 import { dim, green, red, yellow } from "./lib/format.js";
 import { requireCommands, requireContainerRuntime } from "./lib/preflight.js";
 
@@ -47,6 +53,43 @@ async function checkOuiaIds(): Promise<StatusResult> {
   } catch (err) {
     return {
       label: "OUIA IDs",
+      ok: false,
+      message: `Failed to check: ${err instanceof Error ? err.message : String(err)}`,
+    };
+  }
+}
+
+// ------------------------------------------------------ identifiers
+
+async function checkIdentifiers(): Promise<StatusResult> {
+  try {
+    const source = await fetchIdentifiersJava();
+    const parsed = parseIdentifiersJava(source);
+    const localConstants = readLocalIdentifiers(resolve(GENERATED_IDENTIFIERS_PATH));
+
+    const remoteNames = new Set(parsed.constants.map((c) => c.name));
+    const localSet = new Set(localConstants);
+
+    const added = parsed.constants.filter((c) => !localSet.has(c.name));
+    const removed = localConstants.filter((name) => !remoteNames.has(name));
+
+    if (added.length === 0 && removed.length === 0) {
+      return { label: "Identifiers", ok: true, message: "In sync with upstream" };
+    }
+
+    const parts: string[] = [];
+    if (added.length > 0) parts.push(`${added.length} new: ${added.map((c) => c.name).join(", ")}`);
+    if (removed.length > 0) parts.push(`${removed.length} removed: ${removed.join(", ")}`);
+
+    return {
+      label: "Identifiers",
+      ok: false,
+      message: `Out of sync (${parts.join("; ")})`,
+      action: "pnpm sync:identifiers",
+    };
+  } catch (err) {
+    return {
+      label: "Identifiers",
       ok: false,
       message: `Failed to check: ${err instanceof Error ? err.message : String(err)}`,
     };
@@ -220,7 +263,7 @@ async function main(): Promise<void> {
 
   console.log("Checking sync status…\n");
 
-  const results = await Promise.all([checkOuiaIds(), checkCiBuild(), checkContainerImage(runtime)]);
+  const results = await Promise.all([checkOuiaIds(), checkIdentifiers(), checkCiBuild(), checkContainerImage(runtime)]);
 
   for (const result of results) {
     printResult(result);
