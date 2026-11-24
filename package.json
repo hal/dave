@@ -41,7 +41,7 @@
     "allure-js-commons": "^3.10.2",
     "allure-playwright": "^3.10.2",
     "eslint-plugin-playwright": "^2.11.0",
-    "markdownlint-cli2": "^0.23.2",
+    "markdownlint-cli2": "^0.24.2",
     "mermaid": "^11.16.1",
     "testcontainers": "^12.1.0",
     "typescript": "^6.0.3",
