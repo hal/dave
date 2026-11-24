@@ -16,3 +16,5 @@ docs/.vitepress/dist/
 !.claude/skills/
 !.claude/agents/
 .superpowers/
+.vitest/
+.vite-hooks/_
