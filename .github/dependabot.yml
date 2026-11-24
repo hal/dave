@@ -12,11 +12,6 @@ updates:
       playwright:
         patterns:
           - "@playwright/*"
-      eslint:
-        patterns:
-          - "eslint*"
-          - "@eslint/*"
-          - "typescript-eslint"
       types:
         patterns:
           - "@types/*"
@@ -30,3 +25,8 @@ updates:
     labels:
       - dependencies
       - ci
+    ignore:
+      - dependency-name: actions/upload-pages-artifact
+        versions: [">=5"]
+      - dependency-name: actions/deploy-pages
+        versions: [">=5"]
