@@ -4,7 +4,7 @@ layout: home
 hero:
   name: dave
   text: UI Test Suite
-  tagline: End-to-end tests for halOP — the WildFly management console
+  tagline: End-to-end tests for halOP — the next-gen WildFly management console
   actions:
     - theme: brand
       text: Get Started
