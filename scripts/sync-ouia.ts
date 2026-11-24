@@ -26,7 +26,7 @@ async function main(): Promise<void> {
   const output = emitTypeScript(parsed);
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, output, "utf-8");
-  execFileSync("pnpm", ["exec", "prettier", "--write", outputPath], { stdio: "ignore" });
+  execFileSync("pnpm", ["exec", "vp", "fmt", outputPath], { stdio: "ignore" });
 
   console.log(`Generated ${dim(outputPath)}`);
   console.log(`  ${parsed.constants.length} constants, ${parsed.methods.length} functions`);

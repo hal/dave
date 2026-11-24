@@ -12,7 +12,7 @@ import { GENERATED_IDENTIFIERS_PATH, fetchIdentifiersJava, parseIdentifiersJava 
 function regenerateAndCheck(label: string, output: string, outputPath: string, syncCommand: string): boolean {
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, output, "utf-8");
-  execFileSync("pnpm", ["exec", "prettier", "--write", outputPath], { stdio: "ignore" });
+  execFileSync("pnpm", ["exec", "vp", "fmt", outputPath], { stdio: "ignore" });
 
   try {
     execFileSync("git", ["diff", "--exit-code", outputPath], { stdio: "pipe" });
