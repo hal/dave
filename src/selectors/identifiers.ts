@@ -54,13 +54,14 @@ export function fromTemplate(template: string): string {
 
 // ------------------------------------------------------ static identifiers
 
-export const ADD_RESOURCE_STEP = "add-resource";
+export const ADD_RESOURCE_STEP = "add-resource-step";
 export const ALL_TASKS = "all-tasks";
 export const ATTRIBUTES_HEAD = "attributes-head";
 export const ATTRIBUTES_TAB = "resource-tabs-attributes";
 export const BREADCRUMB_ROOT = "root";
 export const CAPABILITIES_HEAD = "capabilities-head";
 export const CAPABILITIES_TAB = "resource-tabs-capabilities";
+export const CATALOG_THEAD = "catalog-head";
 export const CLEAR_ALL = "clear-all";
 export const CONFIG_FILE = "config-file";
 export const CONFIGURATION_COLUMN = "configuration-column";
@@ -68,11 +69,11 @@ export const CONSOLE_VERSION = "console-version";
 export const CREDENTIAL_STORE_ALIASES_TAB = "credential-store-aliases";
 export const DATA_TAB = "resource-tabs-data";
 export const ENDPOINT_EMPTY = "endpoint-empty";
-export const ENDPOINT_HEAD = "endpoint-head";
 export const ENDPOINT_HOST = "mi-host";
 export const ENDPOINT_NAME = "mi-name";
 export const ENDPOINT_PORT = "mi-port";
 export const ENDPOINT_PROTOCOL = "mi-protocol";
+export const ENDPOINT_THEAD = "endpoint-head";
 export const ENDPOINT_URL = "mi-url";
 export const EXPRESSIONS_HEAD = "expressions-head";
 export const HOST_ARCH = "host-arch";
@@ -88,7 +89,8 @@ export const MARK_ALL_READ = "mark-all-read";
 export const NAV_CONFIGURATION = "/configuration";
 export const NAV_DASHBOARD = "/";
 export const NAV_DEPLOYMENTS = "/deployments";
-export const NAV_MODEL_BROWSER = "/management-model";
+export const NAV_MODEL_BROWSER = "/model-browser";
+export const NAV_MODEL_CATALOG = "/model-catalog";
 export const NAV_RUNTIME = "/runtime";
 export const NAV_TASKS = "/tasks";
 export const NEW_EXPRESSION = "new-expression";
