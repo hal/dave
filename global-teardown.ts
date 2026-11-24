@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { readFileSync, unlinkSync } from "node:fs";
 import type { FullConfig } from "@playwright/test";
 import "./src/utils/configure-testcontainers.js";

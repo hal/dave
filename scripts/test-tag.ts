@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { execFileSync } from "node:child_process";
 import { Tag } from "../src/tags.js";
 import { green, red, dim } from "./lib/format.js";

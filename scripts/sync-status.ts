@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { resolve } from "node:path";
 
 import { execFileAsync } from "../src/utils/container-runtime.js";

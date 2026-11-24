@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 import { spawn } from "node:child_process";
 
 import { green, red } from "./lib/format.js";

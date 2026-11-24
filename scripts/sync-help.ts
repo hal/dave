@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+/* oxlint-disable no-console */
 const HELP = `
 Sync commands — keep dave in sync with halOP
 
